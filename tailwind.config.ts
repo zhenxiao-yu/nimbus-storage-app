@@ -17,8 +17,8 @@ const config: Config = {
       colors: {
         // Brand colors for primary design elements
         brand: {
-          "100": "#EA6365", // Light variant
-          DEFAULT: "#FA7275", // Default (used when `brand` is referenced)
+          "100": "#0f0e46", // Light variant
+          DEFAULT: "#262755", // Default (used when `brand` is referenced)
         },
 
         // Individual colors for specific use cases
@@ -31,16 +31,16 @@ const config: Config = {
 
         // Light mode-specific colors
         light: {
-          "100": "#333F4E", // Darker text or UI elements
-          "200": "#A3B2C7", // Muted text or secondary details
-          "300": "#F2F5F9", // Backgrounds and cards
-          "400": "#F2F4F8", // Alternate background shades
+          "100": "#233543", // Darker text or UI elements
+          "200": "#455564", // Muted text or secondary details
+          "300": "#929ca5", // Backgrounds and cards
+          "400": "#c4c8ce", // Alternate background shades
         },
 
         // Dark mode-specific colors
         dark: {
-          "100": "#04050C", // Background for headers or footers
-          "200": "#131524", // Subtle background contrast
+          "100": "#04141c", // Background for headers or footers
+          "200": "#111e2c", // Subtle background contrast
         },
 
         // Dynamic color variables for custom theming
