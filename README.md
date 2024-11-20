@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nimbus: Simplified Cloud Storage
 
-## Getting Started
+**Nimbus** is a personal project aimed at making file storage and management straightforward and accessible. By focusing on the essentials, it provides a reliable and efficient way to upload, access, and share files without unnecessary complexity.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Tech Stack
+Nimbus is built using modern technologies for simplicity and functionality:
+- **React 19**: For building dynamic user interfaces.
+- **Next.js 15**: Provides server-side rendering for better performance.
+- **Appwrite**: Manages authentication, database, and file storage.
+- **TailwindCSS**: Ensures clean, responsive design with utility-first CSS.
+- **ShadCN**: Helps maintain consistent and reusable UI components.
+- **TypeScript**: Adds type safety for fewer bugs and cleaner code.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🔑 Features
+Nimbus focuses on the core functionalities that make file storage easier:
+- **Authentication**: Sign up, log in, and log out securely using Appwrite.
+- **File Uploads**: Quickly upload documents, images, audio, and video files.
+- **File Management**: View, rename, and delete files effortlessly.
+- **Downloads**: Retrieve files with one click.
+- **File Sharing**: Share uploaded files with others easily.
+- **Dashboard Insights**: See storage usage, recent uploads, and file summaries.
+- **Global Search**: Find files quickly across all uploads.
+- **Sorting**: Organize files by date, name, or size.
+- **Responsive Design**: Works well on both desktop and mobile devices.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🛠 Quick Start
 
-To learn more about Next.js, take a look at the following resources:
+### Prerequisites
+Ensure the following tools are installed:
+- **Git**
+- **Node.js**
+- **npm** (or **yarn**)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 📂 Setup Instructions
 
-## Deploy on Vercel
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/JavaScript-Mastery-Pro/storage_management_solution.git
+   cd storage_management_solution
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. **Set Up Environment Variables**:
+    - Create a `.env.local` file in the project root.
+    - Add the following:
+      ```env
+      NEXT_PUBLIC_APPWRITE_ENDPOINT="https://cloud.appwrite.io/v1"
+      NEXT_PUBLIC_APPWRITE_PROJECT=""
+      NEXT_PUBLIC_APPWRITE_DATABASE=""
+      NEXT_PUBLIC_APPWRITE_USERS_COLLECTION=""
+      NEXT_PUBLIC_APPWRITE_FILES_COLLECTION=""
+      NEXT_PUBLIC_APPWRITE_BUCKET=""
+      NEXT_APPWRITE_KEY=""
+      ```
+    - Replace placeholders with your Appwrite credentials.
+
+4. **Run the Project**:
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 🚀 Improvements for Future Versions
+Nimbus is functional, but there’s room for improvement:
+1. **File Versioning**: Add a version history for uploaded files.
+2. **Tagging**: Allow users to tag files for better organization.
+3. **Better Sharing Options**: Provide links with expiration dates or access levels.
+4. **Offline Support**: Introduce offline access with Progressive Web App (PWA) features.
+5. **Notifications**: Notify users of large uploads, errors, or shared file updates.
+6. **Customizable UI**: Let users tweak themes or layouts to fit their preferences.
+
+---
+
+## 📂 Explore More
+- Check out my other projects at [m4rkyu.com](https://m4rkyu.com).
+- Star the project on GitHub: [Nimbus Repository](https://github.com/JavaScript-Mastery-Pro/storage_management_solution).
+
+---
+
+Nimbus is a simple solution for anyone who wants to manage files without the hassle of complex systems. It’s lightweight, personal, and focused on making storage easier.
