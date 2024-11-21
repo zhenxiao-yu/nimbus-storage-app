@@ -70,14 +70,30 @@ const Sidebar = ({ fullName, avatar, email }: Props) => {
       </nav>
 
       {/* Image Section */}
-      <Image
-        src="/assets/images/files-2.png"
-        alt="Sidebar image"
-        width={506}
-        height={418}
-        className="w-full"
-      />
-
+      <div className="bg-blue-100 mt-6 rounded-lg p-4 shadow-md transition-transform hover:shadow-lg">
+        <h3 className="text-blue-800 text-lg font-semibold">
+          ⭐ Star on GitHub!
+        </h3>
+        <p className="text-blue-700 text-sm">
+          Check out the source code and more projects at{" "}
+          <Link
+            href="https://github.com/your-username/your-repo"
+            target="_blank"
+            className="hover:text-blue-900 font-medium underline transition-colors"
+          >
+            GitHub
+          </Link>{" "}
+          or visit{" "}
+          <Link
+            href="https://m4rkyu.com"
+            target="_blank"
+            className="hover:text-blue-900 font-medium underline transition-colors"
+          >
+            m4rkyu.com
+          </Link>
+          .
+        </p>
+      </div>
       {/* User Information Section */}
       <div className="sidebar-user-info">
         {/* User's avatar */}
