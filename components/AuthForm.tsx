@@ -1,10 +1,9 @@
 "use client";
 
-import { z } from "zod"; // Schema validation library
-import { zodResolver } from "@hookform/resolvers/zod"; // Resolver for integrating Zod with react-hook-form
-import { useForm } from "react-hook-form"; // Form management library
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
-// UI Components
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,56 +15,49 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-// React and Next.js imports
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-// Actions
 import { createAccount, signInUser } from "@/lib/actions/user.actions";
 import OtpModal from "@/components/OTPModal";
 
-// Define the types of forms: login or register
 type FormType = "login" | "register";
 
-// Schema for validation based on form type
 const authFormSchema = (formType: FormType) => {
   return z.object({
-    email: z.string().email(), // Validate email
+    email: z.string().email(),
     fullName:
-      formType === "register" // Full name is required for registration
+      formType === "register"
         ? z
             .string()
             .min(2, "Name must be at least 2 characters")
             .max(50, "Name can't exceed 50 characters")
-        : z.string().optional(), // Optional for login
+        : z.string().optional(),
   });
 };
 
-// Main Authentication Form component
 const AuthForm = ({ type }: { type: FormType }) => {
-  // State management
-  const [isLoading, setIsLoading] = useState(false); // Loader state
-  const [errorMessage, setErrorMessage] = useState(""); // Error message state
-  const [accountId, setAccountId] = useState<string | null>(null); // Account ID for OTP
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [accountId, setAccountId] = useState<string | null>(null);
 
-  // Initialize form schema and form hooks
   const formSchema = authFormSchema(type);
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema), // Use Zod for validation
+    resolver: zodResolver(formSchema),
     defaultValues: {
       fullName: "",
       email: "",
     },
   });
 
-  // Function to handle form submission
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setIsLoading(true); // Start loading
-    setErrorMessage(""); // Clear error messages
+    setIsLoading(true);
+    setErrorMessage("");
 
     try {
-      // Call the respective action based on the form type
       const user =
         type === "register"
           ? await createAccount({
@@ -74,24 +66,29 @@ const AuthForm = ({ type }: { type: FormType }) => {
             })
           : await signInUser({ email: values.email });
 
-      setAccountId(user.accountId); // Store the account ID for OTP modal
+      setAccountId(user.accountId);
+
+      toast.success(
+        type === "register"
+          ? "Account created successfully! Check your email for OTP."
+          : "Sign-in successful! Check your email for OTP.",
+      );
     } catch (error) {
-      setErrorMessage("Failed to create account. Please try again."); // Handle error
+      setErrorMessage("Failed to create account. Please try again.");
+      toast.error("An error occurred. Please try again.");
     } finally {
-      setIsLoading(false); // Stop loading
+      setIsLoading(false);
     }
   };
 
   return (
     <>
+      <ToastContainer position="top-right" autoClose={3000} />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="auth-form">
-          {/* Form Title */}
           <h1 className="form-title">
             {type === "login" ? "Sign In" : "Sign Up"}
           </h1>
-
-          {/* Full Name Field (only for registration) */}
           {type === "register" && (
             <FormField
               control={form.control}
@@ -113,8 +110,6 @@ const AuthForm = ({ type }: { type: FormType }) => {
               )}
             />
           )}
-
-          {/* Email Field */}
           <FormField
             control={form.control}
             name="email"
@@ -134,12 +129,10 @@ const AuthForm = ({ type }: { type: FormType }) => {
               </FormItem>
             )}
           />
-
-          {/* Submit Button */}
           <Button
             type="submit"
             className="form-submit-button"
-            disabled={isLoading} // Disable button when loading
+            disabled={isLoading}
           >
             {type === "login" ? "Sign In" : "Sign Up"}
             {isLoading && (
@@ -152,11 +145,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
               />
             )}
           </Button>
-
-          {/* Error Message */}
           {errorMessage && <p className="error-message">*{errorMessage}</p>}
-
-          {/* Link to switch between forms */}
           <div className="body-2 flex justify-center">
             <p className="text-light-100">
               {type === "login"
@@ -172,8 +161,6 @@ const AuthForm = ({ type }: { type: FormType }) => {
           </div>
         </form>
       </Form>
-
-      {/* OTP Modal */}
       {accountId && (
         <OtpModal email={form.getValues("email")} accountId={accountId} />
       )}

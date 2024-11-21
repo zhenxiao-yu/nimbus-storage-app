@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import "react-toastify/dist/ReactToastify.css";
 
 // Configure the Poppins font with multiple weights and CSS variable
 const poppins = Poppins({
