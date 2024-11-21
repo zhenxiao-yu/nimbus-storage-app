@@ -18,11 +18,11 @@ import FileUploader from "@/components/FileUploader";
 import { signOutUser } from "@/lib/actions/user.actions";
 
 interface Props {
-  $id: string;
-  accountId: string;
-  fullName: string;
-  avatar: string;
-  email: string;
+  $id: string; // Unique ID of the user
+  accountId: string; // Associated account ID
+  fullName: string; // Full name of the user
+  avatar: string; // URL of the user's avatar image
+  email: string; // Email address of the user
 }
 
 const MobileNavigation = ({
@@ -32,11 +32,12 @@ const MobileNavigation = ({
   avatar,
   email,
 }: Props) => {
-  const [open, setOpen] = useState(false);
-  const pathname = usePathname();
+  const [open, setOpen] = useState(false); // State to manage the menu's visibility
+  const pathname = usePathname(); // Current active path
 
   return (
     <header className="mobile-header">
+      {/* Logo Section */}
       <Image
         src="/assets/icons/logo-full-brand.svg"
         alt="logo"
@@ -45,17 +46,22 @@ const MobileNavigation = ({
         className="h-auto"
       />
 
+      {/* Mobile Navigation Drawer */}
       <Sheet open={open} onOpenChange={setOpen}>
+        {/* Menu Trigger */}
         <SheetTrigger>
           <Image
             src="/assets/icons/menu.svg"
-            alt="Search"
+            alt="Menu"
             width={30}
             height={30}
           />
         </SheetTrigger>
+
+        {/* Drawer Content */}
         <SheetContent className="shad-sheet h-screen px-3">
           <SheetTitle>
+            {/* User Info Section */}
             <div className="header-user">
               <Image
                 src={avatar}
@@ -72,23 +78,25 @@ const MobileNavigation = ({
             <Separator className="mb-4 bg-light-200/20" />
           </SheetTitle>
 
+          {/* Navigation Links */}
           <nav className="mobile-nav">
             <ul className="mobile-nav-list">
               {navItems.map(({ url, name, icon }) => (
                 <Link key={name} href={url} className="lg:w-full">
                   <li
                     className={cn(
-                      "mobile-nav-item",
-                      pathname === url && "shad-active",
+                      "mobile-nav-item transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 hover:shadow-md",
+                      pathname === url && "shad-active", // Highlight active link
                     )}
                   >
+                    {/* Navigation Icon */}
                     <Image
                       src={icon}
                       alt={name}
                       width={24}
                       height={24}
                       className={cn(
-                        "nav-icon",
+                        "nav-icon transition-transform duration-300 ease-in-out hover:scale-110",
                         pathname === url && "nav-icon-active",
                       )}
                     />
@@ -101,18 +109,22 @@ const MobileNavigation = ({
 
           <Separator className="my-5 bg-light-200/20" />
 
+          {/* File Uploader and Sign-Out Button */}
           <div className="flex flex-col justify-between gap-5 pb-5">
+            {/* File Uploader Component */}
             <FileUploader ownerId={ownerId} accountId={accountId} />
+
+            {/* Logout Button */}
             <Button
               type="submit"
-              className="mobile-sign-out-button"
+              className="mobile-sign-out-button hover:bg-red-600 flex items-center gap-2 transition-all duration-300 hover:scale-105"
               onClick={async () => await signOutUser()}
             >
               <Image
                 src="/assets/icons/logout.svg"
-                alt="logo"
-                width={24}
-                height={24}
+                alt="Logout"
+                width={30}
+                height={30}
               />
               <p>Logout</p>
             </Button>

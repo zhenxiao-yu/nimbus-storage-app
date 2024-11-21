@@ -39,9 +39,9 @@ const Header = ({
             <Image
               src="/assets/icons/logout.svg"
               alt="Sign Out"
-              width={24}
-              height={24}
-              className="w-6"
+              width={34}
+              height={34}
+              className="w-9"
             />
           </Button>
         </form>
