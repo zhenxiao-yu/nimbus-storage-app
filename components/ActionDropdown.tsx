@@ -30,6 +30,8 @@ import {
 } from "@/lib/actions/file.actions";
 import { usePathname } from "next/navigation";
 import { FileDetails, ShareInput } from "@/components/ActionsModalContent";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ActionDropdown = ({ file }: { file: Models.Document }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,34 +54,53 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
   const handleAction = async () => {
     if (!action) return;
     setIsLoading(true);
-    let success = false;
 
-    const actions = {
-      rename: () =>
-        renameFile({ fileId: file.$id, name, extension: file.extension, path }),
-      share: () => updateFileUsers({ fileId: file.$id, emails, path }),
-      delete: () =>
-        deleteFile({ fileId: file.$id, bucketFileId: file.bucketFileId, path }),
-    };
+    try {
+      const actions = {
+        rename: () =>
+          renameFile({
+            fileId: file.$id,
+            name,
+            extension: file.extension,
+            path,
+          }),
+        share: () => updateFileUsers({ fileId: file.$id, emails, path }),
+        delete: () =>
+          deleteFile({
+            fileId: file.$id,
+            bucketFileId: file.bucketFileId,
+            path,
+          }),
+      };
 
-    success = await actions[action.value as keyof typeof actions]();
+      await actions[action.value as keyof typeof actions]();
 
-    if (success) closeAllModals();
-
-    setIsLoading(false);
+      toast.success(`${action.label} completed successfully!`);
+      closeAllModals();
+    } catch (error) {
+      toast.error(`Failed to ${action.label.toLowerCase()}. Please try again.`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleRemoveUser = async (email: string) => {
     const updatedEmails = emails.filter((e) => e !== email);
 
-    const success = await updateFileUsers({
-      fileId: file.$id,
-      emails: updatedEmails,
-      path,
-    });
+    try {
+      await updateFileUsers({
+        fileId: file.$id,
+        emails: updatedEmails,
+        path,
+      });
 
-    if (success) setEmails(updatedEmails);
-    closeAllModals();
+      setEmails(updatedEmails);
+      toast.success("User removed successfully!");
+    } catch (error) {
+      toast.error("Failed to remove user. Please try again.");
+    } finally {
+      closeAllModals();
+    }
   };
 
   const renderDialogContent = () => {
@@ -139,52 +160,39 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
   };
 
   return (
-    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
-        <DropdownMenuTrigger className="shad-no-focus">
-          <Image
-            src="/assets/icons/dots.svg"
-            alt="dots"
-            width={34}
-            height={34}
-          />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuLabel className="max-w-[200px] truncate">
-            {file.name}
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          {actionsDropdownItems.map((actionItem) => (
-            <DropdownMenuItem
-              key={actionItem.value}
-              className="shad-dropdown-item"
-              onClick={() => {
-                setAction(actionItem);
+    <>
+      <ToastContainer position="top-right" autoClose={5000} />
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+          <DropdownMenuTrigger className="shad-no-focus">
+            <Image
+              src="/assets/icons/dots.svg"
+              alt="dots"
+              width={34}
+              height={34}
+            />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel className="max-w-[200px] truncate">
+              {file.name}
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {actionsDropdownItems.map((actionItem) => (
+              <DropdownMenuItem
+                key={actionItem.value}
+                className="shad-dropdown-item"
+                onClick={() => {
+                  setAction(actionItem);
 
-                if (
-                  ["rename", "share", "delete", "details"].includes(
-                    actionItem.value,
-                  )
-                ) {
-                  setIsModalOpen(true);
-                }
-              }}
-            >
-              {actionItem.value === "download" ? (
-                <Link
-                  href={constructDownloadUrl(file.bucketFileId)}
-                  download={file.name}
-                  className="flex items-center gap-2"
-                >
-                  <Image
-                    src={actionItem.icon}
-                    alt={actionItem.label}
-                    width={30}
-                    height={30}
-                  />
-                  {actionItem.label}
-                </Link>
-              ) : (
+                  if (
+                    ["rename", "share", "delete", "details"].includes(
+                      actionItem.value,
+                    )
+                  ) {
+                    setIsModalOpen(true);
+                  }
+                }}
+              >
                 <div className="flex items-center gap-2">
                   <Image
                     src={actionItem.icon}
@@ -194,14 +202,14 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
                   />
                   {actionItem.label}
                 </div>
-              )}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-      {renderDialogContent()}
-    </Dialog>
+        {renderDialogContent()}
+      </Dialog>
+    </>
   );
 };
 export default ActionDropdown;
