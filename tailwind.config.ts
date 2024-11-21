@@ -23,18 +23,18 @@ const config: Config = {
 
         // Individual colors for specific use cases
         red: "#FF7474", // Error messages, critical highlights
-        error: "#b80000", // Explicit error indication
-        green: "#3DD9B3", // Success or positive actions
-        blue: "#56B8FF", // Informational or links
+        error: "#fd6584", // Explicit error indication
+        green: "#47c58d", // Success or positive actions
+        blue: "#4157fd", // Informational or links
         pink: "#EEA8FD", // Accent or playful elements
-        orange: "#F9AB72", // Warnings or call-to-action highlights
+        orange: "#fdb60f", // Warnings or call-to-action highlights
 
         // Light mode-specific colors
         light: {
           "100": "#233543", // Darker text or UI elements
           "200": "#455564", // Muted text or secondary details
           "300": "#929ca5", // Backgrounds and cards
-          "400": "#c4c8ce", // Alternate background shades
+          "400": "#ced0d2", // Alternate background shades
         },
 
         // Dark mode-specific colors
@@ -99,9 +99,9 @@ const config: Config = {
 
       // Shadow styles for elevated UI components
       boxShadow: {
-        "drop-1": "0px 10px 30px 0px rgba(66, 71, 97, 0.1)", // Subtle shadow
-        "drop-2": "0 8px 30px 0 rgba(65, 89, 214, 0.3)", // Medium shadow
-        "drop-3": "0 8px 30px 0 rgba(65, 89, 214, 0.1)", // Lighter shadow
+        "drop-1": "0px 4px 12px rgba(66, 71, 97, 0.08)", // Light shadow for subtle elevation (e.g., buttons or small cards)
+        "drop-2": "0px 6px 20px rgba(65, 89, 214, 0.15)", // Medium shadow for elevated components (e.g., modals, tooltips)
+        "drop-3": "0px 12px 40px rgba(65, 89, 214, 0.2)", // Heavy shadow for prominent components (e.g., dropdowns, large cards)
       },
 
       // Border radius for consistent rounding
@@ -109,6 +109,8 @@ const config: Config = {
         lg: "var(--radius)", // Large radius
         md: "calc(var(--radius) - 2px)", // Medium radius
         sm: "calc(var(--radius) - 4px)", // Small radius
+        pill: "50px", // Rounded pill shape for tags or buttons
+        circle: "50%", // Perfect circle for avatars and circular icons
       },
 
       // Keyframes for animations
