@@ -32,17 +32,26 @@ export const uploadFile = async ({
   accountId,
   path,
 }: UploadFileProps) => {
-  const { storage, databases } = await createAdminClient();
-
   try {
-    const inputFile = InputFile.fromBuffer(file, file.name);
+    const { storage, databases } = await createAdminClient();
 
+    console.log("Storage client initialized:", storage);
+    console.log("Database client initialized:", databases);
+
+    // Convert the file to InputFile for Appwrite
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const inputFile = InputFile.fromBuffer(buffer, file.name);
+    console.log("InputFile created:", inputFile);
+
+    // Upload file to Appwrite storage bucket
     const bucketFile = await storage.createFile(
       appwriteConfig.bucketId,
       ID.unique(),
       inputFile,
     );
+    console.log("File uploaded to storage bucket:", bucketFile);
 
+    // Prepare the file document to store in the database
     const fileDocument = {
       type: getFileType(bucketFile.name).type,
       name: bucketFile.name,
@@ -55,6 +64,7 @@ export const uploadFile = async ({
       bucketFileId: bucketFile.$id,
     };
 
+    // Store file metadata in the database
     const newFile = await databases
       .createDocument(
         appwriteConfig.databaseId,
@@ -63,13 +73,22 @@ export const uploadFile = async ({
         fileDocument,
       )
       .catch(async (error: unknown) => {
+        console.error("Error creating file document:", error);
+
+        // Rollback: delete the uploaded file if the document creation fails
         await storage.deleteFile(appwriteConfig.bucketId, bucketFile.$id);
         handleError(error, "Failed to create file document");
       });
 
-    revalidatePath(path);
+    // Trigger revalidation for the given path
+    await revalidatePath(path);
+
+    console.log("File metadata saved successfully:", newFile);
+
+    // Return the processed file information
     return parseStringify(newFile);
   } catch (error) {
+    console.error("Error during file upload:", error);
     handleError(error, "Failed to upload file");
   }
 };
