@@ -15,10 +15,10 @@ export const dynamic = "force-dynamic";
  * Ensures the user is authenticated before rendering the layout.
  *
  * @param {React.ReactNode} children - The content to be rendered within the layout.
- * @returns The layout structure or redirects to login if no user is authenticated.
+ * @returns The layout structure or redirects to log in if no user is authenticated.
  */
 const Layout = async ({ children }: { children: React.ReactNode }) => {
-  // Fetch the current user; if not authenticated, redirect to login
+  // Fetch the current user; if not authenticated, redirect to log in
   const currentUser = await getCurrentUser();
 
   if (!currentUser) return redirect("/login");
