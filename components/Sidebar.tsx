@@ -71,13 +71,13 @@ const Sidebar = ({ fullName, avatar, email }: Props) => {
 
       {/* Image Section */}
       <div className="bg-blue-100 mt-6 rounded-lg p-4 shadow-md transition-transform hover:shadow-lg">
-        <h3 className="text-blue-800 text-lg font-semibold">
-          ⭐ Star on GitHub!
+        <h3 className="text-blue-800 text-md font-semibold">
+          ⭐ Star this project!
         </h3>
         <p className="text-blue-700 text-sm">
-          Check out the source code and more projects at{" "}
+          Check out the source code and more projects on{" "}
           <Link
-            href="https://github.com/your-username/your-repo"
+            href="https://github.com/zhenxiao-yu/nimbus-storage-app"
             target="_blank"
             className="hover:text-blue-900 font-medium underline transition-colors"
           >
