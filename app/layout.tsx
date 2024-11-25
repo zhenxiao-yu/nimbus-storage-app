@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import "react-toastify/dist/ReactToastify.css";
+import { Analytics } from "@vercel/analytics/next";
 
 // Configure the Poppins font with multiple weights and CSS variable
 const poppins = Poppins({
@@ -32,6 +33,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${poppins.variable} font-poppins antialiased`}>
         {children}
+        <Analytics />
       </body>
     </html>
   );
