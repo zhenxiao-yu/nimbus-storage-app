@@ -122,6 +122,39 @@ lib/
 
 For self-hosting, any Node 20+ host works. Build with `npm run build` and run `npm run start`.
 
+## Optional: OAuth providers
+
+Nimbus ships with one-click sign-in for **Google** and **GitHub**. To turn them on:
+
+### Google
+
+1. In [Google Cloud Console](https://console.cloud.google.com/apis/credentials), create an **OAuth 2.0 Client ID** (type: Web application).
+2. Add authorized redirect URI:
+   `https://cloud.appwrite.io/v1/account/sessions/oauth2/callback/google/<APPWRITE_PROJECT_ID>`
+3. In Appwrite Console → **Auth → Settings → Google**, paste the Client ID and Client Secret. Toggle on.
+
+### GitHub
+
+1. In [GitHub Developer Settings → OAuth Apps](https://github.com/settings/developers), create a new OAuth App.
+2. Authorization callback URL:
+   `https://cloud.appwrite.io/v1/account/sessions/oauth2/callback/github/<APPWRITE_PROJECT_ID>`
+3. Paste the Client ID and Secret into Appwrite Console → **Auth → Settings → GitHub**.
+
+The “Continue with Google/GitHub” buttons will then work end-to-end. Until configured, clicking them surfaces a friendly toast.
+
+## Optional: Vercel Cron (keep Appwrite warm)
+
+Appwrite Cloud's free tier auto-pauses projects after ~30 days of inactivity. Nimbus ships with a daily cron at [vercel.json](vercel.json) that hits `/api/health`, which in turn pings Appwrite's `/health` endpoint with the server API key. That single request resets the inactivity timer.
+
+To require an auth header (recommended for production):
+
+```bash
+vercel env add CRON_SECRET production
+# paste a long random value
+```
+
+When `CRON_SECRET` is set, the route rejects any request that doesn't carry `Authorization: Bearer ${CRON_SECRET}`. Vercel Cron sends this header automatically.
+
 ## Roadmap
 
 - Folders + drag-to-organize
