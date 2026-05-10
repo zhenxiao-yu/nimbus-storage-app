@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const { account, databases } = await createAdminClient();
+    const { account, databases, users } = await createAdminClient();
 
     const session = await account.createSession(userId, secret);
 
@@ -34,9 +34,11 @@ export async function GET(req: NextRequest) {
       secure: process.env.NODE_ENV === "production",
     });
 
-    // Look up the Appwrite Auth user so we can stamp their email + name
-    // into our `users` collection on first sign-in.
-    const authUser = await account.get();
+    // Look up the Appwrite Auth user via the server-side Users admin
+    // service. We can't use account.get() here because the admin client
+    // is API-key authenticated — it has no session context, so .get()
+    // would resolve the API key's identity (or throw).
+    const authUser = await users.get(userId);
 
     // Try to find a user doc that's already linked to this Appwrite Auth account.
     const linked = await databases.listDocuments(

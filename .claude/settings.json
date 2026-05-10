@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc --noEmit)",
+      "Bash(npx tsc --noEmit *)",
+      "Bash(vercel ls)",
+      "Bash(vercel ls *)",
+      "Bash(npx vercel ls)",
+      "Bash(npx vercel ls *)",
+      "Bash(vercel inspect *)",
+      "Bash(npx vercel inspect *)",
+      "Bash(vercel env ls)",
+      "Bash(vercel env ls *)",
+      "Bash(npx vercel env ls)",
+      "Bash(vercel whoami)",
+      "Bash(npx vercel whoami)",
+      "Bash(vercel domains ls)",
+      "Bash(vercel domains ls *)",
+      "Bash(npx next lint)"
+    ]
+  }
+}
