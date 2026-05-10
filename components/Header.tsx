@@ -20,12 +20,7 @@ const Header = ({
       <div className="flex items-center gap-2">
         <FileUploader ownerId={userId} accountId={accountId} />
         <ThemeToggle />
-        <form
-          action={async () => {
-            "use server";
-            await signOutUser();
-          }}
-        >
+        <form action={signOutUser}>
           <Button
             type="submit"
             variant="ghost"

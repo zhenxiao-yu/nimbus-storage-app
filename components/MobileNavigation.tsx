@@ -113,12 +113,7 @@ const MobileNavigation = ({
                 className="w-full"
               />
 
-              <form
-                action={async () => {
-                  "use server";
-                  await signOutUser();
-                }}
-              >
+              <form action={signOutUser}>
                 <Button
                   type="submit"
                   variant="outline"
