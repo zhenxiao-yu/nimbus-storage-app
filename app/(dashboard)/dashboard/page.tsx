@@ -96,11 +96,13 @@ export default async function DashboardPage() {
                 key={file.$id}
                 className="group flex items-center gap-3 py-3 first:pt-0 last:pb-0"
               >
-                <Thumbnail
-                  type={file.type}
-                  extension={file.extension}
-                  url={file.url}
-                />
+                <div className="shrink-0">
+                  <Thumbnail
+                    type={file.type}
+                    extension={file.extension}
+                    url={file.url}
+                  />
+                </div>
                 <Link
                   href={file.url}
                   target="_blank"
@@ -112,7 +114,9 @@ export default async function DashboardPage() {
                   </p>
                   <FormattedDateTime date={file.$createdAt} />
                 </Link>
-                <ActionDropdown file={file} />
+                <div className="shrink-0">
+                  <ActionDropdown file={file} />
+                </div>
               </li>
             ))}
           </ul>

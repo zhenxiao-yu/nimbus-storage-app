@@ -112,7 +112,7 @@ export const verifySecret = async ({
       path: "/",
       httpOnly: true,
       sameSite: "strict",
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
     });
 
     return parseStringify({ sessionId: session.$id });
@@ -146,19 +146,19 @@ export const getCurrentUser = async () => {
 };
 
 /**
- * Logs out the current user by deleting their session and clearing the session cookie.
+ * Logs out the current user. Always clears the cookie locally and redirects
+ * home, even if the Appwrite session-delete call fails — the user-visible
+ * outcome should be "I am signed out."
  */
 export const signOutUser = async () => {
-  const { account } = await createSessionClient();
-
   try {
-    await account.deleteSession("current"); // Delete the current session
-    (await cookies()).delete("appwrite-session"); // Clear the session cookie
+    const { account } = await createSessionClient();
+    await account.deleteSession("current");
   } catch (error) {
-    handleError(error, "Failed to sign out user");
-  } finally {
-    redirect("/"); // Redirect to the public landing page after sign out
+    console.error("signOutUser: server-side session delete failed", error);
   }
+  (await cookies()).delete("appwrite-session");
+  redirect("/");
 };
 
 /**

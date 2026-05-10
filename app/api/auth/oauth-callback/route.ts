@@ -31,36 +31,64 @@ export async function GET(req: NextRequest) {
       path: "/",
       httpOnly: true,
       sameSite: "strict",
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
     });
 
     // Look up the Appwrite Auth user so we can stamp their email + name
     // into our `users` collection on first sign-in.
     const authUser = await account.get();
 
-    const existing = await databases.listDocuments(
+    // Try to find a user doc that's already linked to this Appwrite Auth account.
+    const linked = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.usersCollectionId,
       [Query.equal("accountId", authUser.$id)],
     );
 
-    if (existing.total === 0) {
-      await databases.createDocument(
+    if (linked.total === 0) {
+      // No row yet for this accountId. Check if a row exists for the same
+      // email — that means this person previously signed up via email-OTP.
+      // We migrate that row to point at the new accountId so they keep
+      // ownership of all their existing files.
+      const byEmail = await databases.listDocuments(
         appwriteConfig.databaseId,
         appwriteConfig.usersCollectionId,
-        ID.unique(),
-        {
-          fullName: authUser.name || authUser.email.split("@")[0],
-          email: authUser.email,
-          avatar: avatarPlaceholderUrl,
-          accountId: authUser.$id,
-        },
+        [Query.equal("email", authUser.email)],
       );
+
+      if (byEmail.total > 0) {
+        const doc = byEmail.documents[0];
+        await databases.updateDocument(
+          appwriteConfig.databaseId,
+          appwriteConfig.usersCollectionId,
+          doc.$id,
+          {
+            accountId: authUser.$id,
+            fullName: doc.fullName || authUser.name || authUser.email.split("@")[0],
+          },
+        );
+      } else {
+        await databases.createDocument(
+          appwriteConfig.databaseId,
+          appwriteConfig.usersCollectionId,
+          ID.unique(),
+          {
+            fullName: authUser.name || authUser.email.split("@")[0],
+            email: authUser.email,
+            avatar: avatarPlaceholderUrl,
+            accountId: authUser.$id,
+          },
+        );
+      }
     }
 
     return NextResponse.redirect(new URL("/dashboard", req.url));
   } catch (error) {
     console.error("OAuth callback failed", error);
+    // We may have set a session cookie before failing on the document
+    // upsert. Clear it so the user can retry instead of being trapped in
+    // a half-authenticated state where /dashboard redirects them back.
+    (await cookies()).delete("appwrite-session");
     return NextResponse.redirect(new URL("/login?error=oauth_failed", req.url));
   }
 }

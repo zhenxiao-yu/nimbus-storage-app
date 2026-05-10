@@ -10,10 +10,17 @@ const callbackPath = "/api/auth/oauth-callback";
 const failurePath = "/login?error=oauth";
 
 async function buildOriginPaths() {
-  const h = await headers();
-  const host = h.get("x-forwarded-host") ?? h.get("host");
-  const proto = h.get("x-forwarded-proto") ?? "https";
-  const origin = host ? `${proto}://${host}` : process.env.NEXT_PUBLIC_SITE_URL!;
+  // Lock the redirect origin to NEXT_PUBLIC_SITE_URL, falling back to the
+  // forwarded host only when SITE_URL isn't set (local dev). This prevents
+  // a misconfigured proxy / spoofed Host header from redirecting users to
+  // an attacker-controlled domain after OAuth.
+  let origin = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+  if (!origin) {
+    const h = await headers();
+    const host = h.get("x-forwarded-host") ?? h.get("host");
+    const proto = h.get("x-forwarded-proto") ?? "http";
+    origin = host ? `${proto}://${host}` : "http://localhost:3000";
+  }
   return {
     success: `${origin}${callbackPath}`,
     failure: `${origin}${failurePath}`,

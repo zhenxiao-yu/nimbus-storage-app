@@ -16,7 +16,7 @@ export const siteConfig = {
   title: "Nimbus — Cloud storage that gets out of your way",
   shortTitle: "Nimbus",
   description:
-    "A modern, end-to-end encrypted cloud workspace for your files. Upload, organize, share, and access anywhere — built on Appwrite, Next.js, and shadcn/ui.",
+    "A modern cloud workspace for your files. Upload, organize, share, and access anywhere — encrypted in transit and at rest, built on Appwrite, Next.js, and shadcn/ui.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://nimbus-storage.vercel.app",
   ogImage: "/opengraph-image",
   author: "Mark Yu",

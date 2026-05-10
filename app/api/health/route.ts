@@ -14,12 +14,17 @@ export const runtime = "nodejs";
  * Vercel Cron sets this automatically when CRON_SECRET is configured.
  */
 export async function GET(req: NextRequest) {
-  const auth = req.headers.get("authorization");
-  const expected = process.env.CRON_SECRET
-    ? `Bearer ${process.env.CRON_SECRET}`
-    : null;
-
-  if (expected && auth !== expected) {
+  // Fail-closed: if CRON_SECRET isn't configured, this endpoint is disabled
+  // entirely. That prevents an unconfigured deploy from exposing an
+  // unauthenticated outbound-fetch trigger.
+  const secret = process.env.CRON_SECRET;
+  if (!secret) {
+    return NextResponse.json(
+      { ok: false, error: "CRON_SECRET not configured" },
+      { status: 503 },
+    );
+  }
+  if (req.headers.get("authorization") !== `Bearer ${secret}`) {
     return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
   }
 

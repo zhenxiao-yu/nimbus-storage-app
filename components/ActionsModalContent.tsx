@@ -10,17 +10,17 @@ import { convertFileSize, formatDateTime } from "@/lib/utils";
 const ImageThumbnail = ({ file }: { file: Models.Document }) => (
   <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-accent/30 p-3">
     <Thumbnail type={file.type} extension={file.extension} url={file.url} />
-    <div className="flex flex-col">
-      <p className="line-clamp-1 text-sm font-medium">{file.name}</p>
+    <div className="flex min-w-0 flex-1 flex-col">
+      <p className="line-clamp-1 break-all text-sm font-medium">{file.name}</p>
       <FormattedDateTime date={file.$createdAt} />
     </div>
   </div>
 );
 
 const DetailRow = ({ label, value }: { label: string; value: string }) => (
-  <div className="flex items-center justify-between border-b border-border/60 py-2 text-sm last:border-0">
-    <p className="text-muted-foreground">{label}</p>
-    <p className="max-w-[60%] truncate font-medium">{value}</p>
+  <div className="flex items-center justify-between gap-3 border-b border-border/60 py-2 text-sm last:border-0">
+    <p className="shrink-0 text-muted-foreground">{label}</p>
+    <p className="min-w-0 truncate text-right font-medium">{value}</p>
   </div>
 );
 
@@ -89,13 +89,13 @@ export const ShareInput = ({
             {file.users.map((email: string) => (
               <li
                 key={email}
-                className="flex items-center justify-between rounded-lg border border-border/60 bg-card px-3 py-2"
+                className="flex items-center justify-between gap-2 rounded-lg border border-border/60 bg-card px-3 py-2"
               >
-                <span className="truncate text-sm">{email}</span>
+                <span className="min-w-0 flex-1 truncate text-sm">{email}</span>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="size-7"
+                  className="size-7 shrink-0"
                   onClick={() => onRemove(email)}
                   aria-label={`Remove ${email}`}
                 >

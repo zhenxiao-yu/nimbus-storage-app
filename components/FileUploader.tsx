@@ -98,13 +98,15 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
                   key={`${file.name}-${index}`}
                   className="flex items-center justify-between gap-3 px-4 py-3"
                 >
-                  <div className="flex min-w-0 items-center gap-3">
-                    <Thumbnail
-                      type={type}
-                      extension={extension}
-                      url={convertFileToUrl(file)}
-                    />
-                    <div className="min-w-0">
+                  <div className="flex min-w-0 flex-1 items-center gap-3">
+                    <div className="shrink-0">
+                      <Thumbnail
+                        type={type}
+                        extension={extension}
+                        url={convertFileToUrl(file)}
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium">
                         {file.name}
                       </p>
@@ -116,7 +118,7 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
                   <button
                     type="button"
                     onClick={(e) => handleRemoveFile(e, file.name)}
-                    className="ring-focus rounded-full p-1 text-muted-foreground hover:text-foreground"
+                    className="ring-focus shrink-0 rounded-full p-1 text-muted-foreground hover:text-foreground"
                     aria-label={`Remove ${file.name}`}
                   >
                     <X className="size-4" />

@@ -229,15 +229,16 @@ export const deleteFile = async ({
   const { databases, storage } = await createAdminClient();
 
   try {
-    const deletedFile = await databases.deleteDocument(
+    // Delete the bucket blob first. If this fails we keep the document so
+    // the file remains visible and the user can retry. Doing it the other
+    // way around can leave orphaned blobs silently consuming quota.
+    await storage.deleteFile(appwriteConfig.bucketId, bucketFileId);
+
+    await databases.deleteDocument(
       appwriteConfig.databaseId,
       appwriteConfig.filesCollectionId,
       fileId,
     );
-
-    if (deletedFile) {
-      await storage.deleteFile(appwriteConfig.bucketId, bucketFileId);
-    }
 
     revalidatePath(path);
     return parseStringify({ status: "success" });

@@ -102,7 +102,7 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
     const { value, label } = action;
 
     return (
-      <DialogContent className="max-w-md rounded-2xl">
+      <DialogContent className="max-w-[calc(100vw-2rem)] rounded-2xl sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-center">{label}</DialogTitle>
         </DialogHeader>
@@ -127,8 +127,10 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
           {value === "delete" && (
             <p className="text-center text-sm text-muted-foreground">
               You&apos;re about to permanently delete{" "}
-              <span className="font-medium text-foreground">{file.name}</span>.
-              This can&apos;t be undone.
+              <span className="break-all font-medium text-foreground">
+                {file.name}
+              </span>
+              . This can&apos;t be undone.
             </p>
           )}
         </div>
@@ -171,7 +173,7 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-44">
-          <DropdownMenuLabel className="max-w-[200px] truncate">
+          <DropdownMenuLabel className="truncate">
             {file.name}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />

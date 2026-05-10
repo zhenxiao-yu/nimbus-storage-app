@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Logo } from "@/components/logo";
 import FileUploader from "@/components/FileUploader";
+import Search from "@/components/Search";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { navItems } from "@/constants";
 import { cn } from "@/lib/utils";
@@ -41,10 +42,16 @@ const MobileNavigation = ({
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border/60 bg-background/80 px-4 backdrop-blur-md lg:hidden">
-      <Logo size="sm" href="/dashboard" />
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-border/60 bg-background/80 px-4 backdrop-blur-md lg:hidden">
+      <div className="shrink-0">
+        <Logo size="sm" href="/dashboard" />
+      </div>
 
-      <div className="flex items-center gap-1">
+      <div className="min-w-0 flex-1">
+        <Search />
+      </div>
+
+      <div className="flex shrink-0 items-center gap-1">
         <ThemeToggle />
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
