@@ -4,9 +4,13 @@ declare type FileType = "document" | "image" | "video" | "audio" | "other";
 
 declare interface ActionType {
   label: string;
-  icon: string;
+  icon: React.ElementType | string;
   value: string;
 }
+
+declare type SegmentParams = {
+  type?: string;
+};
 
 declare interface SearchParamProps {
   params?: Promise<SegmentParams>;
@@ -49,7 +53,7 @@ declare interface FileUploaderProps {
 }
 
 declare interface MobileNavigationProps {
-  ownerId: string;
+  $id: string;
   accountId: string;
   fullName: string;
   avatar: string;
@@ -67,10 +71,4 @@ declare interface ThumbnailProps {
   url: string;
   className?: string;
   imageClassName?: string;
-}
-
-declare interface ShareInputProps {
-  file: Models.Document;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onRemove: (email: string) => void;
 }

@@ -1,48 +1,38 @@
-import React from "react";
+import { LogOut } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import Search from "@/components/Search";
 import FileUploader from "@/components/FileUploader";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { signOutUser } from "@/lib/actions/user.actions";
 
-/**
- * Header Component
- * Renders the header section of the application, including a search bar, file uploader, and sign-out button.
- * @param userId - The ID of the currently logged-in user.
- * @param accountId - The ID of the user's associated account.
- */
 const Header = ({
   userId,
   accountId,
 }: {
-  userId: string; // Unique ID of the user
-  accountId: string; // ID of the associated account
+  userId: string;
+  accountId: string;
 }) => {
   return (
-    <header className="header">
-      {/* Search component for querying or filtering data */}
+    <header className="sticky top-0 z-20 hidden items-center justify-between gap-4 border-b border-border/60 bg-background/70 px-6 py-4 backdrop-blur-md lg:flex">
       <Search />
 
-      <div className="header-wrapper">
-        {/* FileUploader component to upload files, passing user and account IDs */}
+      <div className="flex items-center gap-2">
         <FileUploader ownerId={userId} accountId={accountId} />
-
-        {/* Sign-out button with a server action to log out the user */}
+        <ThemeToggle />
         <form
           action={async () => {
-            "use server"; // Indicates a server-side action
-            await signOutUser(); // Calls the sign-out logic
+            "use server";
+            await signOutUser();
           }}
         >
-          <Button type="submit" className="sign-out-button">
-            {/* Logout icon */}
-            <Image
-              src="/assets/icons/logout.svg"
-              alt="Sign Out"
-              width={34}
-              height={34}
-              className="w-9"
-            />
+          <Button
+            type="submit"
+            variant="ghost"
+            size="icon"
+            aria-label="Sign out"
+          >
+            <LogOut className="size-5" />
           </Button>
         </form>
       </div>

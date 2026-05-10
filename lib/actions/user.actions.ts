@@ -157,7 +157,7 @@ export const signOutUser = async () => {
   } catch (error) {
     handleError(error, "Failed to sign out user");
   } finally {
-    redirect("/sign-in"); // Redirect to the sign-in page
+    redirect("/"); // Redirect to the public landing page after sign out
   }
 };
 

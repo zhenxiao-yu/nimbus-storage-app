@@ -35,21 +35,14 @@ export const uploadFile = async ({
   try {
     const { storage, databases } = await createAdminClient();
 
-    console.log("Storage client initialized:", storage);
-    console.log("Database client initialized:", databases);
-
-    // Convert the file to InputFile for Appwrite
     const buffer = Buffer.from(await file.arrayBuffer());
     const inputFile = InputFile.fromBuffer(buffer, file.name);
-    console.log("InputFile created:", inputFile);
 
-    // Upload file to Appwrite storage bucket
     const bucketFile = await storage.createFile(
       appwriteConfig.bucketId,
       ID.unique(),
       inputFile,
     );
-    console.log("File uploaded to storage bucket:", bucketFile);
 
     // Prepare the file document to store in the database
     const fileDocument = {
@@ -73,22 +66,13 @@ export const uploadFile = async ({
         fileDocument,
       )
       .catch(async (error: unknown) => {
-        console.error("Error creating file document:", error);
-
-        // Rollback: delete the uploaded file if the document creation fails
         await storage.deleteFile(appwriteConfig.bucketId, bucketFile.$id);
         handleError(error, "Failed to create file document");
       });
 
-    // Trigger revalidation for the given path
-    await revalidatePath(path);
-
-    console.log("File metadata saved successfully:", newFile);
-
-    // Return the processed file information
+    revalidatePath(path);
     return parseStringify(newFile);
   } catch (error) {
-    console.error("Error during file upload:", error);
     handleError(error, "Failed to upload file");
   }
 };
@@ -159,7 +143,6 @@ export const getFiles = async ({
       queries,
     );
 
-    console.log({ files });
     return parseStringify(files);
   } catch (error) {
     handleError(error, "Failed to get files");

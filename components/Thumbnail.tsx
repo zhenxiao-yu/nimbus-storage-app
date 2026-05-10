@@ -1,5 +1,5 @@
-import React from "react";
 import Image from "next/image";
+
 import { cn, getFileIcon } from "@/lib/utils";
 
 interface Props {
@@ -20,19 +20,26 @@ export const Thumbnail = ({
   const isImage = type === "image" && extension !== "svg";
 
   return (
-    <figure className={cn("thumbnail", className)}>
+    <figure
+      className={cn(
+        "flex size-12 min-w-12 items-center justify-center overflow-hidden rounded-xl border border-border/60 bg-accent/40",
+        className,
+      )}
+    >
       <Image
         src={isImage ? url : getFileIcon(extension, type)}
-        alt="thumbnail"
+        alt={`${type} thumbnail`}
         width={100}
         height={100}
+        unoptimized={isImage}
         className={cn(
-          "size-8 object-contain",
+          "size-7 object-contain",
           imageClassName,
-          isImage && "thumbnail-image",
+          isImage && "size-full object-cover object-center",
         )}
       />
     </figure>
   );
 };
+
 export default Thumbnail;

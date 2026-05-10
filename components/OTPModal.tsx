@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Loader2, X } from "lucide-react";
+import { toast } from "sonner";
 
-// Import UI components
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,25 +14,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-
 import { Button } from "@/components/ui/button";
+import { sendEmailOTP, verifySecret } from "@/lib/actions/user.actions";
 
-// Import user actions
-import { verifySecret, sendEmailOTP } from "@/lib/actions/user.actions";
-
-/**
- * OTP Modal Component
- * Handles OTP submission and resending for authentication.
- *
- * @param accountId - User's account ID for OTP verification.
- * @param email - User's email to resend OTP if needed.
- */
 const OtpModal = ({
   accountId,
   email,
@@ -40,110 +29,102 @@ const OtpModal = ({
   accountId: string;
   email: string;
 }) => {
-  const router = useRouter(); // Navigation hook
-  const [isOpen, setIsOpen] = useState(true); // Modal open state
-  const [password, setPassword] = useState(""); // OTP input state
-  const [isLoading, setIsLoading] = useState(false); // Loading state for submission
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(true);
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [resending, setResending] = useState(false);
 
-  /**
-   * Handles OTP submission.
-   * Verifies the entered OTP and redirects to the home page if successful.
-   */
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setIsLoading(true); // Start loading
-
+    if (password.length < 6) {
+      toast.error("Enter the 6-digit code from your email");
+      return;
+    }
+    setIsLoading(true);
     try {
-      const sessionId = await verifySecret({ accountId, password }); // Verify OTP
-
-      if (sessionId) router.push("/"); // Redirect to home on success
-    } catch (error) {
-      console.error("Failed to verify OTP", error); // Log verification error
+      const sessionId = await verifySecret({ accountId, password });
+      if (sessionId) {
+        toast.success("Signed in.");
+        router.push("/dashboard");
+      } else {
+        toast.error("That code didn't work. Try again or resend.");
+      }
+    } catch {
+      toast.error("That code didn't work. Try again or resend.");
     } finally {
-      setIsLoading(false); // Stop loading
+      setIsLoading(false);
     }
   };
 
-  /**
-   * Resends the OTP to the user's email.
-   */
   const handleResendOtp = async () => {
+    setResending(true);
     try {
-      await sendEmailOTP({ email }); // Resend OTP
-    } catch (error) {
-      console.error("Failed to resend OTP", error); // Log resend error
+      await sendEmailOTP({ email });
+      toast.success("New code sent — check your inbox.");
+    } catch {
+      toast.error("Couldn't resend the code. Try again.");
+    } finally {
+      setResending(false);
     }
   };
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogContent className="shad-alert-dialog">
-        <AlertDialogHeader className="relative flex justify-center">
-          {/* Modal title and close button */}
-          <AlertDialogTitle className="h2 text-center">
-            Enter Your OTP
-            <Image
-              src="/assets/icons/close-dark.svg"
-              alt="close"
-              width={20}
-              height={20}
-              onClick={() => setIsOpen(false)} // Close modal
-              className="otp-close-button cursor-pointer"
-            />
+      <AlertDialogContent className="max-w-md rounded-2xl">
+        <AlertDialogHeader className="relative">
+          <button
+            type="button"
+            onClick={() => setIsOpen(false)}
+            className="ring-focus absolute right-0 top-0 rounded-full p-1 text-muted-foreground hover:text-foreground"
+            aria-label="Close"
+          >
+            <X className="size-4" />
+          </button>
+          <AlertDialogTitle className="h3 text-center">
+            Enter your code
           </AlertDialogTitle>
-          {/* OTP description */}
-          <AlertDialogDescription className="subtitle-2 text-center text-light-100">
-            We&apos;ve sent a code to{" "}
-            <span className="pl-1 text-brand">{email}</span>
+          <AlertDialogDescription className="text-center text-sm text-muted-foreground">
+            We sent a 6-digit code to{" "}
+            <span className="font-medium text-foreground">{email}</span>.
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        {/* OTP input component */}
-        <InputOTP maxLength={6} value={password} onChange={setPassword}>
-          <InputOTPGroup className="shad-otp">
-            {[...Array(6)].map((_, index) => (
-              <InputOTPSlot
-                key={index}
-                index={index}
-                className="shad-otp-slot"
-              />
-            ))}
-          </InputOTPGroup>
-        </InputOTP>
-
-        <AlertDialogFooter>
-          <div className="flex w-full flex-col gap-4">
-            {/* Submit button */}
-            <AlertDialogAction
-              onClick={handleSubmit}
-              className="shad-submit-btn h-12"
-              type="button"
-            >
-              Submit
-              {isLoading && (
-                <Image
-                  src="/assets/icons/loader.svg"
-                  alt="loader"
-                  width={24}
-                  height={24}
-                  className="ml-2 animate-spin"
+        <div className="flex justify-center py-2">
+          <InputOTP maxLength={6} value={password} onChange={setPassword}>
+            <InputOTPGroup className="gap-2">
+              {[0, 1, 2, 3, 4, 5].map((i) => (
+                <InputOTPSlot
+                  key={i}
+                  index={i}
+                  className="size-12 rounded-lg border-2 text-lg md:size-14 md:text-xl"
                 />
-              )}
-            </AlertDialogAction>
+              ))}
+            </InputOTPGroup>
+          </InputOTP>
+        </div>
 
-            {/* Resend OTP link */}
-            <div className="subtitle-2 mt-2 text-center text-light-100">
-              Didn&apos;t get a code?
-              <Button
-                type="button"
-                variant="link"
-                className="pl-1 text-brand"
-                onClick={handleResendOtp}
-              >
-                Click to resend
-              </Button>
-            </div>
-          </div>
+        <AlertDialogFooter className="flex-col gap-3">
+          <AlertDialogAction
+            onClick={handleSubmit}
+            className="h-11 w-full"
+            type="button"
+          >
+            {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
+            Verify and continue
+          </AlertDialogAction>
+          <p className="text-center text-sm text-muted-foreground">
+            Didn&apos;t get a code?{" "}
+            <Button
+              type="button"
+              variant="link"
+              className="h-auto p-0 text-sm font-medium"
+              disabled={resending}
+              onClick={handleResendOtp}
+            >
+              {resending ? "Sending…" : "Resend"}
+            </Button>
+          </p>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

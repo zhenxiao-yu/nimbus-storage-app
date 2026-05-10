@@ -1,5 +1,7 @@
 "use client";
 
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
 import {
   Select,
   SelectContent,
@@ -7,29 +9,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { usePathname, useRouter } from "next/navigation";
 import { sortTypes } from "@/constants";
 
 const Sort = () => {
   const path = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const current = searchParams.get("sort") || sortTypes[0].value;
 
   const handleSort = (value: string) => {
-    router.push(`${path}?sort=${value}`);
+    const params = new URLSearchParams(searchParams);
+    params.set("sort", value);
+    router.push(`${path}?${params.toString()}`);
   };
 
   return (
-    <Select onValueChange={handleSort} defaultValue={sortTypes[0].value}>
-      <SelectTrigger className="sort-select">
-        <SelectValue placeholder={sortTypes[0].value} />
+    <Select onValueChange={handleSort} defaultValue={current}>
+      <SelectTrigger className="h-9 w-full sm:w-[200px]">
+        <SelectValue placeholder="Sort by" />
       </SelectTrigger>
-      <SelectContent className="sort-select-content">
+      <SelectContent>
         {sortTypes.map((sort) => (
-          <SelectItem
-            key={sort.label}
-            className="shad-select-item"
-            value={sort.value}
-          >
+          <SelectItem key={sort.value} value={sort.value}>
             {sort.label}
           </SelectItem>
         ))}

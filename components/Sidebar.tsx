@@ -1,113 +1,93 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
-import { navItems } from "@/constants";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Github, Sparkles } from "lucide-react";
+
+import { Logo } from "@/components/logo";
+import { navItems, siteConfig } from "@/constants";
 import { cn } from "@/lib/utils";
 
 interface Props {
-  fullName: string; // User's full name to display in the sidebar
-  avatar: string; // URL of the user's avatar image
-  email: string; // User's email address
+  fullName: string;
+  avatar: string;
+  email: string;
 }
 
 const Sidebar = ({ fullName, avatar, email }: Props) => {
-  const pathname = usePathname(); // Current active path
+  const pathname = usePathname();
 
   return (
-    <aside className="sidebar">
-      {/* Logo Section */}
-      <Link href="/">
-        {/* Full logo for large screens */}
-        <Image
-          src="/assets/icons/logo-full-brand.svg"
-          alt="logo"
-          width={360}
-          height={120}
-          className="hidden h-auto lg:block"
-        />
+    <aside className="hidden h-screen w-[260px] shrink-0 flex-col border-r border-border/60 bg-card/40 backdrop-blur-sm lg:flex">
+      <div className="px-6 pb-4 pt-7">
+        <Logo size="md" href="/dashboard" />
+      </div>
 
-        {/* Compact logo for smaller screens */}
-        <Image
-          src="/assets/icons/logo-brand.svg"
-          alt="logo"
-          width={52}
-          height={52}
-          className="lg:hidden"
-        />
-      </Link>
-
-      {/* Navigation Menu */}
-      <nav className="sidebar-nav">
-        <ul className="flex flex-1 flex-col gap-6">
-          {navItems.map(({ url, name, icon }) => (
-            <Link key={name} href={url} className="lg:w-full">
-              {/* Sidebar navigation item */}
-              <li
-                className={cn(
-                  "sidebar-nav-item transition-all duration-300 hover:bg-gray-200 hover:scale-105 hover:shadow-md",
-                  pathname === url && "shad-active", // Highlight active route
-                )}
-              >
-                {/* Icon for the navigation item */}
-                <Image
-                  src={icon}
-                  alt={name}
-                  width={24}
-                  height={24}
+      <nav className="flex-1 px-3">
+        <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+          Workspace
+        </p>
+        <ul className="space-y-1">
+          {navItems.map(({ url, name, icon: Icon }) => {
+            const active =
+              url === "/dashboard"
+                ? pathname === url
+                : pathname === url || pathname.startsWith(`${url}/`);
+            return (
+              <li key={name}>
+                <Link
+                  href={url}
                   className={cn(
-                    "nav-icon",
-                    pathname === url && "nav-icon-active", // Highlight active icon
+                    "ring-focus group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                    active
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
                   )}
-                />
-                {/* Label for the navigation item (visible on larger screens) */}
-                <p className="hidden lg:block">{name}</p>
+                  aria-current={active ? "page" : undefined}
+                >
+                  <Icon
+                    className={cn(
+                      "size-4 shrink-0 transition-transform",
+                      "group-hover:scale-110",
+                      active && "text-primary",
+                    )}
+                  />
+                  <span>{name}</span>
+                </Link>
               </li>
-            </Link>
-          ))}
+            );
+          })}
         </ul>
       </nav>
 
-      {/* Image Section */}
-      <div className="bg-blue-100 mt-6 rounded-lg p-4 shadow-md transition-transform hover:shadow-lg">
-        <h3 className="text-blue-800 text-md font-semibold">
-          ⭐ Star this project!
-        </h3>
-        <p className="text-blue-700 text-sm">
-          Check out the source code and more projects on{" "}
-          <Link
-            href="https://github.com/zhenxiao-yu/nimbus-storage-app"
-            target="_blank"
-            className="hover:text-blue-900 font-medium underline transition-colors"
-          >
-            GitHub
-          </Link>{" "}
-          or visit{" "}
-          <Link
-            href="https://m4rkyu.com"
-            target="_blank"
-            className="hover:text-blue-900 font-medium underline transition-colors"
-          >
-            m4rkyu.com
-          </Link>
-          .
-        </p>
-      </div>
-      {/* User Information Section */}
-      <div className="sidebar-user-info">
-        {/* User's avatar */}
-        <Image
-          src={avatar}
-          alt="Avatar"
-          width={44}
-          height={44}
-          className="sidebar-user-avatar"
-        />
-        {/* User details for larger screens */}
-        <div className="hidden lg:block">
-          <p className="subtitle-2 capitalize">{fullName}</p>
-          <p className="caption">{email}</p>
+      <div className="space-y-3 border-t border-border/60 p-3">
+        <Link
+          href={siteConfig.repoUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="ring-focus group flex items-center justify-between rounded-lg border border-border/60 px-3 py-2.5 text-sm transition-colors hover:bg-accent/40"
+        >
+          <span className="flex items-center gap-2 text-foreground">
+            <Sparkles className="size-3.5 text-primary" />
+            <span className="font-medium">Star on GitHub</span>
+          </span>
+          <Github className="size-4 text-muted-foreground transition-transform group-hover:scale-110" />
+        </Link>
+
+        <div className="flex items-center gap-3 rounded-lg p-2">
+          <Image
+            src={avatar}
+            alt={fullName}
+            width={40}
+            height={40}
+            unoptimized
+            className="size-10 rounded-full border border-border/60 object-cover"
+          />
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium capitalize">{fullName}</p>
+            <p className="truncate text-xs text-muted-foreground">{email}</p>
+          </div>
         </div>
       </div>
     </aside>

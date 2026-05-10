@@ -1,105 +1,115 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-
-import Image from "next/image";
-import { Input } from "@/components/ui/input";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { getFiles } from "@/lib/actions/file.actions";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Models } from "node-appwrite";
+import { Search as SearchIcon, Loader2 } from "lucide-react";
+import { useDebounce } from "use-debounce";
+
+import { Input } from "@/components/ui/input";
 import Thumbnail from "@/components/Thumbnail";
 import FormattedDateTime from "@/components/FormattedDateTime";
-import { useDebounce } from "use-debounce";
+import { getFiles } from "@/lib/actions/file.actions";
+
 const Search = () => {
   const [query, setQuery] = useState("");
-  const searchParams = useSearchParams();
-  const searchQuery = searchParams.get("query") || "";
   const [results, setResults] = useState<Models.Document[]>([]);
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const router = useRouter();
-  const path = usePathname();
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get("query") || "";
   const [debouncedQuery] = useDebounce(query, 300);
 
   useEffect(() => {
+    let cancelled = false;
     const fetchFiles = async () => {
       if (debouncedQuery.length === 0) {
         setResults([]);
         setOpen(false);
-        return router.push(path.replace(searchParams.toString(), ""));
+        return;
       }
-
+      setLoading(true);
       const files = await getFiles({ types: [], searchText: debouncedQuery });
-      setResults(files.documents);
+      if (cancelled) return;
+      setResults(files?.documents ?? []);
       setOpen(true);
+      setLoading(false);
     };
-
     fetchFiles();
+    return () => {
+      cancelled = true;
+    };
   }, [debouncedQuery]);
 
   useEffect(() => {
-    if (!searchQuery) {
-      setQuery("");
-    }
+    if (!searchQuery) setQuery("");
   }, [searchQuery]);
 
   const handleClickItem = (file: Models.Document) => {
     setOpen(false);
     setResults([]);
-
-    router.push(
-      `/${file.type === "video" || file.type === "audio" ? "media" : file.type + "s"}?query=${query}`,
-    );
+    const segment =
+      file.type === "video" || file.type === "audio"
+        ? "media"
+        : `${file.type}s`;
+    router.push(`/dashboard/${segment}?query=${encodeURIComponent(query)}`);
   };
 
   return (
-    <div className="search">
-      <div className="search-input-wrapper">
-        <Image
-          src="/assets/icons/search.svg"
-          alt="Search"
-          width={24}
-          height={24}
-        />
+    <div className="relative w-full max-w-md">
+      <div className="relative">
+        <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={query}
-          placeholder="Search..."
-          className="search-input"
+          placeholder="Search your files…"
+          className="h-10 pl-9 pr-9"
           onChange={(e) => setQuery(e.target.value)}
+          onFocus={() => results.length && setOpen(true)}
+          onBlur={() => setTimeout(() => setOpen(false), 150)}
         />
-
-        {open && (
-          <ul className="search-result">
-            {results.length > 0 ? (
-              results.map((file) => (
-                <li
-                  className="flex items-center justify-between"
-                  key={file.$id}
-                  onClick={() => handleClickItem(file)}
-                >
-                  <div className="flex cursor-pointer items-center gap-4">
-                    <Thumbnail
-                      type={file.type}
-                      extension={file.extension}
-                      url={file.url}
-                      className="size-9 min-w-9"
-                    />
-                    <p className="subtitle-2 line-clamp-1 text-light-100">
-                      {file.name}
-                    </p>
-                  </div>
-
-                  <FormattedDateTime
-                    date={file.$createdAt}
-                    className="caption line-clamp-1 text-light-200"
-                  />
-                </li>
-              ))
-            ) : (
-              <p className="empty-result">No files found</p>
-            )}
-          </ul>
+        {loading && (
+          <Loader2 className="absolute right-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-muted-foreground" />
         )}
       </div>
+
+      {open && (
+        <div className="absolute left-0 right-0 top-12 z-50 overflow-hidden rounded-xl border border-border/60 bg-popover p-2 shadow-elevated">
+          {results.length > 0 ? (
+            <ul className="max-h-80 space-y-1 overflow-y-auto scrollbar-thin">
+              {results.map((file) => (
+                <li key={file.$id}>
+                  <button
+                    type="button"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => handleClickItem(file)}
+                    className="flex w-full items-center justify-between gap-3 rounded-md px-2 py-2 text-left transition-colors hover:bg-accent/60"
+                  >
+                    <div className="flex min-w-0 items-center gap-3">
+                      <Thumbnail
+                        type={file.type}
+                        extension={file.extension}
+                        url={file.url}
+                        className="size-8 min-w-8"
+                      />
+                      <p className="truncate text-sm">{file.name}</p>
+                    </div>
+                    <FormattedDateTime
+                      date={file.$createdAt}
+                      className="caption shrink-0"
+                    />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="px-3 py-6 text-center text-sm text-muted-foreground">
+              No files match &ldquo;{query}&rdquo;
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 };

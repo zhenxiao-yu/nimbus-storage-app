@@ -1,160 +1,131 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { usePathname } from "next/navigation";
+import { Loader2, Upload, X } from "lucide-react";
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
-import { cn, convertFileToUrl, getFileType } from "@/lib/utils";
-import Image from "next/image";
 import Thumbnail from "@/components/Thumbnail";
 import { MAX_FILE_SIZE } from "@/constants";
-import { useToast } from "@/hooks/use-toast";
+import { cn, convertFileSize, convertFileToUrl, getFileType } from "@/lib/utils";
 import { uploadFile } from "@/lib/actions/file.actions";
-import { usePathname } from "next/navigation";
 
 interface Props {
-  ownerId: string; // Unique ID of the file owner
-  accountId: string; // Unique ID of the associated account
-  className?: string; // Optional additional CSS class for styling
+  ownerId: string;
+  accountId: string;
+  className?: string;
 }
 
-/**
- * FileUploader component allows users to upload and preview files.
- */
 const FileUploader = ({ ownerId, accountId, className }: Props) => {
-  // Get the current pathname for file upload context
   const path = usePathname();
-
-  // Access toast notification functionality
-  const { toast } = useToast();
-
-  // State to manage the list of selected files
   const [files, setFiles] = useState<File[]>([]);
 
-  /**
-   * Handles the file drop event by validating and uploading files.
-   * @param acceptedFiles - List of files dropped into the dropzone
-   */
   const onDrop = useCallback(
-    async (acceptedFiles: File[]) => {
-      // Update state with newly dropped files
-      setFiles(acceptedFiles);
+    async (accepted: File[]) => {
+      setFiles(accepted);
 
-      // Map over files and handle validation and upload
-      const uploadPromises = acceptedFiles.map(async (file) => {
-        if (file.size > MAX_FILE_SIZE) {
-          // Remove file from the list if it exceeds the max size
-          setFiles((prevFiles) =>
-            prevFiles.filter((f) => f.name !== file.name),
-          );
-
-          // Show error toast
-          return toast({
-            description: (
-              <p className="body-2 text-white">
-                <span className="font-semibold">{file.name}</span> is too large.
-                Max file size is 50MB.
-              </p>
-            ),
-            className: "error-toast",
-          });
-        }
-
-        // Attempt to upload the file
-        return uploadFile({ file, ownerId, accountId, path }).then(
-          (uploadedFile) => {
-            if (uploadedFile) {
-              // Remove successfully uploaded file from the list
-              setFiles((prevFiles) =>
-                prevFiles.filter((f) => f.name !== file.name),
-              );
+      await Promise.all(
+        accepted.map(async (file) => {
+          if (file.size > MAX_FILE_SIZE) {
+            setFiles((prev) => prev.filter((f) => f.name !== file.name));
+            toast.error(`${file.name} is too large`, {
+              description: `Max upload is ${convertFileSize(MAX_FILE_SIZE, 0)}`,
+            });
+            return;
+          }
+          try {
+            const uploaded = await uploadFile({
+              file,
+              ownerId,
+              accountId,
+              path,
+            });
+            if (uploaded) {
+              setFiles((prev) => prev.filter((f) => f.name !== file.name));
+              toast.success(`${file.name} uploaded`);
             }
-          },
-        );
-      });
-
-      // Wait for all uploads to complete
-      await Promise.all(uploadPromises);
+          } catch {
+            setFiles((prev) => prev.filter((f) => f.name !== file.name));
+            toast.error(`Couldn't upload ${file.name}`);
+          }
+        }),
+      );
     },
-    [ownerId, accountId, path, toast],
+    [ownerId, accountId, path],
   );
 
-  // Configure Dropzone for drag-and-drop functionality
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
-  /**
-   * Removes a specific file from the list when the remove icon is clicked.
-   * @param e - Mouse event from clicking the remove icon
-   * @param fileName - Name of the file to remove
-   */
   const handleRemoveFile = (
-    e: React.MouseEvent<HTMLImageElement, MouseEvent>,
+    e: React.MouseEvent,
     fileName: string,
   ) => {
-    e.stopPropagation(); // Prevent event from bubbling
-    setFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
+    e.stopPropagation();
+    setFiles((prev) => prev.filter((f) => f.name !== fileName));
   };
 
   return (
-    <div {...getRootProps()} className="cursor-pointer">
-      {/* Hidden input element for file selection */}
+    <div {...getRootProps()} className={cn("inline-block", className)}>
       <input {...getInputProps()} />
-
-      {/* Upload button */}
-      <Button type="button" className={cn("uploader-button", className)}>
-        <Image
-          src="/assets/icons/upload.svg"
-          alt="upload"
-          width={24}
-          height={24}
-        />
-        <p>Upload</p>
+      <Button
+        type="button"
+        className={cn(
+          "h-10 gap-2 px-4 font-medium",
+          "bg-gradient-to-br from-violet-500 via-indigo-500 to-sky-500 text-white shadow-glow hover:opacity-95",
+          isDragActive && "ring-2 ring-primary ring-offset-2",
+          className,
+        )}
+      >
+        <Upload className="size-4" />
+        Upload
       </Button>
 
-      {/* File preview section */}
       {files.length > 0 && (
-        <ul className="uploader-preview-list">
-          <h4 className="h4 text-light-100">Uploading</h4>
-
-          {files.map((file, index) => {
-            const { type, extension } = getFileType(file.name);
-
-            return (
-              <li
-                key={`${file.name}-${index}`}
-                className="uploader-preview-item"
-              >
-                <div className="flex items-center gap-3">
-                  {/* Thumbnail preview for the file */}
-                  <Thumbnail
-                    type={type}
-                    extension={extension}
-                    url={convertFileToUrl(file)}
-                  />
-
-                  {/* File name and loading indicator */}
-                  <div className="preview-item-name">
-                    {file.name}
-                    <Image
-                      src="/assets/icons/file-loader.gif"
-                      width={80}
-                      height={26}
-                      alt="Loader"
+        <div className="fixed bottom-6 right-6 z-50 w-[min(420px,calc(100vw-3rem))] overflow-hidden rounded-2xl border border-border/60 bg-card shadow-elevated">
+          <div className="flex items-center justify-between border-b border-border/60 px-4 py-3">
+            <p className="text-sm font-semibold">
+              Uploading {files.length} {files.length === 1 ? "file" : "files"}
+            </p>
+            <Loader2 className="size-4 animate-spin text-muted-foreground" />
+          </div>
+          <ul className="max-h-80 divide-y divide-border/60 overflow-y-auto scrollbar-thin">
+            {files.map((file, index) => {
+              const { type, extension } = getFileType(file.name);
+              return (
+                <li
+                  key={`${file.name}-${index}`}
+                  className="flex items-center justify-between gap-3 px-4 py-3"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <Thumbnail
+                      type={type}
+                      extension={extension}
+                      url={convertFileToUrl(file)}
                     />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">
+                        {file.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {convertFileSize(file.size)}
+                      </p>
+                    </div>
                   </div>
-                </div>
-
-                {/* Remove icon to delete file from the list */}
-                <Image
-                  src="/assets/icons/remove.svg"
-                  width={24}
-                  height={24}
-                  alt="Remove"
-                  onClick={(e) => handleRemoveFile(e, file.name)}
-                />
-              </li>
-            );
-          })}
-        </ul>
+                  <button
+                    type="button"
+                    onClick={(e) => handleRemoveFile(e, file.name)}
+                    className="ring-focus rounded-full p-1 text-muted-foreground hover:text-foreground"
+                    aria-label={`Remove ${file.name}`}
+                  >
+                    <X className="size-4" />
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       )}
     </div>
   );

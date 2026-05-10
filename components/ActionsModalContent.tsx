@@ -1,96 +1,111 @@
 import { Models } from "node-appwrite";
+import { X } from "lucide-react";
+
 import Thumbnail from "@/components/Thumbnail";
 import FormattedDateTime from "@/components/FormattedDateTime";
-import { convertFileSize, formatDateTime } from "@/lib/utils";
-import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import { convertFileSize, formatDateTime } from "@/lib/utils";
 
 const ImageThumbnail = ({ file }: { file: Models.Document }) => (
-  <div className="file-details-thumbnail">
+  <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-accent/30 p-3">
     <Thumbnail type={file.type} extension={file.extension} url={file.url} />
     <div className="flex flex-col">
-      <p className="subtitle-2 mb-1">{file.name}</p>
-      <FormattedDateTime date={file.$createdAt} className="caption" />
+      <p className="line-clamp-1 text-sm font-medium">{file.name}</p>
+      <FormattedDateTime date={file.$createdAt} />
     </div>
   </div>
 );
 
 const DetailRow = ({ label, value }: { label: string; value: string }) => (
-  <div className="flex">
-    <p className="file-details-label text-left">{label}</p>
-    <p className="file-details-value text-left">{value}</p>
+  <div className="flex items-center justify-between border-b border-border/60 py-2 text-sm last:border-0">
+    <p className="text-muted-foreground">{label}</p>
+    <p className="max-w-[60%] truncate font-medium">{value}</p>
   </div>
 );
 
 export const FileDetails = ({ file }: { file: Models.Document }) => {
   return (
-    <>
+    <div className="space-y-3">
       <ImageThumbnail file={file} />
-      <div className="space-y-4 px-2 pt-2">
-        <DetailRow label="Format:" value={file.extension} />
-        <DetailRow label="Size:" value={convertFileSize(file.size)} />
-        <DetailRow label="Owner:" value={file.owner.fullName} />
-        <DetailRow label="Last edit:" value={formatDateTime(file.$updatedAt)} />
+      <div className="rounded-xl border border-border/60 bg-card px-4">
+        <DetailRow label="Format" value={file.extension.toUpperCase()} />
+        <DetailRow label="Size" value={convertFileSize(file.size)} />
+        <DetailRow
+          label="Owner"
+          value={file.owner?.fullName ?? "—"}
+        />
+        <DetailRow
+          label="Last edit"
+          value={formatDateTime(file.$updatedAt)}
+        />
       </div>
-    </>
+    </div>
   );
 };
 
-interface Props {
+interface ShareInputProps {
   file: Models.Document;
   onInputChange: React.Dispatch<React.SetStateAction<string[]>>;
   onRemove: (email: string) => void;
 }
 
-export const ShareInput = ({ file, onInputChange, onRemove }: Props) => {
+export const ShareInput = ({
+  file,
+  onInputChange,
+  onRemove,
+}: ShareInputProps) => {
   return (
-    <>
+    <div className="space-y-3">
       <ImageThumbnail file={file} />
 
-      <div className="share-wrapper">
-        <p className="subtitle-2 pl-1 text-light-100">
-          Share file with other users
-        </p>
+      <div>
+        <label className="mb-1.5 block text-sm font-medium">
+          Share with others
+        </label>
         <Input
           type="email"
-          placeholder="Enter email address"
-          onChange={(e) => onInputChange(e.target.value.trim().split(","))}
-          className="share-input-field"
+          placeholder="Enter email addresses, comma-separated"
+          onChange={(e) =>
+            onInputChange(
+              e.target.value
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean),
+            )
+          }
         />
-        <div className="pt-4">
-          <div className="flex justify-between">
-            <p className="subtitle-2 text-light-100">Shared with</p>
-            <p className="subtitle-2 text-light-200">
-              {file.users.length} users
+      </div>
+
+      {file.users?.length > 0 && (
+        <div>
+          <div className="mb-2 flex items-center justify-between">
+            <p className="text-sm font-medium">Shared with</p>
+            <p className="text-xs text-muted-foreground">
+              {file.users.length} {file.users.length === 1 ? "person" : "people"}
             </p>
           </div>
-
-          <ul className="pt-2">
+          <ul className="space-y-1">
             {file.users.map((email: string) => (
               <li
                 key={email}
-                className="flex items-center justify-between gap-2"
+                className="flex items-center justify-between rounded-lg border border-border/60 bg-card px-3 py-2"
               >
-                <p className="subtitle-2">{email}</p>
+                <span className="truncate text-sm">{email}</span>
                 <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-7"
                   onClick={() => onRemove(email)}
-                  className="share-remove-user"
+                  aria-label={`Remove ${email}`}
                 >
-                  <Image
-                    src="/assets/icons/remove.svg"
-                    alt="Remove"
-                    width={24}
-                    height={24}
-                    className="remove-icon"
-                  />
+                  <X className="size-4" />
                 </Button>
               </li>
             ))}
           </ul>
         </div>
-      </div>
-    </>
+      )}
+    </div>
   );
 };

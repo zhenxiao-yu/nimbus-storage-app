@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /api
+
+Sitemap: https://nimbus-storage.vercel.app/sitemap.xml

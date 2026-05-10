@@ -1,17 +1,20 @@
-import React from "react";
 import { cn, formatDateTime } from "@/lib/utils";
 
 export const FormattedDateTime = ({
   date,
   className,
 }: {
-  date: string;
+  date: string | null | undefined;
   className?: string;
 }) => {
   return (
-    <p className={cn("body-1 text-light-200", className)}>
+    <time
+      dateTime={date ?? undefined}
+      className={cn("text-xs text-muted-foreground", className)}
+    >
       {formatDateTime(date)}
-    </p>
+    </time>
   );
 };
+
 export default FormattedDateTime;

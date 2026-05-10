@@ -1,0 +1,16 @@
+{
+  "name": "Nimbus",
+  "short_name": "Nimbus",
+  "description": "A modern, end-to-end cloud workspace for your files.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0a0e1a",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}

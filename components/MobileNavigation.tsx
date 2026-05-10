@@ -1,28 +1,33 @@
 "use client";
 
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { LogOut, Menu } from "lucide-react";
+
 import {
   Sheet,
   SheetContent,
+  SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import Image from "next/image";
-import React, { useState } from "react";
-import { usePathname } from "next/navigation";
-import { Separator } from "@radix-ui/react-separator";
-import { navItems } from "@/constants";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Logo } from "@/components/logo";
 import FileUploader from "@/components/FileUploader";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { navItems } from "@/constants";
+import { cn } from "@/lib/utils";
 import { signOutUser } from "@/lib/actions/user.actions";
 
 interface Props {
-  $id: string; // Unique ID of the user
-  accountId: string; // Associated account ID
-  fullName: string; // Full name of the user
-  avatar: string; // URL of the user's avatar image
-  email: string; // Email address of the user
+  $id: string;
+  accountId: string;
+  fullName: string;
+  avatar: string;
+  email: string;
 }
 
 const MobileNavigation = ({
@@ -32,105 +37,101 @@ const MobileNavigation = ({
   avatar,
   email,
 }: Props) => {
-  const [open, setOpen] = useState(false); // State to manage the menu's visibility
-  const pathname = usePathname(); // Current active path
+  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
-    <header className="mobile-header">
-      {/* Logo Section */}
-      <Image
-        src="/assets/icons/logo-full-brand.svg"
-        alt="logo"
-        width={120}
-        height={52}
-        className="h-auto"
-      />
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border/60 bg-background/80 px-4 backdrop-blur-md lg:hidden">
+      <Logo size="sm" href="/dashboard" />
 
-      {/* Mobile Navigation Drawer */}
-      <Sheet open={open} onOpenChange={setOpen}>
-        {/* Menu Trigger */}
-        <SheetTrigger>
-          <Image
-            src="/assets/icons/menu.svg"
-            alt="Menu"
-            width={30}
-            height={30}
-          />
-        </SheetTrigger>
-
-        {/* Drawer Content */}
-        <SheetContent className="shad-sheet h-screen px-3">
-          <SheetTitle>
-            {/* User Info Section */}
-            <div className="header-user">
-              <Image
-                src={avatar}
-                alt="avatar"
-                width={44}
-                height={44}
-                className="header-user-avatar"
-              />
-              <div className="sm:hidden lg:block">
-                <p className="subtitle-2 capitalize">{fullName}</p>
-                <p className="caption">{email}</p>
+      <div className="flex items-center gap-1">
+        <ThemeToggle />
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Open menu"
+            >
+              <Menu className="size-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-[300px] p-0">
+            <SheetHeader className="border-b border-border/60 p-5">
+              <SheetTitle className="sr-only">Navigation</SheetTitle>
+              <div className="flex items-center gap-3">
+                <Image
+                  src={avatar}
+                  alt={fullName}
+                  width={44}
+                  height={44}
+                  unoptimized
+                  className="size-11 rounded-full border border-border/60"
+                />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium capitalize">
+                    {fullName}
+                  </p>
+                  <p className="truncate text-xs text-muted-foreground">
+                    {email}
+                  </p>
+                </div>
               </div>
-            </div>
-            <Separator className="mb-4 bg-light-200/20" />
-          </SheetTitle>
+            </SheetHeader>
 
-          {/* Navigation Links */}
-          <nav className="mobile-nav">
-            <ul className="mobile-nav-list">
-              {navItems.map(({ url, name, icon }) => (
-                <Link key={name} href={url} className="lg:w-full">
-                  <li
+            <nav className="flex flex-col gap-1 p-3">
+              {navItems.map(({ url, name, icon: Icon }) => {
+                const active =
+                  url === "/dashboard"
+                    ? pathname === url
+                    : pathname === url || pathname.startsWith(`${url}/`);
+                return (
+                  <Link
+                    key={name}
+                    href={url}
+                    onClick={() => setOpen(false)}
                     className={cn(
-                      "mobile-nav-item transition-all duration-300 ease-in-out hover:bg-gray-200 hover:scale-105 hover:shadow-md",
-                      pathname === url && "shad-active", // Highlight active link
+                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                      active
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
                     )}
                   >
-                    {/* Navigation Icon */}
-                    <Image
-                      src={icon}
-                      alt={name}
-                      width={24}
-                      height={24}
-                      className={cn(
-                        "nav-icon transition-transform duration-300 ease-in-out hover:scale-110",
-                        pathname === url && "nav-icon-active",
-                      )}
-                    />
-                    <p>{name}</p>
-                  </li>
-                </Link>
-              ))}
-            </ul>
-          </nav>
+                    <Icon className="size-4" />
+                    {name}
+                  </Link>
+                );
+              })}
+            </nav>
 
-          <Separator className="my-5 bg-light-200/20" />
+            <Separator />
 
-          {/* File Uploader and Sign-Out Button */}
-          <div className="flex flex-col justify-between gap-5 pb-5">
-            {/* File Uploader Component */}
-            <FileUploader ownerId={ownerId} accountId={accountId} />
-
-            {/* Logout Button */}
-            <Button
-              type="submit"
-              className="mobile-sign-out-button hover:bg-red-600 flex items-center gap-2 transition-all duration-300 hover:scale-105"
-              onClick={async () => await signOutUser()}
-            >
-              <Image
-                src="/assets/icons/logout.svg"
-                alt="Logout"
-                width={30}
-                height={30}
+            <div className="flex flex-col gap-3 p-4">
+              <FileUploader
+                ownerId={ownerId}
+                accountId={accountId}
+                className="w-full"
               />
-              <p>Logout</p>
-            </Button>
-          </div>
-        </SheetContent>
-      </Sheet>
+
+              <form
+                action={async () => {
+                  "use server";
+                  await signOutUser();
+                }}
+              >
+                <Button
+                  type="submit"
+                  variant="outline"
+                  className="w-full justify-start gap-2"
+                >
+                  <LogOut className="size-4" />
+                  Sign out
+                </Button>
+              </form>
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
     </header>
   );
 };

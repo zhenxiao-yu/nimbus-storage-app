@@ -1,5 +1,12 @@
 "use client";
 
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Models } from "node-appwrite";
+import { Loader2, MoreVertical } from "lucide-react";
+import { toast } from "sonner";
+
 import {
   Dialog,
   DialogContent,
@@ -15,29 +22,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
-import Image from "next/image";
-import { Models } from "node-appwrite";
-import { actionsDropdownItems } from "@/constants";
-import Link from "next/link";
-import { constructDownloadUrl } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  FileDetails,
+  ShareInput,
+} from "@/components/ActionsModalContent";
+import { actionsDropdownItems } from "@/constants";
+import { constructDownloadUrl } from "@/lib/utils";
 import {
   deleteFile,
   renameFile,
   updateFileUsers,
 } from "@/lib/actions/file.actions";
-import { usePathname } from "next/navigation";
-import { FileDetails, ShareInput } from "@/components/ActionsModalContent";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const ActionDropdown = ({ file }: { file: Models.Document }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [action, setAction] = useState<ActionType | null>(null);
-  const [name, setName] = useState(file.name);
+  const [action, setAction] = useState<{
+    label: string;
+    value: string;
+  } | null>(null);
+  const [name, setName] = useState(file.name.replace(/\.[^.]+$/, ""));
   const [isLoading, setIsLoading] = useState(false);
   const [emails, setEmails] = useState<string[]>([]);
 
@@ -47,8 +53,7 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
     setIsModalOpen(false);
     setIsDropdownOpen(false);
     setAction(null);
-    setName(file.name);
-    //   setEmails([]);
+    setName(file.name.replace(/\.[^.]+$/, ""));
   };
 
   const handleAction = async () => {
@@ -56,69 +61,59 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
     setIsLoading(true);
 
     try {
-      const actions = {
-        rename: () =>
-          renameFile({
-            fileId: file.$id,
-            name,
-            extension: file.extension,
-            path,
-          }),
-        share: () => updateFileUsers({ fileId: file.$id, emails, path }),
-        delete: () =>
-          deleteFile({
-            fileId: file.$id,
-            bucketFileId: file.bucketFileId,
-            path,
-          }),
-      };
-
-      await actions[action.value as keyof typeof actions]();
-
-      toast.success(`${action.label} completed successfully!`);
+      if (action.value === "rename") {
+        await renameFile({
+          fileId: file.$id,
+          name,
+          extension: file.extension,
+          path,
+        });
+      } else if (action.value === "share") {
+        await updateFileUsers({ fileId: file.$id, emails, path });
+      } else if (action.value === "delete") {
+        await deleteFile({
+          fileId: file.$id,
+          bucketFileId: file.bucketFileId,
+          path,
+        });
+      }
+      toast.success(`${action.label} succeeded.`);
       closeAllModals();
-    } catch (error) {
-      toast.error(`Failed to ${action.label.toLowerCase()}. Please try again.`);
+    } catch {
+      toast.error(`Couldn't ${action.label.toLowerCase()}. Try again.`);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleRemoveUser = async (email: string) => {
-    const updatedEmails = emails.filter((e) => e !== email);
-
+    const updated = emails.filter((e) => e !== email);
     try {
-      await updateFileUsers({
-        fileId: file.$id,
-        emails: updatedEmails,
-        path,
-      });
-
-      setEmails(updatedEmails);
-      toast.success("User removed successfully!");
-    } catch (error) {
-      toast.error("Failed to remove user. Please try again.");
-    } finally {
-      closeAllModals();
+      await updateFileUsers({ fileId: file.$id, emails: updated, path });
+      setEmails(updated);
+      toast.success(`Removed ${email}.`);
+    } catch {
+      toast.error("Couldn't update sharing.");
     }
   };
 
   const renderDialogContent = () => {
     if (!action) return null;
-
     const { value, label } = action;
 
     return (
-      <DialogContent className="shad-dialog button">
-        <DialogHeader className="flex flex-col gap-3">
-          <DialogTitle className="text-center text-light-100">
-            {label}
-          </DialogTitle>
+      <DialogContent className="max-w-md rounded-2xl">
+        <DialogHeader>
+          <DialogTitle className="text-center">{label}</DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-3 pt-2">
           {value === "rename" && (
             <Input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              autoFocus
             />
           )}
           {value === "details" && <FileDetails file={file} />}
@@ -130,28 +125,31 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
             />
           )}
           {value === "delete" && (
-            <p className="delete-confirmation">
-              Are you sure you want to delete{` `}
-              <span className="delete-file-name">{file.name}</span>?
+            <p className="text-center text-sm text-muted-foreground">
+              You&apos;re about to permanently delete{" "}
+              <span className="font-medium text-foreground">{file.name}</span>.
+              This can&apos;t be undone.
             </p>
           )}
-        </DialogHeader>
+        </div>
+
         {["rename", "delete", "share"].includes(value) && (
-          <DialogFooter className="flex flex-col gap-3 md:flex-row">
-            <Button onClick={closeAllModals} className="modal-cancel-button">
+          <DialogFooter className="flex-col gap-2 sm:flex-row">
+            <Button
+              variant="outline"
+              onClick={closeAllModals}
+              className="flex-1"
+            >
               Cancel
             </Button>
-            <Button onClick={handleAction} className="modal-submit-button">
-              <p className="capitalize">{value}</p>
-              {isLoading && (
-                <Image
-                  src="/assets/icons/loader.svg"
-                  alt="loader"
-                  width={24}
-                  height={24}
-                  className="animate-spin"
-                />
-              )}
+            <Button
+              onClick={handleAction}
+              variant={value === "delete" ? "destructive" : "default"}
+              className="flex-1"
+              disabled={isLoading}
+            >
+              {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
+              <span className="capitalize">{value}</span>
             </Button>
           </DialogFooter>
         )}
@@ -160,56 +158,60 @@ const ActionDropdown = ({ file }: { file: Models.Document }) => {
   };
 
   return (
-    <>
-      <ToastContainer position="top-right" autoClose={5000} />
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
-          <DropdownMenuTrigger className="shad-no-focus">
-            <Image
-              src="/assets/icons/dots.svg"
-              alt="dots"
-              width={34}
-              height={34}
-            />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuLabel className="max-w-[200px] truncate">
-              {file.name}
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {actionsDropdownItems.map((actionItem) => (
+    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+      <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-8"
+            aria-label="File actions"
+          >
+            <MoreVertical className="size-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-44">
+          <DropdownMenuLabel className="max-w-[200px] truncate">
+            {file.name}
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {actionsDropdownItems.map((item) => {
+            const Icon = item.icon;
+            if (item.value === "download") {
+              return (
+                <DropdownMenuItem key={item.value} asChild>
+                  <Link
+                    href={constructDownloadUrl(file.bucketFileId)}
+                    download={file.name}
+                    target="_blank"
+                    className="flex items-center gap-2"
+                  >
+                    <Icon className="size-4" />
+                    {item.label}
+                  </Link>
+                </DropdownMenuItem>
+              );
+            }
+            return (
               <DropdownMenuItem
-                key={actionItem.value}
-                className="shad-dropdown-item"
+                key={item.value}
                 onClick={() => {
-                  setAction(actionItem);
-
-                  if (
-                    ["rename", "share", "delete", "details"].includes(
-                      actionItem.value,
-                    )
-                  ) {
-                    setIsModalOpen(true);
-                  }
+                  setAction({ label: item.label, value: item.value });
+                  setIsModalOpen(true);
                 }}
+                className="gap-2"
               >
-                <div className="flex items-center gap-2">
-                  <Image
-                    src={actionItem.icon}
-                    alt={actionItem.label}
-                    width={30}
-                    height={30}
-                  />
-                  {actionItem.label}
-                </div>
+                <Icon className="size-4" />
+                {item.label}
               </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+            );
+          })}
+        </DropdownMenuContent>
+      </DropdownMenu>
 
-        {renderDialogContent()}
-      </Dialog>
-    </>
+      {renderDialogContent()}
+    </Dialog>
   );
 };
+
 export default ActionDropdown;

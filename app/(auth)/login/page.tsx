@@ -1,5 +1,13 @@
+import type { Metadata } from "next";
 import AuthForm from "@/components/AuthForm";
 
-const Login = () => <AuthForm type="login" />;
+export const metadata: Metadata = {
+  title: "Sign in",
+  description:
+    "Sign in to Nimbus with a one-time code — no passwords required.",
+  alternates: { canonical: "/login" },
+};
 
-export default Login;
+export default function LoginPage() {
+  return <AuthForm type="login" />;
+}

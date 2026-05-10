@@ -1,6 +1,24 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript", "standard", "plugin:tailwindcss/recommended", "prettier" ],
+  "extends": [
+    "next/core-web-vitals",
+    "next/typescript",
+    "plugin:tailwindcss/recommended",
+    "prettier"
+  ],
   "rules": {
-    "no-undef": "off"
+    "no-undef": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
+    ],
+    "@typescript-eslint/no-explicit-any": "off",
+    "tailwindcss/no-custom-classname": "off",
+    "tailwindcss/classnames-order": "off"
+  },
+  "settings": {
+    "tailwindcss": {
+      "config": "tailwind.config.ts",
+      "callees": ["cn", "cva"]
+    }
   }
 }
