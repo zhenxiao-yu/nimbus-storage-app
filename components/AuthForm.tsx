@@ -103,9 +103,13 @@ const AuthForm = ({ type }: { type: FormType }) => {
     setOauthLoading(provider);
     try {
       await signInWithProvider(provider);
-    } catch {
-      // signInWithProvider redirects on success; an exception here means
-      // the redirect URL couldn't be created (provider not configured).
+    } catch (err) {
+      // Next.js server-action redirect() throws a NEXT_REDIRECT signal that
+      // bubbles to the client — that's the success path, not a failure.
+      const digest = (err as { digest?: string } | null)?.digest;
+      if (typeof digest === "string" && digest.startsWith("NEXT_REDIRECT")) {
+        return;
+      }
       toast.error(
         `${provider === "google" ? "Google" : "GitHub"} sign-in is not configured yet.`,
       );
