@@ -1,13 +1,10 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 
 import { cn, constructPreviewUrl, getFileIcon } from "@/lib/utils";
 
-/**
- * Maps the abstract `size` prop to a concrete Appwrite preview width.
- * 96  — list rows / dense UIs
- * 320 — grid cards
- * 1024 — preview modal hero
- */
 const SIZE_PX: Record<NonNullable<Props["size"]>, number> = {
   sm: 96,
   md: 320,
@@ -17,24 +14,21 @@ const SIZE_PX: Record<NonNullable<Props["size"]>, number> = {
 interface Props {
   type: string;
   extension: string;
-  /**
-   * Fallback URL used when `bucketFileId` is not provided. Kept for
-   * backwards compatibility with callers that don't yet thread the bucket
-   * ID through.
-   */
+  /** Fallback URL when bucketFileId is absent. */
   url?: string;
-  /**
-   * Appwrite Storage blob ID. When present and the file is an image, we
-   * render a resized preview via the Appwrite preview endpoint instead of
-   * the full original.
-   */
+  /** Appwrite Storage blob ID. */
   bucketFileId?: string;
-  /** Selects the preview pixel size. Default behaves like the old component. */
   size?: "sm" | "md" | "lg";
   imageClassName?: string;
   className?: string;
 }
 
+/**
+ * Renders a file thumbnail. For image-type files we try the Appwrite
+ * preview endpoint (resized webp), but if it fails for any reason — perms,
+ * CORS, network — we transparently fall back to the static file-type icon
+ * so the user never sees a broken-image glyph.
+ */
 export const Thumbnail = ({
   type,
   extension,
@@ -45,20 +39,21 @@ export const Thumbnail = ({
   className,
 }: Props) => {
   const isImage = type === "image" && extension !== "svg";
-
-  // Prefer the Appwrite preview endpoint when we have a bucket ID — it's
-  // resized, webp-encoded, and a fraction of the bandwidth of the original.
-  // Fall back to the raw URL if no bucket ID is wired through (older call
-  // sites) so we never render a broken image.
   const previewWidth = size ? SIZE_PX[size] : 320;
-  const imageSrc = isImage
+  const fallbackIcon = getFileIcon(extension, type);
+
+  const previewSrc = isImage
     ? bucketFileId
       ? constructPreviewUrl(bucketFileId, {
           width: previewWidth,
           height: previewWidth,
         })
-      : url
-    : getFileIcon(extension, type);
+      : url || fallbackIcon
+    : fallbackIcon;
+
+  const [errored, setErrored] = useState(false);
+  const showImage = isImage && !errored;
+  const finalSrc = showImage ? previewSrc : fallbackIcon;
 
   return (
     <figure
@@ -68,19 +63,18 @@ export const Thumbnail = ({
       )}
     >
       <Image
-        src={imageSrc}
+        src={finalSrc}
         alt={`${type} thumbnail`}
-        width={previewWidth}
-        height={previewWidth}
-        // Appwrite already returns webp at the requested size; let Next skip
-        // its optimizer to avoid an extra hop.
-        unoptimized={isImage}
+        width={showImage ? previewWidth : 48}
+        height={showImage ? previewWidth : 48}
+        unoptimized={showImage}
         loading="lazy"
         decoding="async"
+        onError={() => setErrored(true)}
         className={cn(
           "size-7 object-contain",
           imageClassName,
-          isImage && "size-full object-cover object-center",
+          showImage && "size-full object-cover object-center",
         )}
       />
     </figure>

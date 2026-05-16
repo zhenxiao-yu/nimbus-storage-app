@@ -17,7 +17,9 @@
       "Bash(vercel domains ls)",
       "Bash(vercel domains ls *)",
       "Bash(npx next lint)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(vercel env *)",
+      "Bash(vercel redeploy *)"
     ]
   }
 }

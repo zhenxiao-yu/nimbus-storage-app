@@ -140,34 +140,37 @@ function TextPreview({ url }: { url: string }) {
   );
 }
 
+function ImagePreview({ file }: { file: Models.DefaultDocument }) {
+  const url = file.url as string;
+  const bucketFileId = file.bucketFileId as string | undefined;
+  const previewSrc = bucketFileId
+    ? constructPreviewUrl(bucketFileId, { width: 1024, height: 1024, quality: 90 })
+    : url;
+  const [src, setSrc] = useState(previewSrc);
+  return (
+    <div className="flex w-full items-center justify-center rounded-lg bg-black/80 p-2 sm:p-4">
+      <Image
+        src={src}
+        alt={(file.name as string) ?? "Image preview"}
+        width={1024}
+        height={1024}
+        unoptimized
+        onError={() => {
+          if (src !== url) setSrc(url);
+        }}
+        className="max-h-[70vh] w-auto object-contain"
+      />
+    </div>
+  );
+}
+
 function PreviewBody({ file }: { file: Models.DefaultDocument }) {
   const type = (file.type as string) ?? "other";
   const extension = ((file.extension as string) ?? "").toLowerCase();
   const url = file.url as string;
 
   if (type === "image") {
-    // Prefer the 1024px preview over the full original — way less bandwidth
-    // for the same on-screen result, and Appwrite serves webp by default.
-    // Falls back to the raw URL if the bucket ID isn't available.
-    const previewSrc = file.bucketFileId
-      ? constructPreviewUrl(file.bucketFileId as string, {
-          width: 1024,
-          height: 1024,
-          quality: 90,
-        })
-      : url;
-    return (
-      <div className="flex w-full items-center justify-center rounded-lg bg-black/80 p-2 sm:p-4">
-        <Image
-          src={previewSrc}
-          alt={file.name}
-          width={1024}
-          height={1024}
-          unoptimized
-          className="max-h-[70vh] w-auto object-contain"
-        />
-      </div>
-    );
+    return <ImagePreview file={file} />;
   }
 
   if (type === "video") {

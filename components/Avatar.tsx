@@ -1,10 +1,10 @@
-import Image from "next/image";
-
 import { cn } from "@/lib/utils";
 
 interface AvatarProps {
   name?: string | null;
   email?: string | null;
+  /** Legacy: kept for prop-API compat with older callers. Ignored — the
+   *  avatar is always rendered as an inline SVG to avoid network failures. */
   src?: string | null;
   size?: number;
   className?: string;
@@ -43,15 +43,16 @@ const getInitials = (name: string) => {
 };
 
 /**
- * Avatar that prefers `src` (real provider image) when present and not a
- * known legacy placeholder, otherwise renders an inline SVG with the user's
- * initials over a deterministic two-tone gradient. No network calls — the
- * SVG is generated at render time from `name`/`email`.
+ * Always renders an inline SVG with the user's initials over a deterministic
+ * two-tone gradient. No network calls — never breaks, never flashes.
+ *
+ * The `src` prop is intentionally ignored. Provider profile pictures aren't
+ * a required feature, and an inline SVG removes a whole class of failure
+ * modes (CORS, ERR_NETWORK_CHANGED, dicebear/Gravatar outages, etc.).
  */
 export function Avatar({
   name,
   email,
-  src,
   size = 40,
   className,
   alt,
@@ -59,31 +60,12 @@ export function Avatar({
   const seed = (name || email || "User").trim() || "User";
   const initials = getInitials(name?.trim() || email?.split("@")[0] || "User");
   const [from, to] = GRADIENT_PAIRS[hash(seed) % GRADIENT_PAIRS.length];
-
-  const isLegacyPlaceholder =
-    !src ||
-    src.startsWith("https://api.dicebear.com/") ||
-    src === "" ||
-    src === "/assets/icons/file-other.svg";
-
-  const dimensions = { width: size, height: size };
-
-  if (!isLegacyPlaceholder) {
-    return (
-      <Image
-        src={src}
-        alt={alt ?? name ?? "Avatar"}
-        width={size}
-        height={size}
-        unoptimized
-        className={cn("rounded-full object-cover", className)}
-      />
-    );
-  }
+  const gradId = `avatar-grad-${seed.length}-${hash(seed)}`;
 
   return (
     <svg
-      {...dimensions}
+      width={size}
+      height={size}
       viewBox="0 0 40 40"
       role="img"
       aria-label={alt ?? name ?? "Avatar"}
@@ -92,7 +74,7 @@ export function Avatar({
     >
       <defs>
         <linearGradient
-          id={`avatar-grad-${seed.length}-${hash(seed)}`}
+          id={gradId}
           x1="0"
           y1="0"
           x2="40"
@@ -103,12 +85,7 @@ export function Avatar({
           <stop offset="100%" stopColor={to} />
         </linearGradient>
       </defs>
-      <rect
-        width="40"
-        height="40"
-        rx="20"
-        fill={`url(#avatar-grad-${seed.length}-${hash(seed)})`}
-      />
+      <rect width="40" height="40" rx="20" fill={`url(#${gradId})`} />
       <text
         x="50%"
         y="50%"
