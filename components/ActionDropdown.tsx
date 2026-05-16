@@ -150,7 +150,9 @@ const ActionDropdown = ({ file }: { file: Models.DefaultDocument }) => {
               className="flex-1"
               disabled={isLoading}
             >
-              {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
+              {isLoading && (
+                <Loader2 aria-hidden="true" className="mr-2 size-4 animate-spin motion-reduce:animate-none" />
+              )}
               <span className="capitalize">{value}</span>
             </Button>
           </DialogFooter>
@@ -169,7 +171,7 @@ const ActionDropdown = ({ file }: { file: Models.DefaultDocument }) => {
             className="size-8"
             aria-label="File actions"
           >
-            <MoreVertical className="size-4" />
+            <MoreVertical aria-hidden="true" className="size-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-44">
@@ -188,7 +190,7 @@ const ActionDropdown = ({ file }: { file: Models.DefaultDocument }) => {
                     target="_blank"
                     className="flex items-center gap-2"
                   >
-                    <Icon className="size-4" />
+                    <Icon aria-hidden="true" className="size-4" />
                     {item.label}
                   </Link>
                 </DropdownMenuItem>
@@ -203,7 +205,7 @@ const ActionDropdown = ({ file }: { file: Models.DefaultDocument }) => {
                 }}
                 className="gap-2"
               >
-                <Icon className="size-4" />
+                <Icon aria-hidden="true" className="size-4" />
                 {item.label}
               </DropdownMenuItem>
             );

@@ -79,7 +79,7 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
           className,
         )}
       >
-        <Upload className="size-4" />
+        <Upload aria-hidden="true" className="size-4" />
         Upload
       </Button>
 
@@ -91,29 +91,29 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.18 }}
-              className="pointer-events-none fixed inset-0 z-[60] flex items-center justify-center bg-background/70 backdrop-blur-md"
+              className="pointer-events-none fixed inset-0 z-[60] flex items-center justify-center bg-background/70 px-6 backdrop-blur-md"
               aria-hidden
             >
-              <div className="pointer-events-none absolute inset-4 rounded-3xl border-2 border-dashed border-primary/60 ring-4 ring-primary/15" />
+              <div className="pointer-events-none absolute inset-3 rounded-3xl border-2 border-dashed border-primary/60 ring-4 ring-primary/15 sm:inset-4" />
               <motion.div
                 initial={{ scale: 0.9, y: 8 }}
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 4 }}
                 transition={{ type: "spring", stiffness: 320, damping: 24 }}
-                className="flex flex-col items-center gap-4 px-6 text-center"
+                className="flex max-w-md flex-col items-center gap-3 text-center sm:gap-4"
               >
                 <motion.div
                   animate={{ y: [0, -8, 0] }}
                   transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-                  className="flex size-20 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 via-indigo-500 to-sky-500 text-white shadow-glow-lg"
+                  className="flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 via-indigo-500 to-sky-500 text-white shadow-glow-lg motion-reduce:animate-none sm:size-20"
                 >
-                  <CloudUpload className="size-10" />
+                  <CloudUpload className="size-8 sm:size-10" />
                 </motion.div>
                 <div className="space-y-1">
-                  <p className="text-2xl font-semibold tracking-tight">
+                  <p className="text-xl font-semibold tracking-tight sm:text-2xl">
                     Drop to upload
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs text-muted-foreground sm:text-sm">
                     Release anywhere on the page to add your files
                   </p>
                 </div>
@@ -136,7 +136,7 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
               <p className="text-sm font-semibold">
                 Uploading {files.length} {files.length === 1 ? "file" : "files"}
               </p>
-              <Loader2 className="size-4 animate-spin text-muted-foreground" />
+              <Loader2 aria-hidden="true" className="size-4 animate-spin text-muted-foreground motion-reduce:animate-none" />
             </div>
             <ul className="max-h-80 divide-y divide-border/60 overflow-y-auto scrollbar-thin">
               <AnimatePresence initial={false}>
@@ -175,7 +175,7 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
                         className="ring-focus shrink-0 rounded-full p-1 text-muted-foreground hover:text-foreground"
                         aria-label={`Remove ${file.name}`}
                       >
-                        <X className="size-4" />
+                        <X aria-hidden="true" className="size-4" />
                       </button>
                     </motion.li>
                   );

@@ -37,6 +37,12 @@ export default async function AuthLayout({
 
   return (
     <div className="relative grid min-h-screen lg:grid-cols-2">
+      <a
+        href="#content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:shadow-elevated focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+      >
+        Skip to content
+      </a>
       <div className="absolute right-4 top-4 z-30 flex items-center gap-2">
         <ThemeToggle />
       </div>
@@ -85,23 +91,26 @@ export default async function AuthLayout({
         </div>
       </section>
 
-      <section className="relative flex flex-col items-center justify-center px-6 py-12 lg:px-12">
-        <div className="lg:hidden mb-10">
+      <main
+        id="content"
+        className="relative flex flex-col items-center justify-center px-4 py-10 sm:px-6 sm:py-12 lg:px-12"
+      >
+        <div className="lg:hidden mb-8 sm:mb-10">
           <Logo href="/" />
         </div>
         {children}
-        <p className="mt-10 max-w-sm text-center text-xs text-muted-foreground/80">
+        <p className="mt-8 sm:mt-10 max-w-sm text-center text-xs text-muted-foreground/80">
           By continuing you agree to the{" "}
-          <a className="underline-offset-4 hover:underline" href="/terms">
+          <a className="underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm" href="/terms">
             terms
           </a>{" "}
           and{" "}
-          <a className="underline-offset-4 hover:underline" href="/privacy">
+          <a className="underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm" href="/privacy">
             privacy
           </a>{" "}
           policy.
         </p>
-      </section>
+      </main>
     </div>
   );
 }

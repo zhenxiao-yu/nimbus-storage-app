@@ -30,7 +30,7 @@ export const Chart = ({ used = 0 }: { used: number }) => {
 
   return (
     <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-violet-600 via-indigo-600 to-sky-600 text-white shadow-glow">
-      <div aria-hidden className="pointer-events-none absolute inset-0">
+      <div aria-hidden className="pointer-events-none absolute inset-0 motion-reduce:[&_div]:!animate-none">
         <div className="absolute -left-20 -top-20 size-72 animate-aurora rounded-full bg-fuchsia-400/30 blur-3xl" />
         <div className="absolute -bottom-24 -right-10 size-72 animate-aurora rounded-full bg-cyan-400/30 blur-3xl [animation-delay:-8s]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.18),transparent_45%)]" />

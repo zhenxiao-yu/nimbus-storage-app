@@ -24,19 +24,25 @@ export function ThemeToggle({ className }: { className?: string }) {
           className={className}
           aria-label="Toggle theme"
         >
-          <Sun className="size-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute size-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <Sun
+            aria-hidden="true"
+            className="size-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 motion-reduce:transition-none"
+          />
+          <Moon
+            aria-hidden="true"
+            className="absolute size-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 motion-reduce:transition-none"
+          />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-36">
         <DropdownMenuItem onClick={() => setTheme("light")}>
-          <Sun className="mr-2 size-4" /> Light
+          <Sun aria-hidden="true" className="mr-2 size-4" /> Light
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("dark")}>
-          <Moon className="mr-2 size-4" /> Dark
+          <Moon aria-hidden="true" className="mr-2 size-4" /> Dark
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("system")}>
-          <Monitor className="mr-2 size-4" /> System
+          <Monitor aria-hidden="true" className="mr-2 size-4" /> System
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

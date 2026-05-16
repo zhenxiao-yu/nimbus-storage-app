@@ -1,11 +1,14 @@
 {
   "name": "Nimbus",
   "short_name": "Nimbus",
-  "description": "A modern, end-to-end cloud workspace for your files.",
+  "description": "A modern cloud workspace for your files. Upload, organize, share, and access anywhere.",
   "start_url": "/dashboard",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#0a0e1a",
   "theme_color": "#6366f1",
+  "categories": ["productivity", "utilities", "business"],
   "icons": [
     {
       "src": "/icon",
@@ -15,7 +18,8 @@
     {
       "src": "/apple-icon",
       "sizes": "180x180",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }

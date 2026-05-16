@@ -4,6 +4,7 @@ import { useRef } from "react";
 import Link from "next/link";
 import {
   motion,
+  useReducedMotion,
   useScroll,
   useTransform,
   type MotionValue,
@@ -63,19 +64,19 @@ export function Hero({ isAuthenticated }: { isAuthenticated: boolean }) {
         className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[600px] bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.18),transparent_60%)]"
       />
 
-      <div className="mx-auto flex max-w-7xl flex-col items-center px-5 py-16 text-center md:py-24 lg:px-8 lg:py-32">
+      <div className="mx-auto flex max-w-7xl flex-col items-center px-4 py-14 text-center sm:px-5 sm:py-16 md:py-24 lg:px-8 lg:py-32">
         <motion.div {...fadeUp(0)}>
           <Link
             href={siteConfig.repoUrl}
             target="_blank"
             rel="noreferrer"
-            className="group mb-8 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/60 px-4 py-1.5 text-xs font-medium shadow-soft backdrop-blur-sm transition-colors hover:bg-accent/40"
+            className="group mb-8 inline-flex max-w-full items-center gap-2 rounded-full border border-border/60 bg-card/60 px-3 py-1.5 text-[11px] font-medium shadow-soft backdrop-blur-sm transition-colors hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:px-4 sm:text-xs"
           >
-            <Sparkles className="size-3 text-primary" />
-            <AnimatedShinyText className="!mx-0">
-              <span>v1.0 — open source on GitHub</span>
+            <Sparkles aria-hidden="true" className="size-3 shrink-0 text-primary" />
+            <AnimatedShinyText as="span" className="!mx-0 truncate">
+              v1.0 — open source on GitHub
             </AnimatedShinyText>
-            <ArrowRight className="size-3 transition-transform group-hover:translate-x-0.5" />
+            <ArrowRight aria-hidden="true" className="size-3 shrink-0 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </motion.div>
 
@@ -105,7 +106,7 @@ export function Hero({ isAuthenticated }: { isAuthenticated: boolean }) {
 
         <motion.div
           {...fadeUp(0.25)}
-          className="mt-10 flex flex-wrap items-center justify-center gap-3"
+          className="mt-8 flex w-full flex-col items-stretch justify-center gap-3 sm:mt-10 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center"
         >
           <div className="relative overflow-hidden rounded-md">
             <Button asChild size="lg" className="h-12 px-6 text-base">
@@ -128,9 +129,12 @@ export function Hero({ isAuthenticated }: { isAuthenticated: boolean }) {
             className="h-12 px-6 text-base"
           >
             <Link href={siteConfig.repoUrl} target="_blank" rel="noreferrer">
-              <Github className="mr-2 size-4" />
+              <Github aria-hidden="true" className="mr-2 size-4" />
               Star on GitHub
-              <span className="ml-2 inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/60 px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+              <span
+                aria-hidden="true"
+                className="ml-2 inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/60 px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
+              >
                 <Star className="size-3" />
                 1.2k
               </span>
@@ -200,17 +204,21 @@ function HeroPreview({
 }: {
   scrollYProgress: MotionValue<number>;
 }) {
+  const prefersReducedMotion = useReducedMotion();
   // Subtle 3D tilt and lift as the user scrolls past the hero.
   const rotateX = useTransform(scrollYProgress, [0, 0.4], [12, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.4], [0.95, 1]);
   const y = useTransform(scrollYProgress, [0, 0.4], [40, 0]);
+  const motionStyle = prefersReducedMotion
+    ? undefined
+    : { rotateX, scale, y, transformStyle: "preserve-3d" as const };
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 0.3 }}
-      className="relative mt-16 w-full max-w-5xl [perspective:1800px] motion-reduce:!transform-none"
+      className="relative mt-10 w-full max-w-5xl [perspective:1800px] motion-reduce:!transform-none sm:mt-16"
     >
       <div
         aria-hidden
@@ -218,7 +226,7 @@ function HeroPreview({
       />
 
       <motion.div
-        style={{ rotateX, scale, y, transformStyle: "preserve-3d" }}
+        style={motionStyle}
         className="relative overflow-hidden rounded-2xl border border-border/60 bg-card shadow-elevated motion-reduce:!transform-none"
       >
         <BorderBeam

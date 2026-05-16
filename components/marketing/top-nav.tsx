@@ -30,6 +30,16 @@ export function TopNav({ isAuthenticated }: { isAuthenticated: boolean }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Esc closes the mobile menu for keyboard users.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
   // Scroll-spy: highlight the section whose top is closest to the
   // viewport top (with a small offset for the sticky header).
   useEffect(() => {
@@ -109,7 +119,7 @@ export function TopNav({ isAuthenticated }: { isAuthenticated: boolean }) {
               rel="noreferrer"
               aria-label="GitHub repository"
             >
-              <Github className="size-4" />
+              <Github aria-hidden="true" className="size-4" />
             </Link>
           </Button>
 
@@ -118,7 +128,7 @@ export function TopNav({ isAuthenticated }: { isAuthenticated: boolean }) {
           <Button asChild className="hidden md:inline-flex">
             <Link href={isAuthenticated ? "/dashboard" : "/login"}>
               {isAuthenticated ? "Open dashboard" : "Sign in"}
-              <ArrowRight className="ml-1.5 size-4" />
+              <ArrowRight aria-hidden="true" className="ml-1.5 size-4" />
             </Link>
           </Button>
 
@@ -126,11 +136,16 @@ export function TopNav({ isAuthenticated }: { isAuthenticated: boolean }) {
             variant="ghost"
             size="icon"
             className="md:hidden"
-            aria-label="Toggle menu"
+            aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
+            aria-controls="mobile-nav-menu"
             onClick={() => setOpen((v) => !v)}
           >
-            {open ? <X className="size-5" /> : <Menu className="size-5" />}
+            {open ? (
+              <X aria-hidden="true" className="size-5" />
+            ) : (
+              <Menu aria-hidden="true" className="size-5" />
+            )}
           </Button>
         </div>
       </div>
@@ -138,11 +153,12 @@ export function TopNav({ isAuthenticated }: { isAuthenticated: boolean }) {
       <AnimatePresence>
         {open && (
           <motion.div
+            id="mobile-nav-menu"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="overflow-hidden md:hidden"
+            className="overflow-hidden md:hidden motion-reduce:!animate-none"
           >
             <div className="space-y-1 border-t border-border/60 bg-background/95 p-4 backdrop-blur-xl">
               {links.map((l) => (
@@ -150,7 +166,7 @@ export function TopNav({ isAuthenticated }: { isAuthenticated: boolean }) {
                   key={l.href}
                   href={l.href}
                   onClick={() => setOpen(false)}
-                  className="block rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent/40 hover:text-foreground"
+                  className="block rounded-md px-3 py-3 text-sm font-medium text-muted-foreground hover:bg-accent/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                 >
                   {l.label}
                 </Link>

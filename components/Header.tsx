@@ -53,7 +53,7 @@ const Header = ({
                 />
               ) : (
                 <span className="flex size-9 items-center justify-center rounded-full border border-border/60 bg-accent/40">
-                  <UserIcon className="size-4 text-muted-foreground" />
+                  <UserIcon aria-hidden="true" className="size-4 text-muted-foreground" />
                 </span>
               )}
               <span
@@ -80,7 +80,7 @@ const Header = ({
                   type="submit"
                   className="flex w-full cursor-pointer items-center gap-2 text-left"
                 >
-                  <LogOut className="size-4" />
+                  <LogOut aria-hidden="true" className="size-4" />
                   Sign out
                 </button>
               </form>

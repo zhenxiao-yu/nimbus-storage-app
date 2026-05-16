@@ -58,25 +58,39 @@ const Search = () => {
   };
 
   return (
-    <div className="group relative w-full max-w-md">
-      <div className="pointer-events-none absolute -inset-0.5 rounded-xl bg-gradient-to-r from-violet-500/0 via-indigo-500/0 to-sky-500/0 opacity-0 blur-md transition-opacity duration-300 group-focus-within:from-violet-500/40 group-focus-within:via-indigo-500/40 group-focus-within:to-sky-500/40 group-focus-within:opacity-60" />
+    <div
+      className="group relative w-full max-w-md"
+      role="search"
+    >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -inset-0.5 rounded-xl bg-gradient-to-r from-violet-500/0 via-indigo-500/0 to-sky-500/0 opacity-0 blur-md transition-opacity duration-300 group-focus-within:from-violet-500/40 group-focus-within:via-indigo-500/40 group-focus-within:to-sky-500/40 group-focus-within:opacity-60 motion-reduce:transition-none"
+      />
       <div className="relative">
-        <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
+        <SearchIcon
+          aria-hidden="true"
+          className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary"
+        />
         <Input
           value={query}
           placeholder="Search your files…"
+          aria-label="Search your files"
+          type="search"
           className="h-10 pl-9 pr-9 transition-shadow focus-visible:ring-2 focus-visible:ring-primary/40"
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => results.length && setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 150)}
         />
         {loading && (
-          <Loader2 className="absolute right-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-muted-foreground" />
+          <Loader2
+            aria-hidden="true"
+            className="absolute right-3 top-1/2 size-4 -translate-y-1/2 animate-spin text-muted-foreground motion-reduce:animate-none"
+          />
         )}
       </div>
 
       {open && (
-        <div className="absolute left-0 right-0 top-12 z-50 overflow-hidden rounded-xl border border-border/60 bg-popover p-2 shadow-elevated">
+        <div className="absolute left-0 right-0 top-12 z-50 max-h-[min(20rem,70vh)] overflow-hidden rounded-xl border border-border/60 bg-popover p-2 shadow-elevated">
           {results.length > 0 ? (
             <ul className="max-h-80 space-y-1 overflow-y-auto scrollbar-thin">
               {results.map((file) => (

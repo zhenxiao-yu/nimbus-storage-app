@@ -5,15 +5,17 @@ interface AnimatedShinyTextProps {
   children: ReactNode;
   className?: string;
   shimmerWidth?: number;
+  as?: "p" | "span";
 }
 
 export const AnimatedShinyText: FC<AnimatedShinyTextProps> = ({
   children,
   className,
   shimmerWidth = 100,
+  as: Tag = "p",
 }) => {
   return (
-    <p
+    <Tag
       style={
         {
           "--shimmer-width": `${shimmerWidth}px`,
@@ -27,6 +29,6 @@ export const AnimatedShinyText: FC<AnimatedShinyTextProps> = ({
       )}
     >
       {children}
-    </p>
+    </Tag>
   );
 };

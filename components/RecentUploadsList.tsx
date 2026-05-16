@@ -81,7 +81,7 @@ export function RecentUploadsList({
               rel="noreferrer noopener"
               className="ring-focus min-w-0 flex-1 rounded-md"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex min-w-0 items-center gap-2">
                 <span
                   className={cn(
                     "inline-flex shrink-0 items-center rounded-md px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide ring-1 ring-inset",
@@ -90,7 +90,7 @@ export function RecentUploadsList({
                 >
                   {chipText}
                 </span>
-                <p className="truncate text-sm font-medium transition-colors group-hover:text-primary">
+                <p className="min-w-0 flex-1 truncate text-sm font-medium transition-colors group-hover:text-primary">
                   {file.name}
                 </p>
               </div>

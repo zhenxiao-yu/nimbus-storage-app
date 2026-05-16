@@ -60,12 +60,14 @@ export const ShareInput = ({
       <ImageThumbnail file={file} />
 
       <div>
-        <label className="mb-1.5 block text-sm font-medium">
+        <label htmlFor="share-emails" className="mb-1.5 block text-sm font-medium">
           Share with others
         </label>
         <Input
+          id="share-emails"
           type="email"
           placeholder="Enter email addresses, comma-separated"
+          className="w-full"
           onChange={(e) =>
             onInputChange(
               e.target.value
@@ -99,7 +101,7 @@ export const ShareInput = ({
                   onClick={() => onRemove(email)}
                   aria-label={`Remove ${email}`}
                 >
-                  <X className="size-4" />
+                  <X aria-hidden="true" className="size-4" />
                 </Button>
               </li>
             ))}

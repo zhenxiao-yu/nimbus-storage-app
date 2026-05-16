@@ -44,8 +44,12 @@ export function OAuthButtons({
   return (
     <div className="grid gap-2">
       {items.map(({ id, label, Icon }) => (
-        <Button key={id} type="button" variant="outline" className="h-11" onClick={() => onProvider(id)} disabled={anyLoading}>
-          {oauthLoading === id ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Icon className="mr-2 size-4" />}
+        <Button key={id} type="button" variant="outline" className="h-11" onClick={() => onProvider(id)} disabled={anyLoading} aria-label={label}>
+          {oauthLoading === id ? (
+            <Loader2 aria-hidden="true" className="mr-2 size-4 animate-spin motion-reduce:animate-none" />
+          ) : (
+            <Icon aria-hidden="true" className="mr-2 size-4" />
+          )}
           {label}
         </Button>
       ))}
@@ -78,7 +82,7 @@ export function IconField<TValues extends FieldValues>({
         <FormLabel>{label}</FormLabel>
         <FormControl>
           <div className="relative">
-            <Icon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Icon aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input type={type} placeholder={placeholder} className="h-11 pl-9" autoComplete={autoComplete} {...field} />
           </div>
         </FormControl>

@@ -4,6 +4,7 @@ import { Github, Twitter } from "@/components/icons/brand-icons";
 
 import { Logo } from "@/components/logo";
 import { siteConfig } from "@/constants";
+import { CookiePreferencesButton } from "@/components/marketing/cookie-preferences-button";
 
 const socials = [
   {
@@ -31,7 +32,7 @@ export function Footer() {
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
       />
 
-      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 lg:grid-cols-4 lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 lg:grid-cols-5 lg:px-8">
         <div className="space-y-4 lg:col-span-2">
           <Logo />
           <p className="max-w-xs text-sm text-muted-foreground">
@@ -45,9 +46,9 @@ export function Footer() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label={label}
-                className="inline-flex size-9 items-center justify-center rounded-full border border-border/60 bg-card text-muted-foreground transition-colors hover:border-border hover:text-foreground"
+                className="inline-flex size-9 items-center justify-center rounded-full border border-border/60 bg-card text-muted-foreground transition-colors hover:border-border hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
-                <Icon className="size-3.5" />
+                <Icon aria-hidden="true" className="size-3.5" />
               </Link>
             ))}
           </div>
@@ -57,17 +58,17 @@ export function Footer() {
           <p className="mb-3 text-sm font-semibold">Product</p>
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li>
-              <Link className="hover:text-foreground" href="/dashboard">
+              <Link className="rounded-sm hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" href="/dashboard">
                 Dashboard
               </Link>
             </li>
             <li>
-              <Link className="hover:text-foreground" href="/login">
+              <Link className="rounded-sm hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" href="/login">
                 Sign in
               </Link>
             </li>
             <li>
-              <Link className="hover:text-foreground" href="/register">
+              <Link className="rounded-sm hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" href="/register">
                 Create account
               </Link>
             </li>
@@ -79,33 +80,62 @@ export function Footer() {
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li>
               <Link
-                className="inline-flex items-center gap-1.5 hover:text-foreground"
+                className="inline-flex items-center gap-1.5 rounded-sm hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 href={siteConfig.repoUrl}
                 target="_blank"
                 rel="noreferrer"
               >
-                <Github className="size-3.5" /> Source
+                <Github aria-hidden="true" className="size-3.5" /> Source
               </Link>
             </li>
             <li>
               <Link
-                className="inline-flex items-center gap-1.5 hover:text-foreground"
+                className="inline-flex items-center gap-1.5 rounded-sm hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 href={siteConfig.authorUrl}
                 target="_blank"
                 rel="noreferrer"
               >
-                <Globe className="size-3.5" /> Author
+                <Globe aria-hidden="true" className="size-3.5" /> Author
               </Link>
             </li>
             <li>
               <Link
-                className="inline-flex items-center gap-1.5 hover:text-foreground"
+                className="inline-flex items-center gap-1.5 rounded-sm hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 href="https://twitter.com/m4rkyu"
                 target="_blank"
                 rel="noreferrer"
               >
-                <Twitter className="size-3.5" /> Twitter
+                <Twitter aria-hidden="true" className="size-3.5" /> Twitter
               </Link>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <p className="mb-3 text-sm font-semibold">Legal</p>
+          <ul className="space-y-2 text-sm text-muted-foreground">
+            <li>
+              <Link className="rounded-sm hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" href="/privacy">
+                Privacy Policy
+              </Link>
+            </li>
+            <li>
+              <Link className="rounded-sm hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" href="/terms">
+                Terms of Service
+              </Link>
+            </li>
+            <li>
+              <Link className="rounded-sm hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" href="/cookies">
+                Cookie Policy
+              </Link>
+            </li>
+            <li>
+              <CookiePreferencesButton
+                variant="link"
+                className="h-auto p-0 text-sm font-normal text-muted-foreground hover:text-foreground"
+              >
+                Cookie preferences
+              </CookiePreferencesButton>
             </li>
           </ul>
         </div>
@@ -118,8 +148,10 @@ export function Footer() {
             the MIT license.
           </p>
           <p className="inline-flex items-center gap-1.5">
-            Built with <Heart className="size-3 text-rose-500" /> using Next.js,
-            Appwrite &amp; shadcn/ui.
+            Built with{" "}
+            <Heart aria-hidden="true" className="size-3 text-rose-500" />{" "}
+            <span className="sr-only">love</span> using Next.js, Appwrite &amp;
+            shadcn/ui.
           </p>
         </div>
       </div>

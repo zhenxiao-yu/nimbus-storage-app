@@ -1,12 +1,20 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Home, ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { AuroraBackground } from "@/components/magicui/aurora-background";
 
+export const metadata: Metadata = {
+  title: "Page not found",
+  description:
+    "The page you’re looking for doesn’t exist or has been moved. Head back home or open your dashboard.",
+  robots: { index: false, follow: false },
+};
+
 export default function NotFound() {
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6">
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 sm:px-6">
       <AuroraBackground />
       <div className="relative z-10 flex flex-col items-center gap-6 text-center">
         <p className="text-6xl font-bold tracking-tighter text-gradient-brand md:text-8xl">
@@ -22,12 +30,12 @@ export default function NotFound() {
         <div className="flex flex-wrap items-center justify-center gap-3">
           <Button asChild>
             <Link href="/">
-              <Home className="mr-2 size-4" /> Home
+              <Home aria-hidden="true" className="mr-2 size-4" /> Home
             </Link>
           </Button>
           <Button asChild variant="outline">
             <Link href="/dashboard">
-              Go to dashboard <ArrowRight className="ml-2 size-4" />
+              Go to dashboard <ArrowRight aria-hidden="true" className="ml-2 size-4" />
             </Link>
           </Button>
         </div>

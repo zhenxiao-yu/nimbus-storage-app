@@ -57,8 +57,9 @@ const Sidebar = ({ fullName, avatar, email }: Props) => {
                   aria-current={active ? "page" : undefined}
                 >
                   <Icon
+                    aria-hidden="true"
                     className={cn(
-                      "size-4 shrink-0 transition-transform",
+                      "size-4 shrink-0 transition-transform motion-reduce:transition-none",
                       "group-hover:scale-110",
                       active && "text-primary",
                     )}
@@ -91,10 +92,13 @@ const Sidebar = ({ fullName, avatar, email }: Props) => {
           className="ring-focus group flex items-center justify-between rounded-lg border border-border/60 px-3 py-2.5 text-sm transition-colors hover:bg-accent/40"
         >
           <span className="flex items-center gap-2 text-foreground">
-            <Sparkles className="size-3.5 text-primary" />
+            <Sparkles aria-hidden="true" className="size-3.5 text-primary" />
             <span className="font-medium">Star on GitHub</span>
           </span>
-          <Github className="size-4 text-muted-foreground transition-transform group-hover:scale-110" />
+          <Github
+            aria-hidden="true"
+            className="size-4 text-muted-foreground transition-transform group-hover:scale-110 motion-reduce:transition-none"
+          />
         </Link>
 
         <div className="flex items-center gap-3 rounded-lg p-2">

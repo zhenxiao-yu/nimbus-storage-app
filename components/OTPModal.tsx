@@ -71,15 +71,15 @@ const OtpModal = ({
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogContent className="max-w-md rounded-2xl">
+      <AlertDialogContent className="max-w-[calc(100vw-2rem)] rounded-2xl sm:max-w-md">
         <AlertDialogHeader className="relative">
           <button
             type="button"
             onClick={() => setIsOpen(false)}
             className="ring-focus absolute right-0 top-0 rounded-full p-1 text-muted-foreground hover:text-foreground"
-            aria-label="Close"
+            aria-label="Close dialog"
           >
-            <X className="size-4" />
+            <X aria-hidden="true" className="size-4" />
           </button>
           <AlertDialogTitle className="h3 text-center">
             Enter your code
@@ -92,12 +92,12 @@ const OtpModal = ({
 
         <div className="flex justify-center py-2">
           <InputOTP maxLength={6} value={password} onChange={setPassword}>
-            <InputOTPGroup className="gap-2">
+            <InputOTPGroup className="gap-1.5 sm:gap-2">
               {[0, 1, 2, 3, 4, 5].map((i) => (
                 <InputOTPSlot
                   key={i}
                   index={i}
-                  className="size-12 rounded-lg border-2 text-lg md:size-14 md:text-xl"
+                  className="size-10 rounded-lg border-2 text-base sm:size-12 sm:text-lg md:size-14 md:text-xl"
                 />
               ))}
             </InputOTPGroup>
@@ -110,7 +110,9 @@ const OtpModal = ({
             className="h-11 w-full"
             type="button"
           >
-            {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
+            {isLoading && (
+              <Loader2 aria-hidden="true" className="mr-2 size-4 animate-spin motion-reduce:animate-none" />
+            )}
             Verify and continue
           </AlertDialogAction>
           <p className="text-center text-sm text-muted-foreground">

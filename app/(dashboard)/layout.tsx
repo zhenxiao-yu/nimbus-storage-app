@@ -16,14 +16,20 @@ export default async function DashboardLayout({
   if (!currentUser) redirect("/login");
 
   return (
-    <main className="flex min-h-screen bg-muted/30">
+    <div className="flex min-h-screen bg-muted/30">
+      <a
+        href="#content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:shadow-elevated focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+      >
+        Skip to content
+      </a>
       <Sidebar
         fullName={currentUser.fullName}
         avatar={currentUser.avatar}
         email={currentUser.email}
       />
 
-      <section className="flex min-h-screen flex-1 flex-col">
+      <section className="flex min-w-0 min-h-screen flex-1 flex-col">
         <MobileNavigation
           $id={currentUser.$id}
           accountId={currentUser.accountId}
@@ -39,10 +45,10 @@ export default async function DashboardLayout({
           avatar={currentUser.avatar}
         />
 
-        <div className="flex-1 px-4 py-6 md:px-8 md:py-8">
+        <main id="content" className="flex-1 px-4 py-6 md:px-8 md:py-8">
           <div className="mx-auto w-full max-w-7xl">{children}</div>
-        </div>
+        </main>
       </section>
-    </main>
+    </div>
   );
 }

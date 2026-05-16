@@ -116,7 +116,7 @@ const features = [
       "Upload any file with a single drop. We auto-classify it as a document, image, media, or other.",
     href: "/dashboard",
     cta: "Open dashboard",
-    className: "col-span-3 lg:col-span-2",
+    className: "col-span-3 md:col-span-2",
     background: (
       <Marquee
         pauseOnHover
@@ -148,7 +148,7 @@ const features = [
       "Debounced full-text search across every file you've uploaded.",
     href: "/dashboard",
     cta: "Try search",
-    className: "col-span-3 lg:col-span-1",
+    className: "col-span-3 md:col-span-1",
     background: (
       <div className="absolute inset-0 flex items-center justify-center [mask-image:linear-gradient(to_top,transparent_15%,black)]">
         <div className="w-full max-w-[260px] translate-y-3 rounded-xl border border-border/60 bg-card p-2 shadow-soft">
@@ -179,7 +179,7 @@ const features = [
       "Share any file with anyone — revoke access in a single click.",
     href: "/dashboard",
     cta: "Share something",
-    className: "col-span-3 lg:col-span-1",
+    className: "col-span-3 md:col-span-1",
     background: <ShareLinkPreview />,
   },
   {
@@ -189,7 +189,7 @@ const features = [
       "Beautiful charts show how your storage trends week over week.",
     href: "/dashboard",
     cta: "See dashboard",
-    className: "col-span-3 lg:col-span-2",
+    className: "col-span-3 md:col-span-2",
     background: <AnimatedBars />,
   },
   {

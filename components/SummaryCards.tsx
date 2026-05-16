@@ -66,10 +66,11 @@ export function SummaryCards({ items }: { items: SummaryItem[] }) {
           <motion.li key={summary.title} variants={item}>
             <Link
               href={summary.url}
-              className="group flex h-full flex-col justify-between rounded-2xl border border-border/60 bg-card p-5 shadow-soft transition-all duration-200 hover:-translate-y-0.5 hover:border-border hover:shadow-elevated"
+              className="group flex h-full flex-col justify-between rounded-2xl border border-border/60 bg-card p-5 shadow-soft transition-all duration-200 hover:-translate-y-0.5 hover:border-border hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
             >
               <div className="flex items-start justify-between">
                 <span
+                  aria-hidden="true"
                   className={
                     "flex size-11 items-center justify-center rounded-xl " +
                     accent.chip
@@ -77,7 +78,10 @@ export function SummaryCards({ items }: { items: SummaryItem[] }) {
                 >
                   <Icon className="size-5" />
                 </span>
-                <ArrowUpRight className="size-4 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                <ArrowUpRight
+                  aria-hidden="true"
+                  className="size-4 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:transition-none"
+                />
               </div>
 
               <div className="mt-6 space-y-1">

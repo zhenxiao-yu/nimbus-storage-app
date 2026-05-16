@@ -13,7 +13,7 @@ export const BentoGrid = ({
   return (
     <div
       className={cn(
-        "grid w-full auto-rows-[22rem] grid-cols-3 gap-4",
+        "grid w-full auto-rows-[18rem] grid-cols-3 gap-4 sm:auto-rows-[22rem]",
         className,
       )}
     >
@@ -51,9 +51,9 @@ export const BentoCard = ({
     <div className="absolute inset-0 opacity-60 [mask-image:linear-gradient(to_top,transparent_0%,black_60%)]">
       {background}
     </div>
-    <div className="pointer-events-none z-10 flex transform-gpu flex-col gap-1 p-6 transition-all duration-300 group-hover:-translate-y-10">
-      <Icon className="size-10 origin-left transform-gpu text-foreground transition-all duration-300 ease-in-out group-hover:scale-75" />
-      <h3 className="text-xl font-semibold text-foreground">{name}</h3>
+    <div className="pointer-events-none z-10 flex transform-gpu flex-col gap-1 p-5 transition-all duration-300 group-hover:-translate-y-10 sm:p-6">
+      <Icon aria-hidden="true" className="size-9 origin-left transform-gpu text-foreground transition-all duration-300 ease-in-out group-hover:scale-75 sm:size-10" />
+      <h3 className="text-lg font-semibold text-foreground sm:text-xl">{name}</h3>
       <p className="max-w-lg text-sm text-muted-foreground">{description}</p>
     </div>
     {cta && href && (

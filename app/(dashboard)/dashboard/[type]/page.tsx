@@ -17,6 +17,8 @@ export async function generateMetadata({
   return {
     title: label,
     description: `${label} stored in your Nimbus workspace.`,
+    alternates: { canonical: `/dashboard/${type}` },
+    robots: { index: false, follow: false },
   };
 }
 
@@ -69,7 +71,7 @@ export default async function TypePage({
             )}
           </p>
 
-          <div className="flex items-center gap-3">
+          <div className="flex w-full items-center gap-3 sm:w-auto">
             <p className="hidden text-sm text-muted-foreground sm:block">
               Sort by:
             </p>

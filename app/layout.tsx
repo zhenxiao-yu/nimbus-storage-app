@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Toaster } from "sonner";
 
 import { ThemeProvider } from "@/components/theme-provider";
+import Analytics from "@/components/Analytics";
+import CookieConsent from "@/components/CookieConsent";
 import { siteConfig } from "@/constants";
 import "./globals.css";
 
@@ -32,6 +32,10 @@ export const metadata: Metadata = {
   creator: siteConfig.author,
   publisher: siteConfig.author,
   applicationName: siteConfig.shortTitle,
+  category: "productivity",
+  alternates: {
+    canonical: "/",
+  },
   formatDetection: {
     email: false,
     address: false,
@@ -59,6 +63,7 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     images: ["/opengraph-image"],
     creator: "@m4rkyu",
+    site: "@m4rkyu",
   },
   icons: {
     icon: "/favicon.ico",
@@ -94,6 +99,15 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${mono.variable}`}>
+      <head>
+        <link rel="preconnect" href="https://cloud.appwrite.io" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://cloud.appwrite.io" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+        <link rel="dns-prefetch" href="https://vitals.vercel-insights.com" />
+        <link rel="dns-prefetch" href="https://va.vercel-scripts.com" />
+      </head>
       <body className="font-sans antialiased">
         <ThemeProvider
           attribute="class"
@@ -110,7 +124,7 @@ export default function RootLayout({
           />
         </ThemeProvider>
         <Analytics />
-        <SpeedInsights />
+        <CookieConsent />
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
@@ -122,6 +136,7 @@ export default function RootLayout({
               description: siteConfig.description,
               applicationCategory: "ProductivityApplication",
               operatingSystem: "Web",
+              url: siteConfig.url,
               author: {
                 "@type": "Person",
                 name: siteConfig.author,
@@ -131,6 +146,44 @@ export default function RootLayout({
                 "@type": "Offer",
                 price: "0",
                 priceCurrency: "USD",
+              },
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: siteConfig.shortTitle,
+              url: siteConfig.url,
+              logo: `${siteConfig.url}/icon`,
+              sameAs: [siteConfig.repoUrl, siteConfig.authorUrl],
+              founder: {
+                "@type": "Person",
+                name: siteConfig.author,
+                url: siteConfig.authorUrl,
+              },
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: siteConfig.shortTitle,
+              url: siteConfig.url,
+              description: siteConfig.description,
+              inLanguage: "en-US",
+              publisher: {
+                "@type": "Organization",
+                name: siteConfig.shortTitle,
+                url: siteConfig.url,
               },
             }),
           }}

@@ -60,10 +60,10 @@ const MobileNavigation = ({
               size="icon"
               aria-label="Open menu"
             >
-              <Menu className="size-5" />
+              <Menu aria-hidden="true" className="size-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-[300px] p-0">
+          <SheetContent side="right" className="w-[min(320px,85vw)] p-0 sm:max-w-sm">
             <SheetHeader className="border-b border-border/60 p-5">
               <SheetTitle className="sr-only">Navigation</SheetTitle>
               <div className="flex items-center gap-3">
@@ -98,13 +98,13 @@ const MobileNavigation = ({
                     href={url}
                     onClick={() => setOpen(false)}
                     className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                      "flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                       active
                         ? "bg-primary/10 text-primary"
                         : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
                     )}
                   >
-                    <Icon className="size-4" />
+                    <Icon aria-hidden="true" className="size-4" />
                     {name}
                   </Link>
                 );
@@ -126,7 +126,7 @@ const MobileNavigation = ({
                   variant="outline"
                   className="w-full justify-start gap-2"
                 >
-                  <LogOut className="size-4" />
+                  <LogOut aria-hidden="true" className="size-4" />
                   Sign out
                 </Button>
               </form>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -148,9 +149,29 @@ const AuthForm = ({ type }: { type: FormType }) => {
           />
 
           <Button type="submit" className="h-11 w-full text-base font-medium" disabled={anyLoading}>
-            {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
+            {isLoading && (
+              <Loader2 aria-hidden="true" className="mr-2 size-4 animate-spin motion-reduce:animate-none" />
+            )}
             {copy.submit}
           </Button>
+
+          <p className="text-center text-xs leading-relaxed text-muted-foreground">
+            By continuing you agree to our{" "}
+            <Link
+              href="/terms"
+              className="underline underline-offset-2 hover:text-foreground"
+            >
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link
+              href="/privacy"
+              className="underline underline-offset-2 hover:text-foreground"
+            >
+              Privacy Policy
+            </Link>
+            .
+          </p>
 
           <SwitchFlowLink type={type} />
         </form>

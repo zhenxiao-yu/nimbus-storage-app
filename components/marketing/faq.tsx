@@ -58,16 +58,17 @@ export function FAQ() {
                 type="button"
                 aria-expanded={isOpen}
                 aria-controls={`faq-${i}`}
+                id={`faq-trigger-${i}`}
                 onClick={() => setOpen(isOpen ? null : i)}
-                className="flex w-full items-center justify-between gap-4 p-6 text-left transition-colors hover:bg-accent/30"
+                className="flex w-full items-center justify-between gap-4 p-5 text-left transition-colors hover:bg-accent/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:p-6"
               >
-                <span className="text-base font-medium">{f.q}</span>
+                <span className="text-sm font-medium sm:text-base">{f.q}</span>
                 <span
                   className={cn(
-                    "flex size-7 shrink-0 items-center justify-center rounded-full border border-border/60 bg-card text-muted-foreground transition-transform duration-300",
+                    "flex size-7 shrink-0 items-center justify-center rounded-full border border-border/60 bg-card text-muted-foreground transition-transform duration-300 motion-reduce:transition-none",
                     isOpen && "rotate-45 text-foreground",
                   )}
-                  aria-hidden
+                  aria-hidden="true"
                 >
                   <Plus className="size-3.5" />
                 </span>
@@ -76,6 +77,8 @@ export function FAQ() {
                 {isOpen && (
                   <motion.div
                     id={`faq-${i}`}
+                    role="region"
+                    aria-labelledby={`faq-trigger-${i}`}
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
@@ -83,9 +86,9 @@ export function FAQ() {
                       duration: 0.3,
                       ease: [0.16, 1, 0.3, 1],
                     }}
-                    className="overflow-hidden"
+                    className="overflow-hidden motion-reduce:!animate-none"
                   >
-                    <p className="px-6 pb-6 text-sm leading-relaxed text-muted-foreground">
+                    <p className="px-5 pb-5 text-sm leading-relaxed text-muted-foreground sm:px-6 sm:pb-6">
                       {f.a}
                     </p>
                   </motion.div>

@@ -24,7 +24,7 @@ export default function DashboardError({
         Appwrite session may have expired — sign out and back in.
       </p>
       <Button onClick={reset} className="mt-2">
-        <RefreshCw className="mr-2 size-4" />
+        <RefreshCw aria-hidden="true" className="mr-2 size-4" />
         Retry
       </Button>
     </div>

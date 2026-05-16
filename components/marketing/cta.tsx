@@ -11,13 +11,13 @@ import { BorderBeam } from "@/components/magicui/border-beam";
 
 export function CTA({ isAuthenticated }: { isAuthenticated: boolean }) {
   return (
-    <section className="mx-auto max-w-7xl px-5 pb-24 lg:px-8">
+    <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-5 sm:pb-24 lg:px-8">
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-80px" }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 p-10 text-center text-white md:p-20"
+        className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 p-6 text-center text-white sm:p-10 md:p-20"
       >
         <AuroraBackground className="opacity-60 motion-reduce:opacity-30 motion-reduce:[&>div]:animate-none" />
         <Meteors number={18} />
@@ -37,7 +37,7 @@ export function CTA({ isAuthenticated }: { isAuthenticated: boolean }) {
         <BorderBeam size={320} duration={16} colorFrom="#a78bfa" colorTo="#22d3ee" />
 
         <div className="relative mx-auto max-w-3xl">
-          <h2 className="text-balance text-4xl font-semibold tracking-tight md:text-6xl">
+          <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl md:text-6xl">
             Ready to{" "}
             <span className="bg-gradient-to-br from-violet-300 via-indigo-300 to-sky-300 bg-clip-text text-transparent">
               own your files?
@@ -47,11 +47,11 @@ export function CTA({ isAuthenticated }: { isAuthenticated: boolean }) {
             Spin up your free Nimbus workspace in under a minute. No password,
             no credit card.
           </p>
-          <div className="mt-9 flex flex-wrap justify-center gap-3">
+          <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:mt-9 sm:flex-row sm:flex-wrap sm:items-center">
             <Button asChild size="lg" className="h-12 px-6 text-base">
               <Link href={isAuthenticated ? "/dashboard" : "/register"}>
                 {isAuthenticated ? "Open dashboard" : "Create free account"}
-                <ArrowRight className="ml-2 size-4" />
+                <ArrowRight aria-hidden="true" className="ml-2 size-4" />
               </Link>
             </Button>
             <Button

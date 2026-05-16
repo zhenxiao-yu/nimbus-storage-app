@@ -11,6 +11,8 @@ export const metadata: Metadata = {
   title: "Dashboard",
   description:
     "Your Nimbus dashboard — storage usage, recent files, and quick actions.",
+  alternates: { canonical: "/dashboard" },
+  robots: { index: false, follow: false },
 };
 
 export default async function DashboardPage() {
