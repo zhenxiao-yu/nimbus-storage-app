@@ -16,7 +16,8 @@
       "Bash(npx vercel whoami)",
       "Bash(vercel domains ls)",
       "Bash(vercel domains ls *)",
-      "Bash(npx next lint)"
+      "Bash(npx next lint)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }

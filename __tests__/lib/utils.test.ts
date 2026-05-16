@@ -6,6 +6,7 @@ import {
   formatDateTime,
   getFileTypesParams,
   getUsageSummary,
+  constructPreviewUrl,
 } from "@/lib/utils";
 
 describe("convertFileSize", () => {
@@ -194,5 +195,32 @@ describe("getUsageSummary", () => {
     expect(summary[0].latestDate).toBe("2024-02-01T00:00:00Z");
     expect(summary[1].size).toBe(100);
     expect(summary[3].size).toBe(500);
+  });
+});
+
+describe("constructPreviewUrl", () => {
+  it("uses default 200x200 webp@85 when no opts are provided", () => {
+    const url = constructPreviewUrl("blob-abc");
+    expect(url).toContain("/files/blob-abc/preview");
+    expect(url).toContain("width=200");
+    expect(url).toContain("height=200");
+    expect(url).toContain("output=webp");
+    expect(url).toContain("quality=85");
+  });
+
+  it("threads custom width/height/quality through to query string", () => {
+    const url = constructPreviewUrl("blob-xyz", {
+      width: 1024,
+      height: 1024,
+      quality: 90,
+    });
+    expect(url).toContain("width=1024");
+    expect(url).toContain("height=1024");
+    expect(url).toContain("quality=90");
+  });
+
+  it("includes the project query param", () => {
+    const url = constructPreviewUrl("blob-1");
+    expect(url).toContain("project=");
   });
 });

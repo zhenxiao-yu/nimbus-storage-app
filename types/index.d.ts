@@ -119,7 +119,9 @@ declare interface SidebarProps {
 declare interface ThumbnailProps {
   type: string;
   extension: string;
-  url: string;
+  url?: string;
+  bucketFileId?: string;
+  size?: "sm" | "md" | "lg";
   className?: string;
   imageClassName?: string;
 }

@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import {
   cn,
   constructDownloadUrl,
+  constructPreviewUrl,
   formatDateTime,
   convertFileSize,
 } from "@/lib/utils";
@@ -145,13 +146,23 @@ function PreviewBody({ file }: { file: Models.DefaultDocument }) {
   const url = file.url as string;
 
   if (type === "image") {
+    // Prefer the 1024px preview over the full original — way less bandwidth
+    // for the same on-screen result, and Appwrite serves webp by default.
+    // Falls back to the raw URL if the bucket ID isn't available.
+    const previewSrc = file.bucketFileId
+      ? constructPreviewUrl(file.bucketFileId as string, {
+          width: 1024,
+          height: 1024,
+          quality: 90,
+        })
+      : url;
     return (
       <div className="flex w-full items-center justify-center rounded-lg bg-black/80 p-2 sm:p-4">
         <Image
-          src={url}
+          src={previewSrc}
           alt={file.name}
-          width={1600}
-          height={1200}
+          width={1024}
+          height={1024}
           unoptimized
           className="max-h-[70vh] w-auto object-contain"
         />

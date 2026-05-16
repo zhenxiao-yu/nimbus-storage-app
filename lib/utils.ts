@@ -203,6 +203,31 @@ export const constructDownloadUrl = (bucketFileId: string) => {
   return `${process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT}/storage/buckets/${process.env.NEXT_PUBLIC_APPWRITE_BUCKET}/files/${bucketFileId}/download?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT}`;
 };
 
+/**
+ * Build an Appwrite Storage *preview* URL for an image file. The preview
+ * endpoint returns a resized, re-encoded image (webp by default) which is
+ * dramatically smaller than the original — great for grids and thumbnails.
+ *
+ * NOTE: Appwrite's preview endpoint takes the **bucket file ID** (the blob's
+ * own ID), not the database document ID. Files in this app expose both —
+ * pass `file.bucketFileId`.
+ *
+ * @param bucketFileId - The bucket-side ID of the file blob.
+ * @param opts.width   - Target width in px. Default 200.
+ * @param opts.height  - Target height in px. Default 200.
+ * @param opts.quality - 0-100, webp quality. Default 85.
+ */
+export const constructPreviewUrl = (
+  bucketFileId: string,
+  opts: { width?: number; height?: number; quality?: number } = {},
+) => {
+  const { width = 200, height = 200, quality = 85 } = opts;
+  const endpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT;
+  const bucket = process.env.NEXT_PUBLIC_APPWRITE_BUCKET;
+  const project = process.env.NEXT_PUBLIC_APPWRITE_PROJECT;
+  return `${endpoint}/storage/buckets/${bucket}/files/${bucketFileId}/preview?project=${project}&width=${width}&height=${height}&output=webp&quality=${quality}`;
+};
+
 // DASHBOARD UTILS
 export const getUsageSummary = (totalSpace: TotalSpace) => {
   return [

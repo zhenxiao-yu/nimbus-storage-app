@@ -61,6 +61,8 @@ function RecentUploadRow({ file }: { file: Models.DefaultDocument }) {
           type={file.type}
           extension={file.extension}
           url={file.url}
+          bucketFileId={file.bucketFileId}
+          size="sm"
         />
       </div>
 
