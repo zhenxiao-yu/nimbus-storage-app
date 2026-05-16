@@ -31,7 +31,12 @@ export async function GET(req: NextRequest) {
     (await cookies()).set("appwrite-session", session.secret, {
       path: "/",
       httpOnly: true,
-      sameSite: "strict",
+      // "lax", not "strict": this cookie is set in the response to a
+      // redirect chain that started on Google/GitHub. Strict drops the
+      // cookie on the subsequent same-site redirect to /dashboard
+      // because the navigation chain was cross-site-initiated, leaving
+      // the user stuck on /login.
+      sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
     });
 
