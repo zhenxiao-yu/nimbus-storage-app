@@ -1,5 +1,6 @@
-import Image from "next/image";
-import { LogOut, User as UserIcon } from "lucide-react";
+import { LogOut } from "lucide-react";
+
+import { Avatar } from "@/components/Avatar";
 
 import {
   DropdownMenu,
@@ -13,7 +14,6 @@ import Search from "@/components/Search";
 import FileUploader from "@/components/FileUploader";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { signOutUser } from "@/lib/actions/user.actions";
-import { resolveAvatarUrl } from "@/constants";
 
 const Header = ({
   userId,
@@ -43,20 +43,13 @@ const Header = ({
               aria-label="Account menu"
               className="ring-focus relative rounded-full"
             >
-              {fullName || email || avatar ? (
-                <Image
-                  src={resolveAvatarUrl(avatar, fullName || email)}
-                  alt={fullName ?? "Account"}
-                  width={36}
-                  height={36}
-                  unoptimized
-                  className="size-9 rounded-full border border-border/60 object-cover ring-2 ring-primary/20 ring-offset-2 ring-offset-background transition-shadow hover:shadow-soft"
-                />
-              ) : (
-                <span className="flex size-9 items-center justify-center rounded-full border border-border/60 bg-accent/40">
-                  <UserIcon aria-hidden="true" className="size-4 text-muted-foreground" />
-                </span>
-              )}
+              <Avatar
+                name={fullName}
+                email={email}
+                src={avatar}
+                size={36}
+                className="size-9 border border-border/60 ring-2 ring-primary/20 ring-offset-2 ring-offset-background transition-shadow hover:shadow-soft"
+              />
               <span
                 aria-hidden
                 className="absolute bottom-0 right-0 size-2.5 rounded-full bg-emerald-500 ring-2 ring-background"

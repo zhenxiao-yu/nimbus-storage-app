@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogOut, Menu } from "lucide-react";
@@ -15,11 +14,12 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Avatar } from "@/components/Avatar";
 import { Logo } from "@/components/logo";
 import FileUploader from "@/components/FileUploader";
 import Search from "@/components/Search";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { navItems, resolveAvatarUrl } from "@/constants";
+import { navItems } from "@/constants";
 import { cn } from "@/lib/utils";
 import { signOutUser } from "@/lib/actions/user.actions";
 
@@ -67,13 +67,12 @@ const MobileNavigation = ({
             <SheetHeader className="border-b border-border/60 p-5">
               <SheetTitle className="sr-only">Navigation</SheetTitle>
               <div className="flex items-center gap-3">
-                <Image
-                  src={resolveAvatarUrl(avatar, fullName || email)}
-                  alt={fullName}
-                  width={44}
-                  height={44}
-                  unoptimized
-                  className="size-11 rounded-full border border-border/60 ring-2 ring-primary/20 ring-offset-2 ring-offset-background"
+                <Avatar
+                  name={fullName}
+                  email={email}
+                  src={avatar}
+                  size={44}
+                  className="size-11 border border-border/60 ring-2 ring-primary/20 ring-offset-2 ring-offset-background"
                 />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium capitalize">
