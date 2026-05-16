@@ -1,10 +1,11 @@
 "use client";
 
-import Link from "next/link";
+import { useState } from "react";
 import { Models } from "node-appwrite";
 import { motion, type Variants } from "framer-motion";
 
 import ActionDropdown from "@/components/ActionDropdown";
+import PreviewModal from "@/components/PreviewModal";
 import Thumbnail from "@/components/Thumbnail";
 import { cn, convertFileSize, formatRelativeTime } from "@/lib/utils";
 
@@ -44,6 +45,69 @@ const item: Variants = {
   },
 };
 
+function RecentUploadRow({ file }: { file: Models.DefaultDocument }) {
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const t = (file.type as string) ?? "other";
+  const chipClass = typeChipStyles[t] ?? typeChipStyles.other;
+  const chipText = typeLabel[t] ?? "File";
+
+  return (
+    <motion.li
+      variants={item}
+      className="group flex items-center gap-3 py-3 first:pt-0 last:pb-0"
+    >
+      <div className="shrink-0">
+        <Thumbnail
+          type={file.type}
+          extension={file.extension}
+          url={file.url}
+        />
+      </div>
+
+      <button
+        type="button"
+        onClick={() => setPreviewOpen(true)}
+        className="ring-focus min-w-0 flex-1 rounded-md text-left"
+      >
+        <div className="flex min-w-0 items-center gap-2">
+          <span
+            className={cn(
+              "inline-flex shrink-0 items-center rounded-md px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide ring-1 ring-inset",
+              chipClass,
+            )}
+          >
+            {chipText}
+          </span>
+          <p className="min-w-0 flex-1 truncate text-sm font-medium transition-colors group-hover:text-primary">
+            {file.name}
+          </p>
+        </div>
+        <p className="mt-0.5 truncate text-xs text-muted-foreground">
+          <span>{formatRelativeTime(file.$createdAt)}</span>
+          <span className="mx-1.5 text-border">·</span>
+          <span className="tabular-nums">
+            {convertFileSize(file.size)}
+          </span>
+        </p>
+      </button>
+
+      <div
+        className="shrink-0 opacity-60 transition-opacity group-hover:opacity-100"
+        onClick={(e) => e.stopPropagation()}
+        onPointerDown={(e) => e.stopPropagation()}
+      >
+        <ActionDropdown file={file} />
+      </div>
+
+      <PreviewModal
+        file={file}
+        open={previewOpen}
+        onOpenChange={setPreviewOpen}
+      />
+    </motion.li>
+  );
+}
+
 export function RecentUploadsList({
   files,
 }: {
@@ -56,59 +120,9 @@ export function RecentUploadsList({
       animate="show"
       className="divide-y divide-border/60"
     >
-      {files.map((file) => {
-        const t = (file.type as string) ?? "other";
-        const chipClass = typeChipStyles[t] ?? typeChipStyles.other;
-        const chipText = typeLabel[t] ?? "File";
-
-        return (
-          <motion.li
-            key={file.$id}
-            variants={item}
-            className="group flex items-center gap-3 py-3 first:pt-0 last:pb-0"
-          >
-            <div className="shrink-0">
-              <Thumbnail
-                type={file.type}
-                extension={file.extension}
-                url={file.url}
-              />
-            </div>
-
-            <Link
-              href={file.url}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="ring-focus min-w-0 flex-1 rounded-md"
-            >
-              <div className="flex min-w-0 items-center gap-2">
-                <span
-                  className={cn(
-                    "inline-flex shrink-0 items-center rounded-md px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide ring-1 ring-inset",
-                    chipClass,
-                  )}
-                >
-                  {chipText}
-                </span>
-                <p className="min-w-0 flex-1 truncate text-sm font-medium transition-colors group-hover:text-primary">
-                  {file.name}
-                </p>
-              </div>
-              <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                <span>{formatRelativeTime(file.$createdAt)}</span>
-                <span className="mx-1.5 text-border">·</span>
-                <span className="tabular-nums">
-                  {convertFileSize(file.size)}
-                </span>
-              </p>
-            </Link>
-
-            <div className="shrink-0 opacity-60 transition-opacity group-hover:opacity-100">
-              <ActionDropdown file={file} />
-            </div>
-          </motion.li>
-        );
-      })}
+      {files.map((file) => (
+        <RecentUploadRow key={file.$id} file={file} />
+      ))}
     </motion.ul>
   );
 }

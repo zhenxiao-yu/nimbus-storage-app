@@ -19,6 +19,7 @@ import { Logo } from "@/components/logo";
 import FileUploader from "@/components/FileUploader";
 import Search from "@/components/Search";
 import { ThemeToggle } from "@/components/theme-toggle";
+import CommandPaletteTrigger from "@/components/CommandPaletteTrigger";
 import { navItems } from "@/constants";
 import { cn } from "@/lib/utils";
 import { signOutUser } from "@/lib/actions/user.actions";
@@ -52,6 +53,7 @@ const MobileNavigation = ({
       </div>
 
       <div className="flex shrink-0 items-center gap-1">
+        <CommandPaletteTrigger className="hidden sm:inline-flex" />
         <ThemeToggle />
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>

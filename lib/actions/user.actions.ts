@@ -153,6 +153,23 @@ export const signOutUser = async () => {
 };
 
 /**
+ * Issues a short-lived JWT for the currently authenticated user.
+ * Used by the browser Appwrite SDK to subscribe to Realtime channels
+ * with the same permissions as the server session. Returns null on
+ * failure (e.g., no session) so callers can degrade gracefully.
+ */
+export const getRealtimeJWT = async (): Promise<string | null> => {
+  try {
+    const { account } = await createSessionClient();
+    const jwt = await account.createJWT();
+    return jwt.jwt;
+  } catch (error) {
+    logError("getRealtimeJWT", error);
+    return null;
+  }
+};
+
+/**
  * Signs in a user by sending an OTP to their email.
  * If the user doesn't exist, returns an error.
  * @param email - The user's email address.

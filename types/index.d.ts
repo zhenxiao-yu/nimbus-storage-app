@@ -29,6 +29,10 @@ declare interface GetFilesProps {
   sort?: string;
   limit?: number;
 }
+declare interface GetTrashedFilesProps {
+  searchText?: string;
+  sort?: string;
+}
 declare interface RenameFileProps {
   fileId: string;
   name: string;
@@ -42,7 +46,24 @@ declare interface UpdateFileUsersProps {
 }
 declare interface DeleteFileProps {
   fileId: string;
+  path: string;
+}
+declare interface RestoreFileProps {
+  fileId: string;
+  path: string;
+}
+declare interface PermanentlyDeleteFileProps {
+  fileId: string;
   bucketFileId: string;
+  path: string;
+}
+declare interface CreateShareLinkProps {
+  fileId: string;
+  daysValid: number;
+  path: string;
+}
+declare interface RevokeShareLinkProps {
+  fileId: string;
   path: string;
 }
 

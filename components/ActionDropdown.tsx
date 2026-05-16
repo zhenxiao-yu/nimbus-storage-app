@@ -27,12 +27,14 @@ import { Button } from "@/components/ui/button";
 import {
   FileDetails,
   ShareInput,
+  ShareLinkPanel,
 } from "@/components/ActionsModalContent";
 import { actionsDropdownItems } from "@/constants";
 import { constructDownloadUrl } from "@/lib/utils";
 import {
   deleteFile,
   renameFile,
+  restoreFile,
   updateFileUsers,
 } from "@/lib/actions/file.actions";
 
@@ -68,16 +70,27 @@ const ActionDropdown = ({ file }: { file: Models.DefaultDocument }) => {
           extension: file.extension,
           path,
         });
+        toast.success(`${action.label} succeeded.`);
       } else if (action.value === "share") {
         await updateFileUsers({ fileId: file.$id, emails, path });
+        toast.success(`${action.label} succeeded.`);
       } else if (action.value === "delete") {
-        await deleteFile({
-          fileId: file.$id,
-          bucketFileId: file.bucketFileId,
-          path,
+        await deleteFile({ fileId: file.$id, path });
+        toast.success(`Moved "${file.name}" to Trash.`, {
+          duration: 7000,
+          action: {
+            label: "Undo",
+            onClick: async () => {
+              try {
+                await restoreFile({ fileId: file.$id, path });
+                toast.success(`Restored "${file.name}".`);
+              } catch {
+                toast.error("Couldn't undo the delete.");
+              }
+            },
+          },
         });
       }
-      toast.success(`${action.label} succeeded.`);
       closeAllModals();
     } catch {
       toast.error(`Couldn't ${action.label.toLowerCase()}. Try again.`);
@@ -124,13 +137,16 @@ const ActionDropdown = ({ file }: { file: Models.DefaultDocument }) => {
               onRemove={handleRemoveUser}
             />
           )}
+          {value === "share-link" && (
+            <ShareLinkPanel file={file} path={path} />
+          )}
           {value === "delete" && (
             <p className="text-center text-sm text-muted-foreground">
-              You&apos;re about to permanently delete{" "}
+              You&apos;re about to move{" "}
               <span className="break-all font-medium text-foreground">
                 {file.name}
-              </span>
-              . This can&apos;t be undone.
+              </span>{" "}
+              to Trash. You can restore it from there.
             </p>
           )}
         </div>
@@ -174,7 +190,7 @@ const ActionDropdown = ({ file }: { file: Models.DefaultDocument }) => {
             <MoreVertical aria-hidden="true" className="size-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-44">
+        <DropdownMenuContent align="end" className="w-48">
           <DropdownMenuLabel className="truncate">
             {file.name}
           </DropdownMenuLabel>

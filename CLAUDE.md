@@ -52,6 +52,8 @@ The README documents the required collections. Two non-obvious shapes:
 
 - **Files.owner** is an Appwrite *relationship* → Users collection. Queries that need owner fields must include them via `Query.select` or rely on the relationship expansion.
 - **Files.users** is a plain `string[]` of email addresses for sharing. Membership checks happen in queries (`Query.contains("users", currentUserEmail)` style) — there is no separate share collection.
+- **Files.deletedAt** (datetime, optional) — soft-delete marker. NULL/missing = active; non-null = trashed. `getFiles`/`getTotalSpaceUsed` filter on `Query.isNull("deletedAt")`; the Trash page uses `Query.isNotNull("deletedAt")`.
+- **Files.shareToken** (string, optional, **indexed**) + **Files.shareExpiresAt** (datetime, optional) — public share links. Anyone with the token can read the file at `/share/<token>` until expiry; revoking clears both fields.
 
 ### UI layer
 

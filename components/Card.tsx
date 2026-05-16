@@ -1,15 +1,18 @@
 "use client";
 
-import Link from "next/link";
+import { useState } from "react";
 import { Models } from "node-appwrite";
 import { motion } from "framer-motion";
 
 import Thumbnail from "@/components/Thumbnail";
 import FormattedDateTime from "@/components/FormattedDateTime";
 import ActionDropdown from "@/components/ActionDropdown";
+import PreviewModal from "@/components/PreviewModal";
 import { convertFileSize } from "@/lib/utils";
 
 const Card = ({ file }: { file: Models.DefaultDocument }) => {
+  const [previewOpen, setPreviewOpen] = useState(false);
+
   return (
     <motion.article
       layout
@@ -37,16 +40,19 @@ const Card = ({ file }: { file: Models.DefaultDocument }) => {
           url={file.url}
           className="size-16 min-w-16 shrink-0 ring-1 ring-border/40 transition-shadow group-hover:ring-primary/30"
         />
-        <div className="shrink-0 opacity-70 transition-opacity group-hover:opacity-100">
+        <div
+          className="shrink-0 opacity-70 transition-opacity group-hover:opacity-100"
+          onClick={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+        >
           <ActionDropdown file={file} />
         </div>
       </div>
 
-      <Link
-        href={file.url}
-        target="_blank"
-        rel="noreferrer noopener"
-        className="ring-focus flex min-w-0 flex-col gap-1 rounded-md focus:outline-none"
+      <button
+        type="button"
+        onClick={() => setPreviewOpen(true)}
+        className="ring-focus flex min-w-0 flex-col gap-1 rounded-md text-left focus:outline-none"
       >
         <p className="line-clamp-2 break-all text-sm font-medium leading-snug transition-colors group-hover:text-primary">
           {file.name}
@@ -58,11 +64,17 @@ const Card = ({ file }: { file: Models.DefaultDocument }) => {
           <span className="mx-1.5 text-border">·</span>
           <span>By {file.owner?.fullName ?? "you"}</span>
         </p>
-      </Link>
+      </button>
 
       <FormattedDateTime
         date={file.$createdAt}
         className="caption mt-auto pt-2"
+      />
+
+      <PreviewModal
+        file={file}
+        open={previewOpen}
+        onOpenChange={setPreviewOpen}
       />
     </motion.article>
   );

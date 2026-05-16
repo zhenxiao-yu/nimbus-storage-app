@@ -113,6 +113,18 @@ lib/
   utils.ts             # cn, formatters, file-type helpers
 ```
 
+## Schema additions for v2 features
+
+These features require three new optional attributes on the **Files** collection. Add them in Appwrite Console → Database → Files → Attributes:
+
+| Attribute        | Type     | Required | Notes                                                                                       |
+| ---------------- | -------- | -------- | ------------------------------------------------------------------------------------------- |
+| `deletedAt`      | Datetime | No       | NULL = active. Set to the deletion timestamp when a file is moved to Trash.                 |
+| `shareToken`     | String   | No       | 64 char max. URL-safe random token for public share links. **Add an index** (key: `shareToken`, attribute: `shareToken`) — the share-page lookup queries by this. |
+| `shareExpiresAt` | Datetime | No       | Public share link expiry. NULL when no link exists or the link has been revoked.            |
+
+After adding the attributes, redeploy. Existing rows without these attributes continue to work — `Query.isNull("deletedAt")` matches both explicit nulls and attribute-missing documents.
+
 ## Deploy
 
 1. Push to GitHub.

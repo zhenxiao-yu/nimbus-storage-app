@@ -7,6 +7,7 @@ import {
   Pencil,
   Info,
   Share2,
+  Link2,
   Download,
   Trash2,
 } from "lucide-react";
@@ -44,12 +45,14 @@ export const navItems = [
   { name: "Images", icon: ImageIcon, url: "/dashboard/images" },
   { name: "Media", icon: Film, url: "/dashboard/media" },
   { name: "Others", icon: FolderArchive, url: "/dashboard/others" },
+  { name: "Trash", icon: Trash2, url: "/dashboard/trash" },
 ];
 
 export const actionsDropdownItems = [
   { label: "Rename", icon: Pencil, value: "rename" },
   { label: "Details", icon: Info, value: "details" },
   { label: "Share", icon: Share2, value: "share" },
+  { label: "Get share link", icon: Link2, value: "share-link" },
   { label: "Download", icon: Download, value: "download" },
   { label: "Delete", icon: Trash2, value: "delete" },
 ] as const;

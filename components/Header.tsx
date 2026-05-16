@@ -13,6 +13,7 @@ import {
 import Search from "@/components/Search";
 import FileUploader from "@/components/FileUploader";
 import { ThemeToggle } from "@/components/theme-toggle";
+import CommandPaletteTrigger from "@/components/CommandPaletteTrigger";
 import { signOutUser } from "@/lib/actions/user.actions";
 
 const Header = ({
@@ -33,6 +34,7 @@ const Header = ({
       <Search />
 
       <div className="flex items-center gap-2">
+        <CommandPaletteTrigger />
         <FileUploader ownerId={userId} accountId={accountId} />
         <ThemeToggle />
 
