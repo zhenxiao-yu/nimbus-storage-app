@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import { Github } from "@/components/icons/brand-icons";
 
 import { Logo } from "@/components/logo";
-import { navItems, siteConfig } from "@/constants";
+import { navItems, resolveAvatarUrl, siteConfig } from "@/constants";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -104,12 +104,12 @@ const Sidebar = ({ fullName, avatar, email }: Props) => {
         <div className="flex items-center gap-3 rounded-lg p-2">
           <div className="relative">
             <Image
-              src={avatar}
+              src={resolveAvatarUrl(avatar, fullName || email)}
               alt={fullName}
               width={40}
               height={40}
               unoptimized
-              className="size-10 rounded-full border border-border/60 object-cover"
+              className="size-10 rounded-full border border-border/60 object-cover ring-2 ring-primary/20 ring-offset-2 ring-offset-card"
             />
             <span
               aria-hidden

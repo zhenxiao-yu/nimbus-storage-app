@@ -63,8 +63,30 @@ export const sortTypes = [
   { label: "Size (smallest)", value: "size-asc" },
 ];
 
-export const avatarPlaceholderUrl =
+const LEGACY_AVATAR_URL =
   "https://api.dicebear.com/9.x/initials/svg?seed=Nimbus";
+
+export const getAvatarUrl = (seed: string | undefined | null) => {
+  const safe = (seed ?? "").trim() || "Nimbus";
+  return `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(
+    safe,
+  )}&backgroundType=gradientLinear&fontFamily=Inter&fontWeight=600&radius=50`;
+};
+
+/**
+ * Display-side avatar resolver. Backfills legacy fixed-seed URLs with a
+ * per-user derived avatar so old accounts get unique avatars too.
+ */
+export const resolveAvatarUrl = (
+  storedUrl: string | undefined | null,
+  seed: string | undefined | null,
+) => {
+  if (!storedUrl || storedUrl === LEGACY_AVATAR_URL) return getAvatarUrl(seed);
+  return storedUrl;
+};
+
+/** @deprecated Use getAvatarUrl(seed) — every user should get a unique avatar. */
+export const avatarPlaceholderUrl = LEGACY_AVATAR_URL;
 
 export const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 export const TOTAL_BUCKET_SIZE = 2 * 1024 * 1024 * 1024; // 2GB

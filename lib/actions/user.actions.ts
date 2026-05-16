@@ -6,7 +6,7 @@ import { appwriteConfig } from "@/lib/appwrite/config";
 import { Query, ID } from "node-appwrite";
 import { parseStringify } from "@/lib/utils";
 import { cookies } from "next/headers";
-import { avatarPlaceholderUrl } from "@/constants";
+import { getAvatarUrl } from "@/constants";
 import { redirect } from "next/navigation";
 import { handleActionError as handleError, logError } from "@/lib/logger";
 
@@ -72,7 +72,7 @@ export const createAccount = async ({
       {
         fullName,
         email,
-        avatar: avatarPlaceholderUrl, // Default avatar
+        avatar: getAvatarUrl(fullName || email),
         accountId,
       },
     );

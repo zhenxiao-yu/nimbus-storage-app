@@ -2,7 +2,7 @@ import { ID, Query } from "node-appwrite";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-import { avatarPlaceholderUrl } from "@/constants";
+import { getAvatarUrl } from "@/constants";
 import { createAdminClient } from "@/lib/appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { logError } from "@/lib/logger";
@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
           {
             fullName: authUser.name || authUser.email.split("@")[0],
             email: authUser.email,
-            avatar: avatarPlaceholderUrl,
+            avatar: getAvatarUrl(authUser.name || authUser.email),
             accountId: authUser.$id,
           },
         );

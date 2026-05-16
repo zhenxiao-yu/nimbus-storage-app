@@ -19,7 +19,7 @@ import { Logo } from "@/components/logo";
 import FileUploader from "@/components/FileUploader";
 import Search from "@/components/Search";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { navItems } from "@/constants";
+import { navItems, resolveAvatarUrl } from "@/constants";
 import { cn } from "@/lib/utils";
 import { signOutUser } from "@/lib/actions/user.actions";
 
@@ -68,12 +68,12 @@ const MobileNavigation = ({
               <SheetTitle className="sr-only">Navigation</SheetTitle>
               <div className="flex items-center gap-3">
                 <Image
-                  src={avatar}
+                  src={resolveAvatarUrl(avatar, fullName || email)}
                   alt={fullName}
                   width={44}
                   height={44}
                   unoptimized
-                  className="size-11 rounded-full border border-border/60"
+                  className="size-11 rounded-full border border-border/60 ring-2 ring-primary/20 ring-offset-2 ring-offset-background"
                 />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium capitalize">
