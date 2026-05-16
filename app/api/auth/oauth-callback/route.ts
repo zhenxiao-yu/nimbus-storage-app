@@ -6,6 +6,7 @@ import { getAvatarUrl } from "@/constants";
 import { createAdminClient } from "@/lib/appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { logError } from "@/lib/logger";
+import { seedWelcomeFile } from "@/lib/actions/onboarding.actions";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -76,7 +77,7 @@ export async function GET(req: NextRequest) {
           },
         );
       } else {
-        await databases.createDocument(
+        const newUserDoc = await databases.createDocument(
           appwriteConfig.databaseId,
           appwriteConfig.usersCollectionId,
           ID.unique(),
@@ -87,6 +88,14 @@ export async function GET(req: NextRequest) {
             accountId: authUser.$id,
           },
         );
+
+        // First-time OAuth signup: seed the welcome file. Errors are
+        // swallowed inside seedWelcomeFile so a seeding failure can't
+        // strand the user on /login.
+        await seedWelcomeFile({
+          ownerId: newUserDoc.$id,
+          accountId: authUser.$id,
+        });
       }
     }
 

@@ -64,9 +64,12 @@ NEXT_PUBLIC_APPWRITE_PROJECT=your_project_id
 NEXT_PUBLIC_APPWRITE_DATABASE=your_database_id
 NEXT_PUBLIC_APPWRITE_USERS_COLLECTION=your_users_collection_id
 NEXT_PUBLIC_APPWRITE_FILES_COLLECTION=your_files_collection_id
+NEXT_PUBLIC_APPWRITE_FOLDERS_COLLECTION=your_folders_collection_id
 NEXT_PUBLIC_APPWRITE_BUCKET=your_bucket_id
 NEXT_APPWRITE_KEY=your_server_api_key
 ```
+
+> `NEXT_PUBLIC_APPWRITE_FOLDERS_COLLECTION` enables folder organization. If it's missing, `scripts/setup-v2-schema.mjs` will create the collection and print the ID — copy that into `.env.local` (and your Vercel project env) before redeploying.
 
 > When deploying, update `NEXT_PUBLIC_SITE_URL` to your production domain so SEO metadata, sitemaps, and OG images resolve correctly.
 
@@ -115,15 +118,31 @@ lib/
 
 ## Schema additions for v2 features
 
-These features require three new optional attributes on the **Files** collection. Add them in Appwrite Console → Database → Files → Attributes:
+The easiest way to apply every v2 schema change is to run the provisioning script — it's idempotent and creates any missing attributes, indexes, or collections:
 
-| Attribute        | Type     | Required | Notes                                                                                       |
-| ---------------- | -------- | -------- | ------------------------------------------------------------------------------------------- |
-| `deletedAt`      | Datetime | No       | NULL = active. Set to the deletion timestamp when a file is moved to Trash.                 |
-| `shareToken`     | String   | No       | 64 char max. URL-safe random token for public share links. **Add an index** (key: `shareToken`, attribute: `shareToken`) — the share-page lookup queries by this. |
-| `shareExpiresAt` | Datetime | No       | Public share link expiry. NULL when no link exists or the link has been revoked.            |
+```bash
+node --env-file=.env.local scripts/setup-v2-schema.mjs
+```
 
-After adding the attributes, redeploy. Existing rows without these attributes continue to work — `Query.isNull("deletedAt")` matches both explicit nulls and attribute-missing documents.
+This will:
+
+- Add three attributes to **Files** (`deletedAt`, `shareToken`, `shareExpiresAt`) and index `shareToken`.
+- Add `folderId` (string, indexed) to **Files** so files can belong to a folder.
+- Create a new **Folders** collection (if the `NEXT_PUBLIC_APPWRITE_FOLDERS_COLLECTION` env var isn't set, the script creates the collection and prints its ID so you can add it to `.env.local`).
+
+| Collection | Attribute        | Type     | Required | Notes                                                                                       |
+| ---------- | ---------------- | -------- | -------- | ------------------------------------------------------------------------------------------- |
+| Files      | `deletedAt`      | Datetime | No       | NULL = active. Set to the deletion timestamp when a file is moved to Trash.                 |
+| Files      | `shareToken`     | String   | No       | 64 char max. URL-safe random token for public share links (indexed).                        |
+| Files      | `shareExpiresAt` | Datetime | No       | Public share link expiry. NULL when no link exists or the link has been revoked.            |
+| Files      | `folderId`       | String   | No       | 64 char max. NULL = root. References a row in the Folders collection (indexed).             |
+| Folders    | `name`           | String   | Yes      | 100 char max.                                                                               |
+| Folders    | `ownerId`        | String   | Yes      | 64 char max — Users document ID (indexed).                                                  |
+| Folders    | `accountId`      | String   | Yes      | 64 char max — Appwrite account ID; used for per-row permissions.                            |
+| Folders    | `parentId`       | String   | No       | 64 char max. NULL = top-level folder (indexed).                                             |
+| Folders    | `deletedAt`      | Datetime | No       | Soft-delete marker.                                                                         |
+
+Existing rows without these attributes continue to work — `Query.isNull("deletedAt")` matches both explicit nulls and attribute-missing documents.
 
 ## Deploy
 
@@ -166,6 +185,25 @@ vercel env add CRON_SECRET production
 ```
 
 When `CRON_SECRET` is set, the route rejects any request that doesn't carry `Authorization: Bearer ${CRON_SECRET}`. Vercel Cron sends this header automatically.
+
+## First-time user experience
+
+The first time a user signs up — whether via email OTP or Google/GitHub
+OAuth — Nimbus seeds their workspace with a single sample file,
+**"Welcome to Nimbus.md"**, so the dashboard isn't empty on the very
+first visit. The source asset lives at [public/onboarding/welcome.md](public/onboarding/welcome.md)
+and is uploaded by [lib/actions/onboarding.actions.ts](lib/actions/onboarding.actions.ts)
+using the admin Appwrite client.
+
+Notes:
+
+- The seeder is **idempotent**: it checks for an existing file with the
+  same name owned by the user before uploading, so re-runs (e.g., flaky
+  retries on the serverless edge) won't pile up duplicates.
+- Seeding failures are logged but **never block signup** — a user with a
+  broken seed step still lands in an empty (but functional) dashboard.
+- The welcome file is a normal user-owned file: they can rename, share,
+  trash, or permanently delete it like anything else.
 
 ## Roadmap
 

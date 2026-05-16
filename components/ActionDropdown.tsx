@@ -29,6 +29,7 @@ import {
   ShareInput,
   ShareLinkPanel,
 } from "@/components/ActionsModalContent";
+import MoveToFolderDialog from "@/components/MoveToFolderDialog";
 import { actionsDropdownItems } from "@/constants";
 import { constructDownloadUrl } from "@/lib/utils";
 import {
@@ -41,6 +42,7 @@ import {
 const ActionDropdown = ({ file }: { file: Models.DefaultDocument }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMoveOpen, setIsMoveOpen] = useState(false);
   const [action, setAction] = useState<{
     label: string;
     value: string;
@@ -212,6 +214,21 @@ const ActionDropdown = ({ file }: { file: Models.DefaultDocument }) => {
                 </DropdownMenuItem>
               );
             }
+            if (item.value === "move") {
+              return (
+                <DropdownMenuItem
+                  key={item.value}
+                  onClick={() => {
+                    setIsDropdownOpen(false);
+                    setIsMoveOpen(true);
+                  }}
+                  className="gap-2"
+                >
+                  <Icon aria-hidden="true" className="size-4" />
+                  {item.label}
+                </DropdownMenuItem>
+              );
+            }
             return (
               <DropdownMenuItem
                 key={item.value}
@@ -230,6 +247,13 @@ const ActionDropdown = ({ file }: { file: Models.DefaultDocument }) => {
       </DropdownMenu>
 
       {renderDialogContent()}
+
+      <MoveToFolderDialog
+        file={file}
+        path={path}
+        open={isMoveOpen}
+        onOpenChange={setIsMoveOpen}
+      />
     </Dialog>
   );
 };

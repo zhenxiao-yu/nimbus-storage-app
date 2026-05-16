@@ -28,6 +28,13 @@ declare interface GetFilesProps {
   searchText?: string;
   sort?: string;
   limit?: number;
+  /**
+   * Optional folder filter.
+   * - `undefined` (default): return files across every folder + root.
+   * - `null`: return only loose files at the root (folderId is null/missing).
+   * - string: return files inside that folder.
+   */
+  folderId?: string | null;
 }
 declare interface GetTrashedFilesProps {
   searchText?: string;
@@ -64,6 +71,29 @@ declare interface CreateShareLinkProps {
 }
 declare interface RevokeShareLinkProps {
   fileId: string;
+  path: string;
+}
+
+declare interface CreateFolderProps {
+  name: string;
+  parentId?: string | null;
+  path: string;
+}
+declare interface RenameFolderProps {
+  folderId: string;
+  name: string;
+  path: string;
+}
+declare interface DeleteFolderProps {
+  folderId: string;
+  path: string;
+}
+declare interface GetFoldersProps {
+  parentId?: string | null;
+}
+declare interface MoveFileProps {
+  fileId: string;
+  folderId: string | null;
   path: string;
 }
 

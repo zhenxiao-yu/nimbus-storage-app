@@ -1,14 +1,16 @@
 {
+  "id": "/",
   "name": "Nimbus",
   "short_name": "Nimbus",
   "description": "A modern cloud workspace for your files. Upload, organize, share, and access anywhere.",
   "start_url": "/dashboard",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
   "orientation": "portrait",
   "background_color": "#0a0e1a",
   "theme_color": "#6366f1",
-  "categories": ["productivity", "utilities", "business"],
+  "categories": ["productivity", "utilities"],
   "icons": [
     {
       "src": "/icon",
@@ -20,6 +22,28 @@
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "/icon-512",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Upload",
+      "short_name": "Upload",
+      "description": "Quickly upload a file to your dashboard",
+      "url": "/dashboard?upload=1",
+      "icons": [{ "src": "/icon", "sizes": "32x32", "type": "image/png" }]
+    },
+    {
+      "name": "Trash",
+      "short_name": "Trash",
+      "description": "View your recently deleted files",
+      "url": "/dashboard/trash",
+      "icons": [{ "src": "/icon", "sizes": "32x32", "type": "image/png" }]
     }
   ]
 }

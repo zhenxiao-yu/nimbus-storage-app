@@ -9,6 +9,7 @@ import { cookies } from "next/headers";
 import { getAvatarUrl } from "@/constants";
 import { redirect } from "next/navigation";
 import { handleActionError as handleError, logError } from "@/lib/logger";
+import { seedWelcomeFile } from "@/lib/actions/onboarding.actions";
 
 /**
  * Fetches a user document by email from the database.
@@ -65,7 +66,7 @@ export const createAccount = async ({
   if (!existingUser) {
     const { databases } = await createAdminClient();
 
-    await databases.createDocument(
+    const newUserDoc = await databases.createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.usersCollectionId,
       ID.unique(),
@@ -76,6 +77,10 @@ export const createAccount = async ({
         accountId,
       },
     );
+
+    // Seed the brand-new workspace with a welcome file. seedWelcomeFile
+    // swallows its own errors — a failure here must not block signup.
+    await seedWelcomeFile({ ownerId: newUserDoc.$id, accountId });
   }
 
   return parseStringify({ accountId });

@@ -5,6 +5,8 @@ import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import Analytics from "@/components/Analytics";
 import CookieConsent from "@/components/CookieConsent";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import InstallPrompt from "@/components/InstallPrompt";
 import { siteConfig } from "@/constants";
 import "./globals.css";
 
@@ -125,6 +127,8 @@ export default function RootLayout({
         </ThemeProvider>
         <Analytics />
         <CookieConsent />
+        <ServiceWorkerRegister />
+        <InstallPrompt />
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger

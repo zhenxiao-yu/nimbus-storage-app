@@ -23,6 +23,7 @@ const createQueries = (
   searchText: string,
   sort: string,
   limit?: number,
+  folderId?: string | null,
 ) => {
   const queries = [
     Query.or([
@@ -34,6 +35,16 @@ const createQueries = (
     // change continue to appear.
     Query.isNull("deletedAt"),
   ];
+
+  // Folder scoping:
+  // - undefined → don't filter (default, returns files across folders + root)
+  // - null      → only root-level files (folderId is null or missing)
+  // - string    → only files inside that folder
+  if (folderId === null) {
+    queries.push(Query.isNull("folderId"));
+  } else if (typeof folderId === "string") {
+    queries.push(Query.equal("folderId", folderId));
+  }
 
   if (types.length > 0) queries.push(Query.equal("type", types));
   if (searchText) queries.push(Query.contains("name", searchText));
@@ -62,6 +73,7 @@ export const getFiles = async ({
   searchText = "",
   sort = "$createdAt-desc",
   limit,
+  folderId,
 }: GetFilesProps) => {
   const { databases } = await createAdminClient();
 
@@ -70,7 +82,14 @@ export const getFiles = async ({
 
     if (!currentUser) throw new Error("User not found");
 
-    const queries = createQueries(currentUser, types, searchText, sort, limit);
+    const queries = createQueries(
+      currentUser,
+      types,
+      searchText,
+      sort,
+      limit,
+      folderId,
+    );
 
     const files = await databases.listDocuments(
       appwriteConfig.databaseId,

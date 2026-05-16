@@ -15,6 +15,11 @@ export const appwriteConfig = {
   // The collection ID for managing files' metadata in the database.
   filesCollectionId: process.env.NEXT_PUBLIC_APPWRITE_FILES_COLLECTION!,
 
+  // The collection ID for managing folder organization. Optional at config
+  // load time — server actions that touch folders call
+  // `requireFoldersCollectionId()` and surface a clear error if it's missing.
+  foldersCollectionId: process.env.NEXT_PUBLIC_APPWRITE_FOLDERS_COLLECTION ?? "",
+
   // The bucket ID used for storing files in Appwrite's storage service.
   bucketId: process.env.NEXT_PUBLIC_APPWRITE_BUCKET!,
 
@@ -22,3 +27,19 @@ export const appwriteConfig = {
   // Ensure this is protected and not exposed to the client-side.
   secretKey: process.env.NEXT_APPWRITE_KEY!,
 };
+
+/**
+ * Resolves the folders collection ID at runtime and throws a descriptive
+ * error if the env var is missing. Folder-related server actions call this
+ * so a missing env produces a clean message instead of a 500 from Appwrite.
+ */
+export function requireFoldersCollectionId(): string {
+  if (!appwriteConfig.foldersCollectionId) {
+    throw new Error(
+      "NEXT_PUBLIC_APPWRITE_FOLDERS_COLLECTION is not set. Add it to .env.local " +
+        "(and your Vercel project env). Run `node --env-file=.env.local scripts/setup-v2-schema.mjs` " +
+        "to provision the folders collection and print its ID.",
+    );
+  }
+  return appwriteConfig.foldersCollectionId;
+}

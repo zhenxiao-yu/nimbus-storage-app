@@ -54,6 +54,8 @@ The README documents the required collections. Two non-obvious shapes:
 - **Files.users** is a plain `string[]` of email addresses for sharing. Membership checks happen in queries (`Query.contains("users", currentUserEmail)` style) — there is no separate share collection.
 - **Files.deletedAt** (datetime, optional) — soft-delete marker. NULL/missing = active; non-null = trashed. `getFiles`/`getTotalSpaceUsed` filter on `Query.isNull("deletedAt")`; the Trash page uses `Query.isNotNull("deletedAt")`.
 - **Files.shareToken** (string, optional, **indexed**) + **Files.shareExpiresAt** (datetime, optional) — public share links. Anyone with the token can read the file at `/share/<token>` until expiry; revoking clears both fields.
+- **Files.folderId** (string, optional, **indexed**) — references a row in the Folders collection. NULL/missing = root. `getFiles({ folderId })` filters by this (use `null` for root-only).
+- **Folders** (separate collection) — single level of nesting today (`parentId` optional, indexed). Soft-deleted via `deletedAt`. Per-document permissions are written at create time (`Permission.read/update/delete(Role.user(accountId))`).
 
 ### UI layer
 
@@ -80,8 +82,10 @@ Required vars (see README for full list):
 
 - `NEXT_PUBLIC_SITE_URL`
 - `NEXT_PUBLIC_APPWRITE_ENDPOINT`, `NEXT_PUBLIC_APPWRITE_PROJECT`, `NEXT_PUBLIC_APPWRITE_DATABASE`
-- `NEXT_PUBLIC_APPWRITE_USERS_COLLECTION`, `NEXT_PUBLIC_APPWRITE_FILES_COLLECTION`, `NEXT_PUBLIC_APPWRITE_BUCKET`
+- `NEXT_PUBLIC_APPWRITE_USERS_COLLECTION`, `NEXT_PUBLIC_APPWRITE_FILES_COLLECTION`, `NEXT_PUBLIC_APPWRITE_FOLDERS_COLLECTION`, `NEXT_PUBLIC_APPWRITE_BUCKET`
 - `NEXT_APPWRITE_KEY` (server-only API key)
 - `CRON_SECRET` (validated by `/api/health` for the Vercel cron)
+
+`NEXT_PUBLIC_APPWRITE_FOLDERS_COLLECTION` powers the folders feature. The provisioning script (`scripts/setup-v2-schema.mjs`) creates the collection on first run and prints the ID for you to add. Folder server actions call `requireFoldersCollectionId()` (in `lib/appwrite/config.ts`) and throw a clean error if it's missing.
 
 When adding new Appwrite resources, thread their IDs through `appwriteConfig` rather than reading `process.env` at the call site.

@@ -216,6 +216,29 @@ export const createShareLink = async ({
 };
 
 /**
+ * Moves a file into a folder (or back to the root when `folderId` is null).
+ * Just updates the `folderId` field on the file document — bucket blobs are
+ * untouched.
+ */
+export const moveFile = async ({ fileId, folderId, path }: MoveFileProps) => {
+  const { databases } = await createAdminClient();
+
+  try {
+    const updated = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.filesCollectionId,
+      fileId,
+      { folderId: folderId ?? null },
+    );
+
+    revalidatePath(path);
+    return parseStringify(updated);
+  } catch (error) {
+    handleError(error, "Failed to move file");
+  }
+};
+
+/**
  * Revokes an existing share link by clearing both fields.
  */
 export const revokeShareLink = async ({

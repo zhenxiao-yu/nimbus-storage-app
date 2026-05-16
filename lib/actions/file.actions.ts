@@ -15,6 +15,7 @@ import {
   permanentlyDeleteFile as _permanentlyDeleteFile,
   createShareLink as _createShareLink,
   revokeShareLink as _revokeShareLink,
+  moveFile as _moveFile,
 } from "@/lib/actions/file.mutate";
 
 export async function uploadFile(props: UploadFileProps) {
@@ -65,4 +66,8 @@ export async function createShareLink(props: CreateShareLinkProps) {
 
 export async function revokeShareLink(props: RevokeShareLinkProps) {
   return _revokeShareLink(props);
+}
+
+export async function moveFile(props: MoveFileProps) {
+  return _moveFile(props);
 }
