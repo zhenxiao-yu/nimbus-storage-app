@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Github, Globe, Twitter } from "lucide-react";
+import { Globe } from "lucide-react";
+import { Github, Twitter } from "@/components/icons/brand-icons";
 
 import { Logo } from "@/components/logo";
 import { siteConfig } from "@/constants";

@@ -91,7 +91,7 @@ export default async function DashboardPage() {
 
         {files?.documents?.length > 0 ? (
           <ul className="divide-y divide-border/60">
-            {files.documents.map((file: Models.Document) => (
+            {files.documents.map((file: Models.DefaultDocument) => (
               <li
                 key={file.$id}
                 className="group flex items-center gap-3 py-3 first:pt-0 last:pb-0"

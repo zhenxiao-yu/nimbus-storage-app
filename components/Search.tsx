@@ -13,7 +13,7 @@ import { getFiles } from "@/lib/actions/file.actions";
 
 const Search = () => {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<Models.Document[]>([]);
+  const [results, setResults] = useState<Models.DefaultDocument[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -47,7 +47,7 @@ const Search = () => {
     if (!searchQuery) setQuery("");
   }, [searchQuery]);
 
-  const handleClickItem = (file: Models.Document) => {
+  const handleClickItem = (file: Models.DefaultDocument) => {
     setOpen(false);
     setResults([]);
     const segment =

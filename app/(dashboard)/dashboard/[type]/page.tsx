@@ -37,7 +37,7 @@ export default async function TypePage({
   const files = await getFiles({ types, searchText, sort });
 
   const totalSize = (files?.documents ?? []).reduce(
-    (acc: number, f: Models.Document) => acc + (f.size ?? 0),
+    (acc: number, f: Models.DefaultDocument) => acc + (f.size ?? 0),
     0,
   );
 
@@ -80,7 +80,7 @@ export default async function TypePage({
 
       {files?.total > 0 ? (
         <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {files.documents.map((file: Models.Document) => (
+          {files.documents.map((file: Models.DefaultDocument) => (
             <li key={file.$id}>
               <Card file={file} />
             </li>

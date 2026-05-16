@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { avatarPlaceholderUrl } from "@/constants";
 import { createAdminClient } from "@/lib/appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
+import { logError } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -86,7 +87,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.redirect(new URL("/dashboard", req.url));
   } catch (error) {
-    console.error("OAuth callback failed", error);
+    logError("OAuth callback failed", error);
     // We may have set a session cookie before failing on the document
     // upsert. Clear it so the user can retry instead of being trapped in
     // a half-authenticated state where /dashboard redirects them back.

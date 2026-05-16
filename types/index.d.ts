@@ -72,3 +72,18 @@ declare interface ThumbnailProps {
   className?: string;
   imageClassName?: string;
 }
+
+declare interface TotalSpaceBucket {
+  size: number;
+  latestDate: string;
+}
+
+declare interface TotalSpace {
+  image: TotalSpaceBucket;
+  document: TotalSpaceBucket;
+  video: TotalSpaceBucket;
+  audio: TotalSpaceBucket;
+  other: TotalSpaceBucket;
+  used: number;
+  all: number;
+}

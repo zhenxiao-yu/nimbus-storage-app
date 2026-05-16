@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Github, Menu, X } from "lucide-react";
+import { ArrowRight, Menu, X } from "lucide-react";
+import { Github } from "@/components/icons/brand-icons";
 
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";

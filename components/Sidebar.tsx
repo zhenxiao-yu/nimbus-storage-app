@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Github, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
+import { Github } from "@/components/icons/brand-icons";
 
 import { Logo } from "@/components/logo";
 import { navItems, siteConfig } from "@/constants";

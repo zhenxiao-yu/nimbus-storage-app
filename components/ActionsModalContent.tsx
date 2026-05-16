@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { convertFileSize, formatDateTime } from "@/lib/utils";
 
-const ImageThumbnail = ({ file }: { file: Models.Document }) => (
+const ImageThumbnail = ({ file }: { file: Models.DefaultDocument }) => (
   <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-accent/30 p-3">
     <Thumbnail type={file.type} extension={file.extension} url={file.url} />
     <div className="flex min-w-0 flex-1 flex-col">
@@ -24,7 +24,7 @@ const DetailRow = ({ label, value }: { label: string; value: string }) => (
   </div>
 );
 
-export const FileDetails = ({ file }: { file: Models.Document }) => {
+export const FileDetails = ({ file }: { file: Models.DefaultDocument }) => {
   return (
     <div className="space-y-3">
       <ImageThumbnail file={file} />
@@ -45,7 +45,7 @@ export const FileDetails = ({ file }: { file: Models.Document }) => {
 };
 
 interface ShareInputProps {
-  file: Models.Document;
+  file: Models.DefaultDocument;
   onInputChange: React.Dispatch<React.SetStateAction<string[]>>;
   onRemove: (email: string) => void;
 }

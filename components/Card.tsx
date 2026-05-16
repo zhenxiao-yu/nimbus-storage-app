@@ -6,7 +6,7 @@ import FormattedDateTime from "@/components/FormattedDateTime";
 import ActionDropdown from "@/components/ActionDropdown";
 import { convertFileSize } from "@/lib/utils";
 
-const Card = ({ file }: { file: Models.Document }) => {
+const Card = ({ file }: { file: Models.DefaultDocument }) => {
   return (
     <article className="group relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-border/60 bg-card p-5 shadow-soft transition-all duration-200 hover:-translate-y-0.5 hover:border-border hover:shadow-elevated">
       <div className="flex items-start justify-between gap-2">

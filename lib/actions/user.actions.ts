@@ -8,6 +8,7 @@ import { parseStringify } from "@/lib/utils";
 import { cookies } from "next/headers";
 import { avatarPlaceholderUrl } from "@/constants";
 import { redirect } from "next/navigation";
+import { handleActionError as handleError, logError } from "@/lib/logger";
 
 /**
  * Fetches a user document by email from the database.
@@ -24,16 +25,6 @@ const getUserByEmail = async (email: string) => {
   );
 
   return result.total > 0 ? result.documents[0] : null;
-};
-
-/**
- * Handles errors by logging and rethrowing them.
- * @param error - The caught error.
- * @param message - Additional context message for debugging.
- */
-const handleError = (error: unknown, message: string) => {
-  console.log(error, message);
-  throw error;
 };
 
 /**
@@ -141,7 +132,7 @@ export const getCurrentUser = async () => {
 
     return parseStringify(user.documents[0]);
   } catch (error) {
-    console.log(error);
+    logError("getCurrentUser", error);
   }
 };
 
@@ -155,7 +146,7 @@ export const signOutUser = async () => {
     const { account } = await createSessionClient();
     await account.deleteSession("current");
   } catch (error) {
-    console.error("signOutUser: server-side session delete failed", error);
+    logError("signOutUser: server-side session delete failed", error);
   }
   (await cookies()).delete("appwrite-session");
   redirect("/");

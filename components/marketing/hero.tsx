@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Github, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
+import { Github } from "@/components/icons/brand-icons";
 
 import { Button } from "@/components/ui/button";
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
