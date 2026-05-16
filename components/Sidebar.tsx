@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
 import { Github } from "@/components/icons/brand-icons";
 
 import { Logo } from "@/components/logo";
@@ -36,13 +37,21 @@ const Sidebar = ({ fullName, avatar, email }: Props) => {
                 ? pathname === url
                 : pathname === url || pathname.startsWith(`${url}/`);
             return (
-              <li key={name}>
+              <li key={name} className="relative">
+                {active && (
+                  <motion.span
+                    layoutId="sidebar-active-pill"
+                    aria-hidden
+                    className="absolute inset-0 rounded-lg bg-primary/10 ring-1 ring-primary/15"
+                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                  />
+                )}
                 <Link
                   href={url}
                   className={cn(
-                    "ring-focus group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                    "ring-focus group relative z-10 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                     active
-                      ? "bg-primary/10 text-primary"
+                      ? "text-primary"
                       : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
                   )}
                   aria-current={active ? "page" : undefined}
@@ -55,6 +64,18 @@ const Sidebar = ({ fullName, avatar, email }: Props) => {
                     )}
                   />
                   <span>{name}</span>
+                  {active && (
+                    <motion.span
+                      layoutId="sidebar-active-dot"
+                      aria-hidden
+                      className="ml-auto size-1.5 rounded-full bg-primary"
+                      transition={{
+                        type: "spring",
+                        stiffness: 380,
+                        damping: 32,
+                      }}
+                    />
+                  )}
                 </Link>
               </li>
             );
@@ -77,14 +98,20 @@ const Sidebar = ({ fullName, avatar, email }: Props) => {
         </Link>
 
         <div className="flex items-center gap-3 rounded-lg p-2">
-          <Image
-            src={avatar}
-            alt={fullName}
-            width={40}
-            height={40}
-            unoptimized
-            className="size-10 rounded-full border border-border/60 object-cover"
-          />
+          <div className="relative">
+            <Image
+              src={avatar}
+              alt={fullName}
+              width={40}
+              height={40}
+              unoptimized
+              className="size-10 rounded-full border border-border/60 object-cover"
+            />
+            <span
+              aria-hidden
+              className="absolute bottom-0 right-0 size-2.5 rounded-full bg-emerald-500 ring-2 ring-card"
+            />
+          </div>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium capitalize">{fullName}</p>
             <p className="truncate text-xs text-muted-foreground">{email}</p>

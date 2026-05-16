@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Models } from "node-appwrite";
-import { Inbox } from "lucide-react";
 
-import Card from "@/components/Card";
+import EmptyIllustration from "@/components/EmptyIllustration";
+import FileGrid from "@/components/FileGrid";
 import Sort from "@/components/Sort";
 import { FILE_TYPE_LABEL } from "@/constants";
 import { getFiles } from "@/lib/actions/file.actions";
@@ -49,8 +49,8 @@ export default async function TypePage({
         <div className="flex items-baseline gap-3">
           <h1 className="h1 capitalize">{label}</h1>
           {files?.total ? (
-            <span className="text-sm text-muted-foreground">
-              ({files.total})
+            <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground">
+              {files.total}
             </span>
           ) : null}
         </div>
@@ -60,7 +60,7 @@ export default async function TypePage({
             {totalSize > 0 ? (
               <>
                 Total size:{" "}
-                <span className="font-medium text-foreground">
+                <span className="font-medium text-foreground tabular-nums">
                   {convertFileSize(totalSize)}
                 </span>
               </>
@@ -79,13 +79,7 @@ export default async function TypePage({
       </header>
 
       {files?.total > 0 ? (
-        <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {files.documents.map((file: Models.DefaultDocument) => (
-            <li key={file.$id}>
-              <Card file={file} />
-            </li>
-          ))}
-        </ul>
+        <FileGrid files={files.documents as Models.DefaultDocument[]} />
       ) : (
         <EmptyState label={label.toLowerCase()} />
       )}
@@ -95,15 +89,18 @@ export default async function TypePage({
 
 function EmptyState({ label }: { label: string }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-border bg-card/40 px-6 py-16 text-center">
-      <div className="flex size-14 items-center justify-center rounded-full bg-accent/40">
-        <Inbox className="size-6 text-muted-foreground" />
+    <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-border bg-card/40 px-6 py-16 text-center">
+      <EmptyIllustration className="w-52 opacity-90" />
+      <div className="space-y-1">
+        <p className="text-base font-medium">No {label} yet</p>
+        <p className="max-w-sm text-sm text-muted-foreground">
+          When you upload {label}, they&apos;ll show up here. Hit{" "}
+          <span className="rounded-md border border-border/60 bg-muted px-1.5 py-0.5 text-xs font-medium text-foreground">
+            Upload
+          </span>{" "}
+          in the header — or drop a file anywhere on this page.
+        </p>
       </div>
-      <p className="text-base font-medium">No {label} yet</p>
-      <p className="max-w-sm text-sm text-muted-foreground">
-        When you upload {label}, they&apos;ll show up here. Use the Upload
-        button in the header to add files.
-      </p>
     </div>
   );
 }

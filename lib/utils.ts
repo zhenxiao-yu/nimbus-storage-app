@@ -110,6 +110,27 @@ export const formatDateTime = (isoString: string | null | undefined) => {
   return `${time}, ${day} ${month}`;
 };
 
+export const formatRelativeTime = (isoString: string | null | undefined) => {
+  if (!isoString) return "—";
+  const then = new Date(isoString).getTime();
+  if (Number.isNaN(then)) return "—";
+  const diff = Date.now() - then;
+  const sec = Math.floor(diff / 1000);
+  if (sec < 60) return "just now";
+  const min = Math.floor(sec / 60);
+  if (min < 60) return `${min}m ago`;
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return `${hr}h ago`;
+  const day = Math.floor(hr / 24);
+  if (day < 7) return `${day}d ago`;
+  const wk = Math.floor(day / 7);
+  if (wk < 5) return `${wk}w ago`;
+  const mo = Math.floor(day / 30);
+  if (mo < 12) return `${mo}mo ago`;
+  const yr = Math.floor(day / 365);
+  return `${yr}y ago`;
+};
+
 export const getFileIcon = (
   extension: string | undefined,
   type: FileType | string,
@@ -190,14 +211,14 @@ export const getUsageSummary = (totalSpace: TotalSpace) => {
       size: totalSpace.document.size,
       latestDate: totalSpace.document.latestDate,
       icon: "/assets/icons/file-document-light.svg",
-      url: "/documents",
+      url: "/dashboard/documents",
     },
     {
       title: "Images",
       size: totalSpace.image.size,
       latestDate: totalSpace.image.latestDate,
       icon: "/assets/icons/file-image-light.svg",
-      url: "/images",
+      url: "/dashboard/images",
     },
     {
       title: "Media",
@@ -207,14 +228,14 @@ export const getUsageSummary = (totalSpace: TotalSpace) => {
           ? totalSpace.video.latestDate
           : totalSpace.audio.latestDate,
       icon: "/assets/icons/file-video-light.svg",
-      url: "/media",
+      url: "/dashboard/media",
     },
     {
       title: "Others",
       size: totalSpace.other.size,
       latestDate: totalSpace.other.latestDate,
       icon: "/assets/icons/file-other-light.svg",
-      url: "/others",
+      url: "/dashboard/others",
     },
   ];
 };

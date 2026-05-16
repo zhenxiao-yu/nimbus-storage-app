@@ -16,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
+import { NumberTicker } from "@/components/magicui/number-ticker";
 import { calculatePercentage, convertFileSize } from "@/lib/utils";
 
 const chartConfig = {
@@ -28,8 +29,14 @@ export const Chart = ({ used = 0 }: { used: number }) => {
   const chartData = [{ storage: "used", percent, fill: "url(#chartFill)" }];
 
   return (
-    <Card className="overflow-hidden border-border/60 bg-gradient-to-br from-violet-600 via-indigo-600 to-sky-600 text-white shadow-glow">
-      <CardContent className="grid items-center gap-2 p-6 md:grid-cols-[200px_1fr]">
+    <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-violet-600 via-indigo-600 to-sky-600 text-white shadow-glow">
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-20 -top-20 size-72 animate-aurora rounded-full bg-fuchsia-400/30 blur-3xl" />
+        <div className="absolute -bottom-24 -right-10 size-72 animate-aurora rounded-full bg-cyan-400/30 blur-3xl [animation-delay:-8s]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.18),transparent_45%)]" />
+      </div>
+
+      <CardContent className="relative grid items-center gap-2 p-6 md:grid-cols-[200px_1fr]">
         <ChartContainer
           config={chartConfig}
           className="mx-auto aspect-square w-full max-w-[200px]"
@@ -60,27 +67,23 @@ export const Chart = ({ used = 0 }: { used: number }) => {
                 content={({ viewBox }) => {
                   if (viewBox && "cx" in viewBox && "cy" in viewBox) {
                     return (
-                      <text
-                        x={viewBox.cx}
-                        y={viewBox.cy}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
+                      <foreignObject
+                        x={(viewBox.cx ?? 0) - 60}
+                        y={(viewBox.cy ?? 0) - 30}
+                        width="120"
+                        height="60"
                       >
-                        <tspan
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          className="fill-white text-3xl font-bold"
-                        >
-                          {percent.toFixed(0)}%
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy ?? 0) + 22}
-                          className="fill-white/70 text-xs"
-                        >
-                          used
-                        </tspan>
-                      </text>
+                        <div className="flex size-full flex-col items-center justify-center">
+                          <div className="text-3xl font-bold tabular-nums text-white">
+                            <NumberTicker
+                              value={percent}
+                              decimalPlaces={percent < 10 ? 1 : 0}
+                            />
+                            <span>%</span>
+                          </div>
+                          <div className="text-xs text-white/70">used</div>
+                        </div>
+                      </foreignObject>
                     );
                   }
                 }}
@@ -89,14 +92,22 @@ export const Chart = ({ used = 0 }: { used: number }) => {
           </RadialBarChart>
         </ChartContainer>
 
-        <CardHeader className="space-y-1.5 p-0">
+        <CardHeader className="space-y-2 p-0">
           <CardTitle className="text-xl font-semibold text-white">
             Available storage
           </CardTitle>
           <CardDescription className="text-sm text-white/80">
-            {convertFileSize(used) || "0 KB"} of 2 GB used. Upgrade Appwrite to
-            scale further.
+            <span className="font-medium text-white">
+              {convertFileSize(used) || "0 KB"}
+            </span>{" "}
+            of 2 GB used. Upgrade Appwrite to scale further.
           </CardDescription>
+          <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/15">
+            <div
+              className="h-full rounded-full bg-white/90 transition-all duration-1000 ease-out"
+              style={{ width: `${Math.min(percent, 100)}%` }}
+            />
+          </div>
         </CardHeader>
       </CardContent>
     </Card>

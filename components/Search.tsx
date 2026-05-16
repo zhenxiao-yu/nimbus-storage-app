@@ -58,13 +58,14 @@ const Search = () => {
   };
 
   return (
-    <div className="relative w-full max-w-md">
+    <div className="group relative w-full max-w-md">
+      <div className="pointer-events-none absolute -inset-0.5 rounded-xl bg-gradient-to-r from-violet-500/0 via-indigo-500/0 to-sky-500/0 opacity-0 blur-md transition-opacity duration-300 group-focus-within:from-violet-500/40 group-focus-within:via-indigo-500/40 group-focus-within:to-sky-500/40 group-focus-within:opacity-60" />
       <div className="relative">
-        <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
         <Input
           value={query}
           placeholder="Search your files…"
-          className="h-10 pl-9 pr-9"
+          className="h-10 pl-9 pr-9 transition-shadow focus-visible:ring-2 focus-visible:ring-primary/40"
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => results.length && setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 150)}

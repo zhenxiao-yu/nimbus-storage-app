@@ -31,7 +31,13 @@ export default async function DashboardLayout({
           avatar={currentUser.avatar}
           email={currentUser.email}
         />
-        <Header userId={currentUser.$id} accountId={currentUser.accountId} />
+        <Header
+          userId={currentUser.$id}
+          accountId={currentUser.accountId}
+          fullName={currentUser.fullName}
+          email={currentUser.email}
+          avatar={currentUser.avatar}
+        />
 
         <div className="flex-1 px-4 py-6 md:px-8 md:py-8">
           <div className="mx-auto w-full max-w-7xl">{children}</div>

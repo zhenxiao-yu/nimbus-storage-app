@@ -1,5 +1,6 @@
 import { TopNav } from "@/components/marketing/top-nav";
 import { Footer } from "@/components/marketing/footer";
+import { ScrollProgress } from "@/components/marketing/scroll-progress";
 import { getCurrentUser } from "@/lib/actions/user.actions";
 
 export const dynamic = "force-dynamic";
@@ -12,6 +13,7 @@ export default async function MarketingLayout({
   const user = await getCurrentUser();
   return (
     <div className="flex min-h-screen flex-col bg-background">
+      <ScrollProgress />
       <TopNav isAuthenticated={!!user} />
       <main className="flex-1">{children}</main>
       <Footer />
