@@ -35,13 +35,13 @@ export function requireEnv(name: string): string {
  * Feature flag for the optional AI Workspace surfaces (file summaries +
  * /dashboard/ai chat). Evaluated at module load on the server; consumed by
  * server actions, the sidebar, and the AI route to degrade gracefully when
- * the deploy hasn't configured an Anthropic API key.
+ * the deploy hasn't configured a Groq API key.
  *
  * Reading `process.env` here is safe — `lib/env.ts` is never imported by
  * client components, so Next won't try to inline this value. Surfaces that
  * need it on the client are passed it as a prop / read it in server pages.
  */
-export const AI_ENABLED = Boolean(process.env.ANTHROPIC_API_KEY);
+export const AI_ENABLED = Boolean(process.env.GROQ_API_KEY);
 
 export function requirePublicEnv(name: string): string {
   const value = process.env[name];

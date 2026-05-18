@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.1.1 — 2026-05-17
+
+Migrate AI Workspace from Anthropic to Groq for always-free inference.
+
+- Drop `@anthropic-ai/sdk`. Add `groq-sdk`.
+- `lib/actions/ai.actions.ts` switched to Groq's OpenAI-compatible chat completions API.
+- Model: `llama-3.1-8b-instant` (fits the 6000 tokens/min free-tier cap).
+- Env var: `ANTHROPIC_API_KEY` → `GROQ_API_KEY`. `AI_ENABLED` flag now reads the new key.
+- Summary content cap dropped from 50KB → 25KB to fit free-tier token budget.
+- Dropped Anthropic-only `cache_control: ephemeral` (Groq doesn't have that API).
+- Rate-limit / overloaded / auth error handling translated to Groq's `Groq.APIError` shape.
+- Public UI, route surfaces, and feature-flag behavior identical to 2.1.0.
+
 ## 2.1.0 — 2026-05-17
 
 The "wow" pass: AI workspace and Quick Look.
