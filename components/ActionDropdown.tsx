@@ -214,6 +214,19 @@ const ActionDropdown = ({ file }: { file: Models.DefaultDocument }) => {
                 </DropdownMenuItem>
               );
             }
+            if (item.value === "beam") {
+              return (
+                <DropdownMenuItem key={item.value} asChild>
+                  <Link
+                    href={`/dashboard/beam/${file.$id}`}
+                    className="flex items-center gap-2"
+                  >
+                    <Icon aria-hidden="true" className="size-4" />
+                    {item.label}
+                  </Link>
+                </DropdownMenuItem>
+              );
+            }
             if (item.value === "move") {
               return (
                 <DropdownMenuItem

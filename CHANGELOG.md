@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.2.0 — 2026-05-17
+
+**Beam** — peer-to-peer file transfer between browsers. AirDrop in the web.
+
+- New ActionDropdown item **Beam** on every file. Opens `/dashboard/beam/[fileId]` (sender, authenticated). Sender gets a big 4-digit code.
+- New public route `/beam` (receiver, no account needed). 4-digit OTP-style input. Once connected, the file streams over WebRTC and the browser triggers a download with the original filename.
+- File bytes never touch any Nimbus / Vercel / Appwrite server during transfer. Only the WebRTC handshake (kilobytes) goes through the public PeerJS signaling broker; file data flows directly browser-to-browser.
+- 64KB chunks over an `RTCDataChannel` with JSON control frames (`meta` / `done` / `abort`) and binary chunk frames.
+- 4-digit code collision regeneration (up to 6 attempts). Graceful failure modes: bad code, dropped sender, WebRTC unsupported, oversized file warning.
+- New dependency: `peerjs@^1.5.5` (dynamically imported, client-side only — never bundled on the server).
+
 ## 2.1.1 — 2026-05-17
 
 Migrate AI Workspace from Anthropic to Groq for always-free inference.

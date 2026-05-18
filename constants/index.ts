@@ -12,6 +12,7 @@ import {
   Download,
   Trash2,
   Sparkles,
+  Send,
 } from "lucide-react";
 
 export const siteConfig = {
@@ -59,6 +60,7 @@ export const actionsDropdownItems = [
   { label: "Share", icon: Share2, value: "share" },
   { label: "Move to folder", icon: FolderInput, value: "move" },
   { label: "Get share link", icon: Link2, value: "share-link" },
+  { label: "Beam", icon: Send, value: "beam" },
   { label: "Download", icon: Download, value: "download" },
   { label: "Delete", icon: Trash2, value: "delete" },
 ] as const;

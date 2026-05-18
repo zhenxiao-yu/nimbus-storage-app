@@ -21,6 +21,7 @@ A modern, end-to-end cloud workspace for your files — built with Next.js 15, R
 - **Drag-and-drop uploads.** Server actions write to Appwrite Storage with auto file-type classification (documents, images, media, others).
 - **Live search & sorting.** Debounced search across every file with name, date, and size sorts.
 - **Sharing & revocation.** Per-file user lists, instant revoke, no extra tooling.
+- **Beam (P2P transfer).** Send any file to another browser with a 4-digit code at `/beam` — streams peer-to-peer over WebRTC, file bytes never touch Nimbus servers.
 - **Modern UI.** Light + dark themes, animated bento landing page, polished empty/loading/error states.
 - **Production-ready.** Security headers, dynamic OG images, sitemap & robots, structured data, and Vercel Analytics + Speed Insights baked in.
 - **AI Workspace (optional).** Summarize text files with Claude inside the preview modal, and ask factual questions about your files at `/dashboard/ai`. Powered by `claude-haiku-4-5` with prompt caching. Enabled when `ANTHROPIC_API_KEY` is set — hidden automatically when it isn't.
