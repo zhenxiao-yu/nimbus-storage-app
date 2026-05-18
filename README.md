@@ -23,6 +23,7 @@ A modern, end-to-end cloud workspace for your files — built with Next.js 15, R
 - **Sharing & revocation.** Per-file user lists, instant revoke, no extra tooling.
 - **Modern UI.** Light + dark themes, animated bento landing page, polished empty/loading/error states.
 - **Production-ready.** Security headers, dynamic OG images, sitemap & robots, structured data, and Vercel Analytics + Speed Insights baked in.
+- **AI Workspace (optional).** Summarize text files with Claude inside the preview modal, and ask factual questions about your files at `/dashboard/ai`. Powered by `claude-haiku-4-5` with prompt caching. Enabled when `ANTHROPIC_API_KEY` is set — hidden automatically when it isn't.
 
 ## Tech stack
 
@@ -67,7 +68,19 @@ NEXT_PUBLIC_APPWRITE_FILES_COLLECTION=your_files_collection_id
 NEXT_PUBLIC_APPWRITE_FOLDERS_COLLECTION=your_folders_collection_id
 NEXT_PUBLIC_APPWRITE_BUCKET=your_bucket_id
 NEXT_APPWRITE_KEY=your_server_api_key
+
+# Optional — enables the AI Workspace (file summaries + /dashboard/ai chat).
+# Leave unset to hide all AI surfaces gracefully.
+ANTHROPIC_API_KEY=your_anthropic_api_key
 ```
+
+> **AI Workspace (optional).** Set `ANTHROPIC_API_KEY` to enable the
+> "Summarize with AI" button inside the file preview modal and the
+> Ask-AI chat at `/dashboard/ai`. Uses `claude-haiku-4-5` with prompt
+> caching on the system prompt to keep follow-up turns fast and cheap.
+> When the key is missing, the sidebar entry, the Summarize button, and
+> the `/dashboard/ai` route all degrade quietly (the route shows a
+> friendly "not configured" message).
 
 > `NEXT_PUBLIC_APPWRITE_FOLDERS_COLLECTION` enables folder organization. If it's missing, `scripts/setup-v2-schema.mjs` will create the collection and print the ID — copy that into `.env.local` (and your Vercel project env) before redeploying.
 

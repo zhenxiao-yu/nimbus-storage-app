@@ -7,6 +7,7 @@ import { CommandPaletteProvider } from "@/components/CommandPaletteProvider";
 import RealtimeSync from "@/components/RealtimeSync";
 import { getCurrentUser } from "@/lib/actions/user.actions";
 import { appwriteConfig } from "@/lib/appwrite/config";
+import { AI_ENABLED } from "@/lib/env";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +32,7 @@ export default async function DashboardLayout({
           fullName={currentUser.fullName}
           avatar={currentUser.avatar}
           email={currentUser.email}
+          aiEnabled={AI_ENABLED}
         />
 
         <section className="flex min-w-0 min-h-screen flex-1 flex-col">

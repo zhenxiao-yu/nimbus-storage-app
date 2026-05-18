@@ -11,6 +11,7 @@ import {
   Link2,
   Download,
   Trash2,
+  Sparkles,
 } from "lucide-react";
 
 export const siteConfig = {
@@ -46,8 +47,11 @@ export const navItems = [
   { name: "Images", icon: ImageIcon, url: "/dashboard/images" },
   { name: "Media", icon: Film, url: "/dashboard/media" },
   { name: "Others", icon: FolderArchive, url: "/dashboard/others" },
+  // AI-gated. The Sidebar renderer filters this out at render time when
+  // ANTHROPIC_API_KEY is not configured — the constant itself stays static.
+  { name: "Ask AI", icon: Sparkles, url: "/dashboard/ai", requiresAi: true },
   { name: "Trash", icon: Trash2, url: "/dashboard/trash" },
-];
+] as const;
 
 export const actionsDropdownItems = [
   { label: "Rename", icon: Pencil, value: "rename" },

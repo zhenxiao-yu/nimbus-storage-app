@@ -31,6 +31,18 @@ export function requireEnv(name: string): string {
  * Same as `requireEnv` but the error message hints that the var must be
  * configured at build time for it to reach the client bundle.
  */
+/**
+ * Feature flag for the optional AI Workspace surfaces (file summaries +
+ * /dashboard/ai chat). Evaluated at module load on the server; consumed by
+ * server actions, the sidebar, and the AI route to degrade gracefully when
+ * the deploy hasn't configured an Anthropic API key.
+ *
+ * Reading `process.env` here is safe — `lib/env.ts` is never imported by
+ * client components, so Next won't try to inline this value. Surfaces that
+ * need it on the client are passed it as a prop / read it in server pages.
+ */
+export const AI_ENABLED = Boolean(process.env.ANTHROPIC_API_KEY);
+
 export function requirePublicEnv(name: string): string {
   const value = process.env[name];
   if (!value) {

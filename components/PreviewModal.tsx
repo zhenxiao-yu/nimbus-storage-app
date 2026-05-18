@@ -3,7 +3,13 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Models } from "node-appwrite";
-import { Download, ExternalLink, Loader2, X } from "lucide-react";
+import {
+  Download,
+  ExternalLink,
+  Loader2,
+  Sparkles,
+  X,
+} from "lucide-react";
 
 import {
   Dialog,
@@ -21,6 +27,7 @@ import {
   formatDateTime,
   convertFileSize,
 } from "@/lib/utils";
+import { isAiEnabled, summarizeFile } from "@/lib/actions/ai.actions";
 
 interface PreviewModalProps {
   file: Models.DefaultDocument | null;
@@ -49,6 +56,127 @@ const typeLabel: Record<string, string> = {
 
 const TEXT_EXTENSIONS = new Set(["txt", "md", "csv", "json", "log"]);
 const PDF_EXTENSIONS = new Set(["pdf"]);
+const AI_SUMMARIZABLE_EXTENSIONS = new Set([
+  "txt",
+  "md",
+  "markdown",
+  "csv",
+  "json",
+  "log",
+]);
+
+/**
+ * Inline summarize panel. Lives below the preview body and above the
+ * footer. Hidden when AI isn't configured on this deploy or the file's
+ * extension can't be summarized.
+ */
+function AiSummaryPanel({ file }: { file: Models.DefaultDocument }) {
+  const [enabled, setEnabled] = useState<boolean | null>(null);
+  const [state, setState] = useState<
+    | { status: "idle" }
+    | { status: "loading" }
+    | { status: "ready"; summary: string }
+    | { status: "error"; message: string }
+  >({ status: "idle" });
+
+  useEffect(() => {
+    // Reset when the file changes so reopening on a different file
+    // doesn't keep the previous summary visible.
+    setState({ status: "idle" });
+  }, [file.$id]);
+
+  useEffect(() => {
+    let cancelled = false;
+    isAiEnabled()
+      .then((on) => {
+        if (!cancelled) setEnabled(on);
+      })
+      .catch(() => {
+        if (!cancelled) setEnabled(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const extension = ((file.extension as string) ?? "").toLowerCase();
+  const eligible = AI_SUMMARIZABLE_EXTENSIONS.has(extension);
+
+  if (!enabled || !eligible) return null;
+
+  const handleSummarize = async () => {
+    setState({ status: "loading" });
+    try {
+      const result = await summarizeFile({ fileId: file.$id });
+      setState({ status: "ready", summary: result.summary });
+    } catch (err) {
+      const message =
+        err instanceof Error && err.message
+          ? err.message
+          : "Couldn't summarize this file.";
+      setState({ status: "error", message });
+    }
+  };
+
+  return (
+    <div className="mt-4 rounded-lg border border-border/60 bg-gradient-to-br from-violet-500/5 via-transparent to-sky-500/5 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <Sparkles aria-hidden="true" className="size-4 text-primary" />
+          <p className="text-sm font-medium">AI summary</p>
+        </div>
+        {state.status !== "ready" && (
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={handleSummarize}
+            disabled={state.status === "loading"}
+          >
+            {state.status === "loading" ? (
+              <>
+                <Loader2 className="size-4 animate-spin motion-reduce:animate-none" />
+                Summarizing…
+              </>
+            ) : (
+              <>
+                <Sparkles className="size-4" />
+                Summarize with AI
+              </>
+            )}
+          </Button>
+        )}
+      </div>
+
+      {state.status === "idle" && (
+        <p className="mt-2 text-xs text-muted-foreground">
+          Generate a short, factual summary of this file using Claude.
+        </p>
+      )}
+      {state.status === "loading" && (
+        <p className="mt-2 text-xs text-muted-foreground">
+          Reading the file and asking the model…
+        </p>
+      )}
+      {state.status === "error" && (
+        <p className="mt-2 text-xs text-destructive">{state.message}</p>
+      )}
+      {state.status === "ready" && (
+        <div className="mt-3 space-y-2">
+          <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+            {state.summary}
+          </p>
+          <button
+            type="button"
+            onClick={handleSummarize}
+            className="text-xs text-muted-foreground underline-offset-2 hover:underline focus-visible:underline"
+          >
+            Regenerate
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function FallbackBody({
   extension,
@@ -290,6 +418,7 @@ export function PreviewModal({ file, open, onOpenChange }: PreviewModalProps) {
 
           <div className="max-h-[80vh] overflow-auto p-4 sm:p-6">
             <PreviewBody file={file} />
+            <AiSummaryPanel file={file} />
           </div>
 
           <footer className="flex flex-col-reverse items-stretch gap-2 border-t border-border/60 px-5 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6">

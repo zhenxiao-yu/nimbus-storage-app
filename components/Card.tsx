@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Models } from "node-appwrite";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Circle } from "lucide-react";
@@ -10,7 +10,11 @@ import FormattedDateTime from "@/components/FormattedDateTime";
 import ActionDropdown from "@/components/ActionDropdown";
 import PreviewModal from "@/components/PreviewModal";
 import { useMultiSelect } from "@/components/MultiSelectProvider";
+import { useQuickLook } from "@/components/QuickLookProvider";
 import { cn, convertFileSize } from "@/lib/utils";
+
+const LONG_PRESS_MS = 500;
+const LONG_PRESS_MOVE_TOLERANCE_PX = 10;
 
 interface CardProps {
   file: Models.DefaultDocument;
@@ -25,15 +29,64 @@ interface CardProps {
 const Card = ({ file, orderedIds }: CardProps) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const multi = useMultiSelect();
+  const quickLook = useQuickLook();
   const selected = multi?.isSelected(file.$id) ?? false;
   // When at least one card is selected, plain clicks toggle selection
   // (Finder-style "selection mode"). When nothing is selected, clicking a
   // card opens its preview as before.
   const anySelected = (multi?.selectedCount ?? 0) > 0;
 
+  // Long-press state for mobile Quick Look trigger. A pointerdown starts a
+  // 500ms timer; pointermove past tolerance, pointerup, pointercancel, or
+  // scroll cancels it. If the timer fires, we open QuickLook and mark this
+  // pointer as "consumed" so the subsequent click doesn't also open the full
+  // PreviewModal.
+  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const longPressStartRef = useRef<{ x: number; y: number } | null>(null);
+  const longPressFiredRef = useRef(false);
+
+  const cancelLongPress = () => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+    longPressStartRef.current = null;
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+    // Only start long-press for touch / pen — mouse users have Space.
+    if (e.pointerType === "mouse") return;
+    longPressFiredRef.current = false;
+    longPressStartRef.current = { x: e.clientX, y: e.clientY };
+    longPressTimerRef.current = setTimeout(() => {
+      longPressFiredRef.current = true;
+      longPressTimerRef.current = null;
+      multi?.notePointerOn(file.$id);
+      quickLook?.openQuickLook(file);
+    }, LONG_PRESS_MS);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
+    const start = longPressStartRef.current;
+    if (!start || !longPressTimerRef.current) return;
+    const dx = e.clientX - start.x;
+    const dy = e.clientY - start.y;
+    if (Math.hypot(dx, dy) > LONG_PRESS_MOVE_TOLERANCE_PX) {
+      cancelLongPress();
+    }
+  };
+
   const handleCardClick = (
     e: React.MouseEvent<HTMLButtonElement | HTMLDivElement>,
   ) => {
+    // Swallow the click that follows a successful long-press — QuickLook is
+    // already open, opening the full modal underneath would be jarring.
+    if (longPressFiredRef.current) {
+      longPressFiredRef.current = false;
+      e.preventDefault();
+      return;
+    }
+    multi?.notePointerOn(file.$id);
     const meta = e.metaKey || e.ctrlKey;
     const shift = e.shiftKey;
     if (multi && (anySelected || meta || shift)) {
@@ -133,7 +186,20 @@ const Card = ({ file, orderedIds }: CardProps) => {
       <button
         type="button"
         onClick={handleCardClick}
-        className="ring-focus flex min-w-0 flex-col gap-1 rounded-md text-left focus:outline-none"
+        onFocus={() => multi?.notePointerOn(file.$id)}
+        onMouseEnter={() => multi?.notePointerOn(file.$id)}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={cancelLongPress}
+        onPointerCancel={cancelLongPress}
+        onPointerLeave={cancelLongPress}
+        onContextMenu={(e) => {
+          // iOS Safari fires a contextmenu on long-press of links/buttons;
+          // since we already handle the long-press ourselves, suppress the
+          // native callout so it doesn't compete with our overlay.
+          if (longPressFiredRef.current) e.preventDefault();
+        }}
+        className="ring-focus flex min-w-0 flex-col gap-1 rounded-md text-left focus:outline-none [touch-action:manipulation] select-none"
       >
         <p className="line-clamp-2 break-all text-sm font-medium leading-snug transition-colors group-hover:text-primary">
           {file.name}

@@ -1,5 +1,31 @@
 # Changelog
 
+## 2.1.0 — 2026-05-17
+
+The "wow" pass: AI workspace and Quick Look.
+
+### Features
+
+- **AI Workspace** (Anthropic Claude integration, feature-flagged on `ANTHROPIC_API_KEY`):
+  - **Summarize with AI** button in the preview modal for text-extractable files (`.md`, `.txt`, `.csv`, `.json`, `.log`). One click → Claude reads the file and returns a 3-5 sentence factual summary, rendered inline. Regenerate button.
+  - **Ask AI** page at `/dashboard/ai`. Chat-style UI that lets the user ask questions about their workspace metadata ("What's my biggest file?", "How am I using my storage?", "Suggest how to organize these into folders"). The most recent 200 files' metadata is passed to the model — file *contents* are never sent.
+  - Sidebar nav entry "Ask AI" (sparkles icon) — gracefully hidden when the API key isn't set.
+  - Model: `claude-haiku-4-5`, `max_tokens: 1024`. Prompt caching enabled on the system prompt (`cache_control: { type: "ephemeral" }`) so cost stays bounded on repeat turns.
+  - Sanitized errors via the existing `ActionError` pattern; rate-limit (429) gets a specific "try again in a moment" message.
+- **Quick Look** (Finder-style hold-space peek):
+  - Hit Space on any file → giant overlay slides in with the file rendered in-place; arrow keys flip prev/next through `orderedIds`; Space or Esc closes; click body to open the full PreviewModal.
+  - Mobile: long-press (500ms) on a card opens Quick Look. First-time hint stored in `localStorage`.
+  - Type-color-coded badge, "N of M" indicator, focus restoration on close.
+  - Respects `prefers-reduced-motion`. Ignores Space when typing in inputs.
+
+### New env var
+
+- `ANTHROPIC_API_KEY` (optional) — enables AI Workspace surfaces. Set in `.env.local` for local dev and Vercel project env for prod. Without it, AI features are hidden cleanly.
+
+### Dependency
+
+- `@anthropic-ai/sdk@^0.96` (browser-side never imports it; only server actions).
+
 ## 2.0.0 — 2026-05-17
 
 A product-grade pass on top of the original 1.0 demo. Roughly: 10 new product features, a top-to-bottom polish on UX and copy, full SEO + cookie-consent + legal pages, accessibility and responsive sweep, a hardened error/logging path, and a reproducible Appwrite setup script.

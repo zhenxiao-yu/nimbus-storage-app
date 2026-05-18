@@ -15,10 +15,18 @@ interface Props {
   fullName: string;
   avatar: string;
   email: string;
+  aiEnabled?: boolean;
 }
 
-const Sidebar = ({ fullName, avatar, email }: Props) => {
+const Sidebar = ({ fullName, avatar, email, aiEnabled = false }: Props) => {
   const pathname = usePathname();
+
+  // Filter AI-gated entries at render time. Keeping `navItems` static (and
+  // the filter here) means the constant is still safe to import elsewhere
+  // without dragging the feature flag into every consumer.
+  const visibleNavItems = navItems.filter(
+    (item) => !("requiresAi" in item && item.requiresAi) || aiEnabled,
+  );
 
   return (
     <aside className="hidden h-screen w-[260px] shrink-0 flex-col border-r border-border/60 bg-card/40 backdrop-blur-sm lg:flex">
@@ -31,7 +39,7 @@ const Sidebar = ({ fullName, avatar, email }: Props) => {
           Workspace
         </p>
         <ul className="space-y-1">
-          {navItems.map(({ url, name, icon: Icon }) => {
+          {visibleNavItems.map(({ url, name, icon: Icon }) => {
             const active =
               url === "/dashboard"
                 ? pathname === url
