@@ -39,7 +39,7 @@ export function Logo({
         strokeWidth="2.4"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="relative z-10 size-[60%] drop-shadow-sm"
+        className="relative z-10 size-3/5 drop-shadow-sm"
       >
         <path d="M17 17H7a4 4 0 1 1 1.2-7.8A5.5 5.5 0 0 1 18.8 9 4 4 0 0 1 17 17Z" />
       </svg>

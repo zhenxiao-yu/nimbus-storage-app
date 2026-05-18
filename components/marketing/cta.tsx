@@ -38,14 +38,14 @@ export function CTA({ isAuthenticated }: { isAuthenticated: boolean }) {
 
         <div className="relative mx-auto max-w-3xl">
           <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl md:text-6xl">
-            Ready to{" "}
+            Try it in a{" "}
             <span className="bg-gradient-to-br from-violet-300 via-indigo-300 to-sky-300 bg-clip-text text-transparent">
-              own your files?
+              browser tab.
             </span>
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-balance text-base text-white/70 md:text-lg">
-            Spin up your free Nimbus workspace in under a minute. No password,
-            no credit card.
+            Sign in with an email code. Upload a file, hit ⌘K, ask the AI a
+            question, beam it to another tab. 2 GB free, no card required.
           </p>
           <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:mt-9 sm:flex-row sm:flex-wrap sm:items-center">
             <Button asChild size="lg" className="h-12 px-6 text-base">

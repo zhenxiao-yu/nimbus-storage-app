@@ -6,7 +6,7 @@ import tailwindPlugin from "eslint-plugin-tailwindcss";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export default [
+const config = [
   ...nextConfig,
   ...tailwindPlugin.configs["flat/recommended"],
   prettierConfig,
@@ -49,3 +49,5 @@ export default [
     ],
   },
 ];
+
+export default config;

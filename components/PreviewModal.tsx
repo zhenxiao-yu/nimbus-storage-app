@@ -82,6 +82,7 @@ function AiSummaryPanel({ file }: { file: Models.DefaultDocument }) {
   useEffect(() => {
     // Reset when the file changes so reopening on a different file
     // doesn't keep the previous summary visible.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setState({ status: "idle" });
   }, [file.$id]);
 
@@ -210,6 +211,8 @@ function TextPreview({ url }: { url: string }) {
 
   useEffect(() => {
     let cancelled = false;
+    // URL-driven fetch; loading state resets when url prop changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setState({ status: "loading" });
     fetch(url)
       .then((r) => {
@@ -375,7 +378,7 @@ export function PreviewModal({ file, open, onOpenChange }: PreviewModalProps) {
           // Override the default shadcn max-w-lg and padding so we can host
           // a true preview canvas. Keep the centering / a11y wiring intact.
           className={cn(
-            "left-[50%] top-[50%] w-full translate-x-[-50%] translate-y-[-50%] gap-0 overflow-hidden rounded-xl border border-border/60 bg-card p-0 shadow-elevated",
+            "left-1/2 top-1/2 w-full -translate-x-1/2 -translate-y-1/2 gap-0 overflow-hidden rounded-xl border border-border/60 bg-card p-0 shadow-elevated",
             "max-w-[calc(100vw-1rem)] sm:max-w-3xl lg:max-w-4xl",
             "motion-reduce:transition-none motion-reduce:data-[state=closed]:animate-none motion-reduce:data-[state=open]:animate-none",
           )}

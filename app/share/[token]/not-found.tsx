@@ -17,7 +17,7 @@ export default function ShareNotFound() {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="border-b border-border/60 bg-background/70 backdrop-blur-md">
-        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-4 py-4 md:px-6">
+        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 p-4 md:px-6">
           <Logo size="sm" href="/" />
           <Link
             href="/"
@@ -57,7 +57,7 @@ export default function ShareNotFound() {
       </main>
 
       <footer className="border-t border-border/60 bg-background/60">
-        <div className="mx-auto flex w-full max-w-5xl items-center justify-center px-4 py-4 text-xs text-muted-foreground md:px-6">
+        <div className="mx-auto flex w-full max-w-5xl items-center justify-center p-4 text-xs text-muted-foreground md:px-6">
           <p>
             &copy; {new Date().getFullYear()} {siteConfig.shortTitle}.
           </p>

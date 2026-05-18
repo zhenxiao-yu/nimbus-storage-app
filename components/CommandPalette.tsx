@@ -64,6 +64,8 @@ const CommandPalette = ({ open, onOpenChange }: CommandPaletteProps) => {
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
+    // Open-driven async fetch — loading flag toggles around the await.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoadingFiles(true);
     (async () => {
       try {
@@ -150,7 +152,7 @@ const CommandPalette = ({ open, onOpenChange }: CommandPaletteProps) => {
         aria-label="Command palette"
         aria-modal="true"
         className={cn(
-          "relative w-full max-w-[640px] overflow-hidden rounded-2xl border border-border/60",
+          "relative w-full max-w-screen-sm overflow-hidden rounded-2xl border border-border/60",
           "bg-popover/95 shadow-elevated backdrop-blur-xl",
           "motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95 motion-safe:duration-150",
         )}
@@ -188,7 +190,7 @@ const CommandPalette = ({ open, onOpenChange }: CommandPaletteProps) => {
                 value={`nav ${name} ${url}`}
                 onSelect={() => navigateTo(url)}
                 className={cn(
-                  "flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 text-sm",
+                  "flex cursor-pointer items-center gap-3 rounded-md p-2 text-sm",
                   "data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground",
                 )}
               >
@@ -225,7 +227,7 @@ const CommandPalette = ({ open, onOpenChange }: CommandPaletteProps) => {
                   value={`file ${file.name} ${file.type ?? ""} ${file.extension ?? ""}`}
                   onSelect={() => openFileUrl(file.url)}
                   className={cn(
-                    "flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 text-sm",
+                    "flex cursor-pointer items-center gap-3 rounded-md p-2 text-sm",
                     "data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground",
                   )}
                 >
@@ -252,7 +254,7 @@ const CommandPalette = ({ open, onOpenChange }: CommandPaletteProps) => {
               value="action upload file new"
               onSelect={handleUpload}
               className={cn(
-                "flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 text-sm",
+                "flex cursor-pointer items-center gap-3 rounded-md p-2 text-sm",
                 "data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground",
               )}
             >
@@ -266,7 +268,7 @@ const CommandPalette = ({ open, onOpenChange }: CommandPaletteProps) => {
               value="action toggle theme dark light"
               onSelect={handleToggleTheme}
               className={cn(
-                "flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 text-sm",
+                "flex cursor-pointer items-center gap-3 rounded-md p-2 text-sm",
                 "data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground",
               )}
             >
@@ -289,7 +291,7 @@ const CommandPalette = ({ open, onOpenChange }: CommandPaletteProps) => {
               value="action sign out logout"
               onSelect={handleSignOut}
               className={cn(
-                "flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 text-sm",
+                "flex cursor-pointer items-center gap-3 rounded-md p-2 text-sm",
                 "data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground",
               )}
             >

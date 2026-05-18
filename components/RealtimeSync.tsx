@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Client } from "appwrite";
 
 import { getRealtimeJWT } from "@/lib/actions/user.actions";
 
@@ -48,6 +47,10 @@ const RealtimeSync = ({
       try {
         const jwt = await getRealtimeJWT();
         if (cancelled || !jwt) return;
+
+        // Lazy-import the appwrite browser SDK so it isn't part of the
+        // initial dashboard chunk (~70KB gz at the time of writing).
+        const { Client } = await import("appwrite");
 
         const client = new Client()
           .setEndpoint(endpoint)

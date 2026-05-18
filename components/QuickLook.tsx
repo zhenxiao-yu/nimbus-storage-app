@@ -13,7 +13,10 @@ import { Models } from "node-appwrite";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ExternalLink, Loader2 } from "lucide-react";
 
-import PreviewModal from "@/components/PreviewModal";
+import dynamic from "next/dynamic";
+const PreviewModal = dynamic(() => import("@/components/PreviewModal"), {
+  ssr: false,
+});
 import { useMultiSelect } from "@/components/MultiSelectProvider";
 import { useQuickLookStrict } from "@/components/QuickLookProvider";
 import { Button } from "@/components/ui/button";
@@ -148,6 +151,8 @@ function TextPeek({ url }: { url: string }) {
 
   useEffect(() => {
     let cancelled = false;
+    // URL-driven fetch; loading state resets when url prop changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setState({ status: "loading" });
     fetch(url)
       .then((r) => {
@@ -221,7 +226,10 @@ export function QuickLook({ files }: QuickLookProps) {
 
   const open = ql.open;
   const file = ql.file;
-  const orderedIds = multi?.orderedIds ?? [];
+  const orderedIds = useMemo(
+    () => multi?.orderedIds ?? [],
+    [multi?.orderedIds],
+  );
 
   const currentIndex = useMemo(() => {
     if (!file) return -1;
@@ -238,6 +246,8 @@ export function QuickLook({ files }: QuickLookProps) {
     if (!isTouch) return;
     try {
       if (!window.localStorage.getItem(QUICKLOOK_HINT_KEY)) {
+        // Client-only: hint visibility depends on localStorage which can't run during SSR.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setShowHoldHint(true);
       }
     } catch {
@@ -338,6 +348,8 @@ export function QuickLook({ files }: QuickLookProps) {
 
   // SSR safety for portal.
   const [mounted, setMounted] = useState(false);
+  // SSR safety for portal — flip after first client render.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
 

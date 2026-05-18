@@ -9,7 +9,11 @@ import {
   useState,
 } from "react";
 
-import CommandPalette from "@/components/CommandPalette";
+import dynamic from "next/dynamic";
+// Only loaded when ⌘K (or the trigger button) is pressed.
+const CommandPalette = dynamic(() => import("@/components/CommandPalette"), {
+  ssr: false,
+});
 
 type Ctx = {
   open: boolean;

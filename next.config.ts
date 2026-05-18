@@ -14,7 +14,7 @@ const cspDirectives = [
   "font-src 'self' data: https://fonts.gstatic.com",
   "img-src 'self' data: blob: https://*.cloud.appwrite.io https://cloud.appwrite.io https://img.freepik.com https://cdn.pixabay.com https://api.dicebear.com https://avatars.dicebear.com",
   "media-src 'self' blob: https://*.cloud.appwrite.io https://cloud.appwrite.io",
-  "connect-src 'self' https://*.cloud.appwrite.io https://cloud.appwrite.io https://vitals.vercel-insights.com https://vercel.live wss://vercel.live",
+  "connect-src 'self' https://*.cloud.appwrite.io https://cloud.appwrite.io https://vitals.vercel-insights.com https://vercel.live wss://vercel.live https://api.groq.com https://*.peerjs.com wss://*.peerjs.com stun: stun:stun.l.google.com:19302",
   "frame-src 'self' https://vercel.live",
   "worker-src 'self' blob:",
   "manifest-src 'self'",

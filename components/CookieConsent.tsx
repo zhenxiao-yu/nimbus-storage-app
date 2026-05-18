@@ -60,6 +60,8 @@ export default function CookieConsent() {
 
   // Hydration-safe initialization
   useEffect(() => {
+    // Hydration-safe mount + localStorage read; both must run client-side.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     const existing = readConsent();
     if (!existing) {

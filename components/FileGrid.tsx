@@ -4,14 +4,24 @@ import { useEffect, useMemo } from "react";
 import { Models } from "node-appwrite";
 import { AnimatePresence, motion } from "framer-motion";
 
+import dynamic from "next/dynamic";
+
 import Card from "@/components/Card";
-import BulkActionsBar from "@/components/BulkActionsBar";
 import {
   MultiSelectProvider,
   useMultiSelect,
 } from "@/components/MultiSelectProvider";
 import { QuickLookProvider } from "@/components/QuickLookProvider";
-import QuickLook from "@/components/QuickLook";
+
+// Deferred: BulkActionsBar only renders content when at least one file is
+// selected, and QuickLook only opens when the user hits Space / long-press.
+const BulkActionsBar = dynamic(
+  () => import("@/components/BulkActionsBar"),
+  { ssr: false },
+);
+const QuickLook = dynamic(() => import("@/components/QuickLook"), {
+  ssr: false,
+});
 
 const container = {
   hidden: { opacity: 0 },

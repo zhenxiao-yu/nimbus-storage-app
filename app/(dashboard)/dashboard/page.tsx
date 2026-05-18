@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Models } from "node-appwrite";
 import { FolderOpen } from "lucide-react";
 
-import { Chart } from "@/components/Chart";
+import ChartLazy from "@/components/ChartLazy";
 import EmptyIllustration from "@/components/EmptyIllustration";
 import FolderCard from "@/components/FolderCard";
 import NewFolderButton from "@/components/NewFolderButton";
@@ -53,7 +53,7 @@ export default async function DashboardPage() {
       </header>
 
       <div className="grid gap-6 xl:grid-cols-2">
-        <Chart used={totalSpace?.used ?? 0} />
+        <ChartLazy used={totalSpace?.used ?? 0} />
         <SummaryCards items={usageSummary} />
       </div>
 

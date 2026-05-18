@@ -54,6 +54,8 @@ const AuthForm = ({ type }: { type: FormType }) => {
     const errorKey = searchParams.get("error");
     if (errorKey && oauthErrorMessages[errorKey]) {
       toast.error(oauthErrorMessages[errorKey]);
+      // Sync error state from URL search params (event-driven from the OAuth callback redirect).
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormError(oauthErrorMessages[errorKey]);
     }
   }, [searchParams]);

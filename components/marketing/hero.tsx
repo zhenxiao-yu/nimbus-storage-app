@@ -74,7 +74,7 @@ export function Hero({ isAuthenticated }: { isAuthenticated: boolean }) {
           >
             <Sparkles aria-hidden="true" className="size-3 shrink-0 text-primary" />
             <AnimatedShinyText as="span" className="!mx-0 truncate">
-              v1.0 — open source on GitHub
+              v2.2 — AI Workspace and Beam are live
             </AnimatedShinyText>
             <ArrowRight aria-hidden="true" className="size-3 shrink-0 transition-transform group-hover:translate-x-0.5" />
           </Link>
@@ -84,24 +84,24 @@ export function Hero({ isAuthenticated }: { isAuthenticated: boolean }) {
           {...fadeUp(0.05)}
           className="mx-auto max-w-4xl text-balance text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
         >
-          The cloud{" "}
+          Your files, plus an{" "}
           <span className="relative inline-block">
             <span className="bg-gradient-to-br from-violet-500 via-indigo-500 to-sky-500 bg-clip-text text-transparent">
-              workspace
+              AI
             </span>
             <span
               aria-hidden
               className="absolute inset-x-0 -bottom-1 h-[3px] rounded-full bg-gradient-to-r from-violet-500/0 via-indigo-500/60 to-sky-500/0 blur-[1px]"
             />
           </span>{" "}
-          that gets out of your way.
+          that understands them.
         </motion.h1>
 
         <motion.p
           {...fadeUp(0.15)}
           className="mx-auto mt-6 max-w-2xl text-balance text-lg text-muted-foreground"
         >
-          Upload, organize, search, and share your files — fast, passwordless, yours to own.
+          Upload and organize into folders, share via short-lived links, beam files browser-to-browser, and ask AI questions about your workspace.
         </motion.p>
 
         <motion.div
@@ -146,7 +146,7 @@ export function Hero({ isAuthenticated }: { isAuthenticated: boolean }) {
           {...fadeUp(0.4)}
           className="mt-6 text-xs text-muted-foreground"
         >
-          No credit card · Passwordless · Self-hostable
+          No credit card · Passwordless · Self-hostable · 2 GB free
         </motion.p>
 
         <SocialProof />
@@ -159,12 +159,12 @@ export function Hero({ isAuthenticated }: { isAuthenticated: boolean }) {
 
 function SocialProof() {
   const badges = [
-    { label: "Indie Hackers", from: "from-violet-500", to: "to-fuchsia-500" },
-    { label: "Vercel", from: "from-slate-700", to: "to-slate-900" },
+    { label: "Next.js 16", from: "from-zinc-700", to: "to-black" },
+    { label: "React 19", from: "from-sky-500", to: "to-indigo-500" },
     { label: "Appwrite", from: "from-pink-500", to: "to-rose-500" },
-    { label: "Next.js", from: "from-zinc-700", to: "to-black" },
-    { label: "Solo Devs", from: "from-sky-500", to: "to-indigo-500" },
-    { label: "Open Source", from: "from-emerald-500", to: "to-teal-500" },
+    { label: "Tailwind", from: "from-cyan-500", to: "to-sky-500" },
+    { label: "Groq", from: "from-orange-500", to: "to-amber-500" },
+    { label: "WebRTC", from: "from-emerald-500", to: "to-teal-500" },
   ];
   return (
     <motion.div
@@ -174,7 +174,7 @@ function SocialProof() {
       className="mt-10 flex flex-col items-center gap-4"
     >
       <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
-        Trusted by indie builders
+        Built with
       </p>
       <div className="flex flex-wrap items-center justify-center gap-2">
         {badges.map((b) => (

@@ -8,32 +8,59 @@ import { cn } from "@/lib/utils";
 
 const faqs = [
   {
-    q: "Is Nimbus free to run?",
-    a: "Yes. Nimbus targets the Vercel + Appwrite Cloud free tier. You get 2 GB of file storage and unlimited deploys without paying anything.",
+    q: "How does the AI Workspace work, and which provider does it use?",
+    a: "Ask AI sends your prompt and a short summary of your file list to Groq's hosted Llama 3.1. Answers stream back token-by-token. Files are not uploaded to the model — only names, sizes, and types are included as context. The feature is gated on a server-side GROQ_API_KEY; if it's missing, the Ask AI route is hidden from the sidebar.",
   },
   {
-    q: "Why no password authentication?",
-    a: "Passwordless OTP via email is more secure for users (no reused passwords) and simpler to maintain. Sessions are HttpOnly cookies signed by Appwrite.",
+    q: "What is Beam?",
+    a: "Beam transfers a file directly from one browser to another over WebRTC using PeerJS. The bytes never touch our server or the Appwrite bucket — only the small signaling handshake does. It's useful for moving a large file to another device on your network or to a friend, without using your storage quota.",
   },
   {
-    q: "Can I self-host this?",
-    a: "Absolutely. Bring your own Appwrite instance (cloud or self-hosted) and deploy to any Node-compatible host. The repo includes a one-click Vercel button.",
+    q: "What's stored, and who can see my files?",
+    a: "Files live in your Appwrite Storage bucket with per-document permissions scoped to your account. Other signed-in users can't list or read your files. Anyone you grant access to via a share link can read that single file until the link's expiry. There is no admin backdoor in the UI; the server-side API key is only used for OAuth callback lookups and provisioning.",
   },
   {
-    q: "What about file size limits?",
-    a: "Single-file uploads are capped at 50 MB by default — adjustable via MAX_FILE_SIZE in the constants module and bodySizeLimit in next.config.ts.",
+    q: "Is there a free tier?",
+    a: "Yes. The full stack is built to run on free tiers: Vercel for hosting, Appwrite Cloud for auth + database + storage, and Groq for the AI. You get 2 GB of file storage on Appwrite's free plan. Groq's free tier has per-minute request and token rate limits — heavy AI use may hit them.",
   },
   {
-    q: "Is there a roadmap?",
-    a: "Folders, tagging, link-with-expiry sharing, PWA offline support, and richer notifications are all on deck. PRs welcome.",
+    q: "How much can I store, and what happens when I delete a file?",
+    a: "Each user is capped at 2 GB total, enforced against the Appwrite bucket. Deleting a file is a soft-delete: it moves to Trash with a deletedAt timestamp and is purged after 30 days. You can restore from Trash at any time before then. Individual uploads are capped at 50 MB by default.",
+  },
+  {
+    q: "What happens when a share link expires?",
+    a: "Public share links carry a token and an expiry timestamp. After expiry, the /share/<token> route returns a not-found page and the file can no longer be read by that link. You can revoke a link manually at any time, which clears both the token and the expiry from the file record.",
+  },
+  {
+    q: "What are the current limits?",
+    a: "Folders are single-level (no nesting yet). There are no team workspaces — each account is solo. Single-file uploads are capped at 50 MB. AI is rate-limited by Groq's free tier. These are tracked on the roadmap.",
+  },
+  {
+    q: "Is this open source, and who built it?",
+    a: "Yes — the full source is on GitHub under an MIT-style license. Nimbus is built and maintained by Mark Yu (m4rkyu.com) as a portfolio project. PRs and issues are welcome.",
   },
 ];
 
 export function FAQ() {
   const [open, setOpen] = useState<number | null>(0);
 
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+
   return (
     <section id="faq" className="mx-auto max-w-3xl px-5 py-24 lg:px-8">
+      <script
+        type="application/ld+json"
+        // Inline because Next won't hoist server-side JSON-LD from a client component otherwise.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}

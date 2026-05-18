@@ -1,9 +1,8 @@
 import { ImageResponse } from "next/og";
 
-export const size = { width: 512, height: 512 };
-export const contentType = "image/png";
+const size = { width: 512, height: 512 };
 
-export default function Icon512() {
+export async function GET() {
   return new ImageResponse(
     (
       <div
@@ -43,6 +42,12 @@ export default function Icon512() {
         </svg>
       </div>
     ),
-    { ...size },
+    {
+      ...size,
+      headers: {
+        "Content-Type": "image/png",
+        "Cache-Control": "public, max-age=86400, s-maxage=86400, immutable",
+      },
+    },
   );
 }

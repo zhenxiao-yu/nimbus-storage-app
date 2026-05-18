@@ -26,7 +26,6 @@ export default function ServiceWorkerRegister() {
         if (cancelled) return;
 
         if (registration.waiting) {
-          // eslint-disable-next-line no-console
           console.info("[SW] Update waiting to activate.");
         }
 
@@ -35,19 +34,16 @@ export default function ServiceWorkerRegister() {
           if (!installing) return;
           installing.addEventListener("statechange", () => {
             if (installing.state === "installed" && navigator.serviceWorker.controller) {
-              // eslint-disable-next-line no-console
               console.info("[SW] New version installed; will activate on next load.");
             }
           });
         });
       } catch (err) {
-        // eslint-disable-next-line no-console
         console.warn("[SW] Registration failed:", err);
       }
     };
 
     const onControllerChange = () => {
-      // eslint-disable-next-line no-console
       console.info("[SW] Controller changed.");
     };
 

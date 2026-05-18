@@ -1,11 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { Models } from "node-appwrite";
 import { motion, type Variants } from "framer-motion";
 
 import ActionDropdown from "@/components/ActionDropdown";
-import PreviewModal from "@/components/PreviewModal";
+// Deferred: only opens after the user clicks a file.
+const PreviewModal = dynamic(() => import("@/components/PreviewModal"), {
+  ssr: false,
+});
 import Thumbnail from "@/components/Thumbnail";
 import { cn, convertFileSize, formatRelativeTime } from "@/lib/utils";
 

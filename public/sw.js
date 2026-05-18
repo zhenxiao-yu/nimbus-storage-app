@@ -6,7 +6,7 @@
  *   - Skip: cross-origin, non-GET, /api/*, Appwrite, query-string requests, server actions.
  */
 
-const CACHE_VERSION = "nimbus-v1";
+const CACHE_VERSION = "nimbus-v2";
 const SHELL_CACHE = `${CACHE_VERSION}-shell`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 const OFFLINE_URL = "/offline";
@@ -21,6 +21,8 @@ const PRECACHE_URLS = [
   "/icon",
   "/apple-icon",
   "/icon-512",
+  "/screenshot-wide",
+  "/screenshot-narrow",
   "/assets/icons/logo-brand.svg",
   "/assets/icons/logo-full-brand.svg",
   "/assets/icons/logo-full.svg",

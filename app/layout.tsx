@@ -109,6 +109,8 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
         <link rel="dns-prefetch" href="https://vitals.vercel-insights.com" />
         <link rel="dns-prefetch" href="https://va.vercel-scripts.com" />
+        <link rel="dns-prefetch" href="https://api.groq.com" />
+        <link rel="dns-prefetch" href="https://0.peerjs.com" />
       </head>
       <body className="font-sans antialiased">
         <ThemeProvider
@@ -131,7 +133,7 @@ export default function RootLayout({
         <InstallPrompt />
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
+           
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
@@ -141,6 +143,21 @@ export default function RootLayout({
               applicationCategory: "ProductivityApplication",
               operatingSystem: "Web",
               url: siteConfig.url,
+              screenshot: `${siteConfig.url}/opengraph-image`,
+              softwareVersion: "2.2.0",
+              inLanguage: "en-US",
+              featureList: [
+                "AI Workspace",
+                "Beam (P2P file transfer)",
+                "Folders",
+                "Command palette",
+                "Realtime sync",
+                "Multi-select & bulk actions",
+                "Quick Look preview",
+                "Public share links",
+                "Trash + Undo",
+                "PWA + offline support",
+              ],
               author: {
                 "@type": "Person",
                 name: siteConfig.author,
@@ -156,7 +173,7 @@ export default function RootLayout({
         />
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
+           
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
@@ -175,7 +192,7 @@ export default function RootLayout({
         />
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
+           
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",

@@ -11,6 +11,8 @@ const CommandPaletteTrigger = ({ className }: { className?: string }) => {
 
   useEffect(() => {
     if (typeof navigator === "undefined") return;
+    // Detect platform on client only to avoid SSR hydration mismatch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMac(/Mac|iPhone|iPod|iPad/i.test(navigator.platform));
   }, []);
 

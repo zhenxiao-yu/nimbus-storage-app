@@ -51,7 +51,7 @@ export default async function DashboardLayout({
             avatar={currentUser.avatar}
           />
 
-          <main id="content" className="flex-1 px-4 py-6 md:px-8 md:py-8">
+          <main id="content" className="flex-1 px-4 py-6 md:p-8">
             <div className="mx-auto w-full max-w-7xl">{children}</div>
           </main>
         </section>

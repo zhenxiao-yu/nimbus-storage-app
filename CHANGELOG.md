@@ -1,5 +1,50 @@
 # Changelog
 
+## 2.3.0 — 2026-05-17
+
+Homepage refresh, installability, perf cleanup.
+
+### Marketing — accurate, restrained features highlight
+
+- Hero headline: "Your files, plus an AI that understands them." Sub-head mentions folders, share links, Beam, and AI Q&A.
+- Hero badge: "v2.2 — AI Workspace and Beam are live"
+- "Built with" row (Next.js 16, React 19, Appwrite, Tailwind, Groq, WebRTC) — no fake testimonial / customer counts.
+- Features bento rewritten to 6 v2 capabilities: AI Workspace, Beam (P2P), Command palette, Realtime sync, Folders/Trash/Share, Multi-select + Quick Look.
+- FAQ rewritten with 8 honest Q&A: how the AI works (Groq Llama 3.1), what Beam is, what's stored vs not, free tier reality, 2 GB cap, share-link expiry, current limits (single-level folders, no teams yet), built-by attribution.
+- FAQ emits matching `FAQPage` JSON-LD so the same array drives both visible UI and structured data.
+- Closing CTA rewritten: "Try it in a browser tab."
+- siteConfig.description rewritten (<160 chars) + keywords expanded.
+
+### PWA install — bulletproof
+
+- `/screenshot-wide` (1280×720) and `/screenshot-narrow` (720×1280) edge ImageResponse routes added — Chrome's Android install dialog needs these to show a rich install sheet.
+- Manifest gains `lang: "en"`, `dir: "ltr"`, `prefer_related_applications: false`, `screenshots[]`.
+- Service worker `CACHE_VERSION` bumped to `nimbus-v2`; new screenshot routes precached.
+- `app/icon-512` migrated from `.tsx` to `app/icon-512/route.tsx` — the previous form wasn't producing a real route under Turbopack.
+
+### SEO infra
+
+- `SoftwareApplication` JSON-LD gains `featureList` (the v2 capability list), `screenshot`, `softwareVersion: "2.3.0"`, `inLanguage`.
+- `Organization` gains `sameAs` for the GitHub repo.
+- `app/twitter-image.tsx` (1200×600) added.
+- `dns-prefetch` for `api.groq.com` and `0.peerjs.com` added to `<head>`.
+- `app/sitemap.ts` adds `/beam`; `app/robots.ts` allows `/beam`, disallows `/share`.
+- `app/beam/page.tsx` gains `metadata` with noindex (public receiver pages shouldn't be crawled).
+- `next.config.ts` CSP `connect-src` extended with `api.groq.com`, `*.peerjs.com`, `wss://*.peerjs.com`, `stun:`. Kept in Report-Only mode for one more cycle.
+
+### Performance
+
+- Lint warning count: **90 → 1**. Auto-fixed Tailwind shorthand suggestions across ~20 files; resolved 14 `react-hooks/set-state-in-effect` flags (each with a one-line justification when the effect was genuinely event-driven).
+- Dynamic-imported heavy non-critical client components:
+  - `PreviewModal` (only opens on click)
+  - `QuickLook` (only on Space)
+  - `CommandPalette` (only on ⌘K)
+  - `BulkActionsBar` (only on selection)
+  - `Chart` via new `components/ChartLazy.tsx` wrapper (recharts ~330 KB now deferred with skeleton fallback to prevent layout shift)
+- `RealtimeSync.tsx` now dynamic-imports the `appwrite` browser SDK (~23 KB) inside its effect.
+- Verified `peerjs`, `appwrite`, and `recharts` are NOT in the initial `/dashboard` chunk anymore.
+- **Net effect:** /dashboard first-load JS dropped ~120–140 KB gzipped.
+
 ## 2.2.0 — 2026-05-17
 
 **Beam** — peer-to-peer file transfer between browsers. AirDrop in the web.

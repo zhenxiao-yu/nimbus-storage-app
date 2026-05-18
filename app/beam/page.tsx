@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
 import { Wifi } from "lucide-react";
 
 import BeamReceiver from "@/components/BeamReceiver";
+
+export const metadata: Metadata = {
+  title: "Receive a file with Beam",
+  description:
+    "Receive a file peer-to-peer in your browser with a 4-digit Beam code — no upload, no server hop.",
+  alternates: { canonical: "/beam" },
+  robots: { index: false, follow: false },
+};
 
 export default function BeamReceivePage() {
   return (

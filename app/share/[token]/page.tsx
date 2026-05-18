@@ -49,7 +49,7 @@ export default async function SharePage({ params }: SharePageProps) {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="border-b border-border/60 bg-background/70 backdrop-blur-md">
-        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-4 py-4 md:px-6">
+        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 p-4 md:px-6">
           <Logo size="sm" href="/" />
           <Link
             href="/"
@@ -115,7 +115,7 @@ export default async function SharePage({ params }: SharePageProps) {
             )}
           </div>
 
-          <div className="flex flex-col gap-3 border-t border-border/60 bg-background/60 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <div className="flex flex-col gap-3 border-t border-border/60 bg-background/60 p-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
             <p className="text-xs text-muted-foreground">
               Hosted on{" "}
               <span className="font-medium text-foreground">
@@ -143,7 +143,7 @@ export default async function SharePage({ params }: SharePageProps) {
       </main>
 
       <footer className="border-t border-border/60 bg-background/60">
-        <div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-muted-foreground sm:flex-row md:px-6">
+        <div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-between gap-2 p-4 text-xs text-muted-foreground sm:flex-row md:px-6">
           <p>
             &copy; {new Date().getFullYear()} {siteConfig.shortTitle}. Shared
             securely.

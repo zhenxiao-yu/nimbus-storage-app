@@ -44,6 +44,8 @@ const Search = () => {
   }, [debouncedQuery]);
 
   useEffect(() => {
+    // Sync local input when the URL search param is cleared externally (e.g. nav).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!searchQuery) setQuery("");
   }, [searchQuery]);
 
@@ -76,7 +78,7 @@ const Search = () => {
           placeholder="Search your files…"
           aria-label="Search your files"
           type="search"
-          className="h-10 pl-9 pr-9 transition-shadow focus-visible:ring-2 focus-visible:ring-primary/40"
+          className="h-10 px-9 transition-shadow focus-visible:ring-2 focus-visible:ring-primary/40"
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => results.length && setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 150)}
@@ -90,7 +92,7 @@ const Search = () => {
       </div>
 
       {open && (
-        <div className="absolute left-0 right-0 top-12 z-50 max-h-[min(20rem,70vh)] overflow-hidden rounded-xl border border-border/60 bg-popover p-2 shadow-elevated">
+        <div className="absolute inset-x-0 top-12 z-50 max-h-[min(20rem,70vh)] overflow-hidden rounded-xl border border-border/60 bg-popover p-2 shadow-elevated">
           {results.length > 0 ? (
             <ul className="max-h-80 space-y-1 overflow-y-auto scrollbar-thin">
               {results.map((file) => (
@@ -99,7 +101,7 @@ const Search = () => {
                     type="button"
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => handleClickItem(file)}
-                    className="flex w-full items-center justify-between gap-3 rounded-md px-2 py-2 text-left transition-colors hover:bg-accent/60"
+                    className="flex w-full items-center justify-between gap-3 rounded-md p-2 text-left transition-colors hover:bg-accent/60"
                   >
                     <div className="flex min-w-0 flex-1 items-center gap-3">
                       <Thumbnail

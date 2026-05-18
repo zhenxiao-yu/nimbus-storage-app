@@ -1,4 +1,3 @@
-/* eslint-disable tailwindcss/no-contradicting-classname */
 import { cn } from "@/lib/utils";
 
 interface BorderBeamProps {

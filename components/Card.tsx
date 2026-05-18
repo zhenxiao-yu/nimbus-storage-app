@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { Models } from "node-appwrite";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Circle } from "lucide-react";
@@ -8,7 +9,12 @@ import { Check, Circle } from "lucide-react";
 import Thumbnail from "@/components/Thumbnail";
 import FormattedDateTime from "@/components/FormattedDateTime";
 import ActionDropdown from "@/components/ActionDropdown";
-import PreviewModal from "@/components/PreviewModal";
+
+// PreviewModal pulls in Radix Dialog + viewer helpers. It's only mounted when
+// `previewOpen` flips true, so defer the import until the user opens it.
+const PreviewModal = dynamic(() => import("@/components/PreviewModal"), {
+  ssr: false,
+});
 import { useMultiSelect } from "@/components/MultiSelectProvider";
 import { useQuickLook } from "@/components/QuickLookProvider";
 import { cn, convertFileSize } from "@/lib/utils";

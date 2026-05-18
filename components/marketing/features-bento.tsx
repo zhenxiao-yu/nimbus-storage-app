@@ -3,213 +3,287 @@
 import { motion } from "framer-motion";
 import {
   Cloud,
+  Command,
+  Eye,
+  FolderTree,
   Layers,
-  Lock,
-  Search,
-  Share2,
+  Radio,
+  Send,
   Sparkles,
-  Upload,
   Zap,
 } from "lucide-react";
 
 import { BentoCard, BentoGrid } from "@/components/magicui/bento-grid";
-import { Marquee } from "@/components/magicui/marquee";
-import { DotPattern } from "@/components/magicui/dot-pattern";
 import { cn } from "@/lib/utils";
 
-const fileTypes = [
-  { ext: "PDF", color: "from-red-500/15 to-red-500/5", text: "text-red-500" },
-  {
-    ext: "DOCX",
-    color: "from-blue-500/15 to-blue-500/5",
-    text: "text-blue-500",
-  },
-  {
-    ext: "PNG",
-    color: "from-violet-500/15 to-violet-500/5",
-    text: "text-violet-500",
-  },
-  {
-    ext: "MP4",
-    color: "from-amber-500/15 to-amber-500/5",
-    text: "text-amber-500",
-  },
-  {
-    ext: "ZIP",
-    color: "from-emerald-500/15 to-emerald-500/5",
-    text: "text-emerald-500",
-  },
-  {
-    ext: "MP3",
-    color: "from-pink-500/15 to-pink-500/5",
-    text: "text-pink-500",
-  },
-];
+// Bento tile backgrounds ----------------------------------------------------
 
-// Stylized animated storage bar-chart used as a tile background.
-function AnimatedBars() {
-  const bars = [
-    { label: "Mon", h: 28 },
-    { label: "Tue", h: 52 },
-    { label: "Wed", h: 41 },
-    { label: "Thu", h: 70 },
-    { label: "Fri", h: 88 },
-    { label: "Sat", h: 60 },
-    { label: "Sun", h: 76 },
+function AIChatPreview() {
+  const turns = [
+    { who: "you", text: "Summarize Q4 report" },
+    { who: "ai", text: "3 highlights: revenue +18%, churn -2%, new ARR $1.4M." },
+    { who: "you", text: "Which files mention onboarding?" },
   ];
   return (
-    <div className="absolute inset-0 flex items-end justify-center gap-2 p-8 pb-16 [mask-image:linear-gradient(to_top,transparent_15%,black)]">
-      {bars.map((b, i) => (
-        <motion.div
-          key={b.label}
-          initial={{ scaleY: 0 }}
-          whileInView={{ scaleY: 1 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{
-            delay: i * 0.06,
-            duration: 0.7,
-            ease: [0.16, 1, 0.3, 1],
-          }}
-          style={{ height: `${b.h}%`, transformOrigin: "bottom" }}
-          className="w-6 rounded-md bg-gradient-to-t from-indigo-500/80 via-violet-500/70 to-sky-400/70"
-        />
-      ))}
-    </div>
-  );
-}
-
-function ShareLinkPreview() {
-  return (
-    <div className="absolute inset-0 flex items-center justify-center [mask-image:linear-gradient(to_top,transparent_25%,black)]">
-      <div className="w-72 max-w-[90%] rounded-xl border border-border/60 bg-card p-3 shadow-soft">
-        <div className="flex items-center gap-2 rounded-md bg-muted/50 px-3 py-2 font-mono text-[11px]">
-          <span className="size-2 rounded-full bg-emerald-500" />
-          <span className="truncate text-muted-foreground">
-            nimbus.app/s/
-            <span className="text-foreground">a91-design-v2.pdf</span>
-          </span>
-        </div>
-        <div className="mt-2 flex flex-col gap-1.5">
-          {["a@m4rkyu.com", "team@nimbus.app", "you@example.com"].map((e) => (
-            <div
-              key={e}
-              className="flex items-center gap-2 rounded-md px-2 py-1.5 text-[11px]"
-            >
-              <span className="size-5 rounded-full bg-gradient-to-br from-violet-400 to-sky-400" />
-              <span className="truncate">{e}</span>
-              <span className="ml-auto rounded-full bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
-                active
-              </span>
-            </div>
-          ))}
+    <div className="absolute inset-0 flex items-center justify-center [mask-image:linear-gradient(to_top,transparent_20%,black)]">
+      <div className="w-72 max-w-[90%] space-y-1.5 rounded-xl border border-border/60 bg-card p-3 shadow-soft">
+        {turns.map((t, i) => (
+          <div
+            key={i}
+            className={cn(
+              "rounded-md px-2.5 py-1.5 text-[11px]",
+              t.who === "ai"
+                ? "bg-gradient-to-br from-violet-500/15 to-indigo-500/10 text-foreground"
+                : "bg-muted/50 text-muted-foreground",
+            )}
+          >
+            <span className="mr-1.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+              {t.who}
+            </span>
+            {t.text}
+          </div>
+        ))}
+        <div className="flex items-center gap-1.5 pt-1 text-[10px] text-muted-foreground">
+          <Sparkles className="size-3 text-primary" />
+          Groq · Llama 3.1
         </div>
       </div>
     </div>
   );
 }
+
+function BeamPreview() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center [mask-image:linear-gradient(to_top,transparent_20%,black)]">
+      <div className="flex items-center gap-4">
+        <div className="flex size-14 items-center justify-center rounded-xl border border-border/60 bg-card text-[10px] font-medium shadow-soft">
+          A
+        </div>
+        <div className="relative h-px w-24 bg-gradient-to-r from-violet-500/0 via-indigo-500 to-sky-500/0">
+          <motion.span
+            initial={{ x: 0, opacity: 0 }}
+            whileInView={{ x: 96, opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.4, repeat: Infinity, ease: "linear" }}
+            className="absolute -top-1 size-2 rounded-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.8)]"
+          />
+        </div>
+        <div className="flex size-14 items-center justify-center rounded-xl border border-border/60 bg-card text-[10px] font-medium shadow-soft">
+          B
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CommandPalettePreview() {
+  const items = [
+    { label: "Upload file", hint: "U" },
+    { label: "New folder", hint: "N" },
+    { label: "Open Trash", hint: "T" },
+    { label: "Ask AI", hint: "A" },
+  ];
+  return (
+    <div className="absolute inset-0 flex items-center justify-center [mask-image:linear-gradient(to_top,transparent_20%,black)]">
+      <div className="w-72 max-w-[90%] rounded-xl border border-border/60 bg-card shadow-soft">
+        <div className="flex items-center gap-2 border-b border-border/60 px-3 py-2 text-xs">
+          <Command className="size-3.5 text-muted-foreground" />
+          <span className="text-muted-foreground">Type a command…</span>
+          <span className="ml-auto rounded-md border border-border/60 bg-muted/40 px-1.5 py-0.5 font-mono text-[10px]">
+            ⌘K
+          </span>
+        </div>
+        <ul className="p-1">
+          {items.map((it) => (
+            <li
+              key={it.label}
+              className="flex items-center justify-between rounded-md px-2 py-1.5 text-[11px] hover:bg-accent/40"
+            >
+              <span>{it.label}</span>
+              <span className="rounded-sm border border-border/60 bg-muted/40 px-1 py-px font-mono text-[10px] text-muted-foreground">
+                {it.hint}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function RealtimePreview() {
+  const events = [
+    { who: "alex", action: "uploaded", file: "design-v3.pdf" },
+    { who: "jordan", action: "renamed", file: "Q4-report.docx" },
+    { who: "sam", action: "shared", file: "logo.png" },
+  ];
+  return (
+    <div className="absolute inset-0 flex items-center justify-center [mask-image:linear-gradient(to_top,transparent_20%,black)]">
+      <div className="w-72 max-w-[90%] space-y-1.5 rounded-xl border border-border/60 bg-card p-3 shadow-soft">
+        {events.map((e, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, x: -8 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.15, duration: 0.4 }}
+            className="flex items-center gap-2 rounded-md px-2 py-1.5 text-[11px]"
+          >
+            <span className="size-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.7)]" />
+            <span className="text-muted-foreground">
+              <span className="text-foreground">{e.who}</span> {e.action}{" "}
+              <span className="text-foreground">{e.file}</span>
+            </span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function FoldersPreview() {
+  const rows = [
+    { name: "Invoices", count: 12, active: true },
+    { name: "Design", count: 31 },
+    { name: "Trash", count: 4, danger: true },
+  ];
+  return (
+    <div className="absolute inset-0 flex items-center justify-center [mask-image:linear-gradient(to_top,transparent_20%,black)]">
+      <div className="w-64 max-w-[90%] space-y-1 rounded-xl border border-border/60 bg-card p-2 shadow-soft">
+        {rows.map((r) => (
+          <div
+            key={r.name}
+            className={cn(
+              "flex items-center gap-2 rounded-md px-2 py-1.5 text-[11px]",
+              r.active && "bg-primary/10 text-foreground",
+            )}
+          >
+            <FolderTree
+              className={cn(
+                "size-3.5",
+                r.danger ? "text-red-500" : "text-indigo-500",
+              )}
+            />
+            <span>{r.name}</span>
+            <span className="ml-auto text-[10px] text-muted-foreground">
+              {r.count}
+            </span>
+          </div>
+        ))}
+        <div className="mt-1.5 flex items-center gap-2 rounded-md border border-dashed border-border/60 px-2 py-1.5 text-[10px] text-muted-foreground">
+          <span className="size-1.5 rounded-full bg-emerald-500" />
+          share link · expires in 24h
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MultiSelectPreview() {
+  const files = [
+    { name: "screenshot-1.png", checked: true },
+    { name: "screenshot-2.png", checked: true },
+    { name: "screenshot-3.png", checked: false },
+  ];
+  return (
+    <div className="absolute inset-0 flex items-center justify-center [mask-image:linear-gradient(to_top,transparent_20%,black)]">
+      <div className="w-72 max-w-[90%] rounded-xl border border-border/60 bg-card shadow-soft">
+        <div className="flex items-center gap-2 border-b border-border/60 px-3 py-2 text-[11px]">
+          <span className="rounded-md bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+            2 selected
+          </span>
+          <span className="ml-auto text-[10px] text-muted-foreground">
+            Space to peek
+          </span>
+        </div>
+        <ul className="p-1">
+          {files.map((f) => (
+            <li
+              key={f.name}
+              className="flex items-center gap-2 rounded-md px-2 py-1.5 text-[11px]"
+            >
+              <span
+                className={cn(
+                  "flex size-3.5 items-center justify-center rounded border",
+                  f.checked
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border",
+                )}
+              >
+                {f.checked && <Eye className="size-2" />}
+              </span>
+              <span className="size-5 rounded-sm bg-gradient-to-br from-violet-400/40 to-sky-400/40" />
+              <span>{f.name}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+// Tiles ---------------------------------------------------------------------
 
 const features = [
   {
-    Icon: Upload,
-    name: "Drag, drop, done.",
+    Icon: Sparkles,
+    name: "AI Workspace",
     description:
-      "Upload any file with a single drop. We auto-classify it as a document, image, media, or other.",
+      "Ask questions about your files in plain English. Streamed answers from Llama 3.1 via Groq.",
+    href: "/dashboard/ai",
+    cta: "Try Ask AI",
+    className: "col-span-3 md:col-span-2",
+    background: <AIChatPreview />,
+  },
+  {
+    Icon: Send,
+    name: "Beam — peer to peer",
+    description:
+      "Send a file straight to another browser over WebRTC. No upload, no relay.",
+    href: "/dashboard",
+    cta: "Open Beam",
+    className: "col-span-3 md:col-span-1",
+    background: <BeamPreview />,
+  },
+  {
+    Icon: Command,
+    name: "Command palette",
+    description:
+      "Hit ⌘K to jump anywhere, run actions, and search files without leaving the keyboard.",
+    href: "/dashboard",
+    cta: "See shortcuts",
+    className: "col-span-3 md:col-span-1",
+    background: <CommandPalettePreview />,
+  },
+  {
+    Icon: Radio,
+    name: "Realtime sync",
+    description:
+      "Uploads, renames, and shares appear instantly across every open tab via Appwrite Realtime.",
     href: "/dashboard",
     cta: "Open dashboard",
     className: "col-span-3 md:col-span-2",
-    background: (
-      <Marquee
-        pauseOnHover
-        className="absolute top-10 [--duration:25s] [mask-image:linear-gradient(to_top,transparent_30%,black)]"
-      >
-        {fileTypes.map((f) => (
-          <figure
-            key={f.ext}
-            className={cn(
-              "relative w-32 cursor-pointer overflow-hidden rounded-xl border border-border/60 p-4",
-              "bg-gradient-to-br",
-              f.color,
-              "transform-gpu transition-all duration-300 hover:scale-105",
-            )}
-          >
-            <p className={cn("text-sm font-bold", f.text)}>{f.ext}</p>
-            <p className="mt-2 text-xs text-muted-foreground">
-              auto-detected
-            </p>
-          </figure>
-        ))}
-      </Marquee>
-    ),
+    background: <RealtimePreview />,
   },
   {
-    Icon: Search,
-    name: "Find anything, instantly.",
+    Icon: FolderTree,
+    name: "Folders, Trash, and share links",
     description:
-      "Debounced full-text search across every file you've uploaded.",
+      "Organize into folders. Soft-delete with 30-day Trash. Share via tokenized links that expire on schedule.",
     href: "/dashboard",
-    cta: "Try search",
-    className: "col-span-3 md:col-span-1",
-    background: (
-      <div className="absolute inset-0 flex items-center justify-center [mask-image:linear-gradient(to_top,transparent_15%,black)]">
-        <div className="w-full max-w-[260px] translate-y-3 rounded-xl border border-border/60 bg-card p-2 shadow-soft">
-          <div className="flex items-center gap-2 rounded-md border border-border/60 bg-muted/30 px-3 py-2">
-            <Search className="size-3.5 text-muted-foreground" />
-            <span className="text-xs">invoice</span>
-            <span className="ml-auto h-3.5 w-px animate-caret-blink bg-muted-foreground/60" />
-          </div>
-          <div className="mt-2 space-y-1.5">
-            {["invoice-2026.pdf", "invoice-template.docx"].map((n) => (
-              <div
-                key={n}
-                className="flex items-center gap-2 rounded-md px-2 py-1.5 text-[11px] hover:bg-accent/40"
-              >
-                <span className="size-2 rounded-sm bg-primary" />
-                {n}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    ),
-  },
-  {
-    Icon: Share2,
-    name: "Share, with control.",
-    description:
-      "Share any file with anyone — revoke access in a single click.",
-    href: "/dashboard",
-    cta: "Share something",
-    className: "col-span-3 md:col-span-1",
-    background: <ShareLinkPreview />,
-  },
-  {
-    Icon: Zap,
-    name: "Usage at a glance.",
-    description:
-      "Beautiful charts show how your storage trends week over week.",
-    href: "/dashboard",
-    cta: "See dashboard",
+    cta: "Open dashboard",
     className: "col-span-3 md:col-span-2",
-    background: <AnimatedBars />,
+    background: <FoldersPreview />,
   },
   {
-    Icon: Lock,
-    name: "Passwordless & secure.",
+    Icon: Eye,
+    name: "Multi-select & Quick Look",
     description:
-      "Magic-link OTP via Appwrite. HttpOnly cookies, strict same-site, no passwords to leak.",
-    href: "/login",
-    cta: "Sign in",
-    className: "col-span-3",
-    background: (
-      <DotPattern
-        width={20}
-        height={20}
-        cx={1}
-        cy={1}
-        cr={1}
-        className="absolute inset-0 [mask-image:radial-gradient(circle_at_center,white,transparent_70%)]"
-      />
-    ),
+      "Select many files for bulk actions. Press Space to peek without opening — like macOS Quick Look.",
+    href: "/dashboard",
+    cta: "Try it",
+    className: "col-span-3 md:col-span-1",
+    background: <MultiSelectPreview />,
   },
 ];
 
@@ -221,8 +295,8 @@ const meta = [
   },
   {
     Icon: Cloud,
-    name: "Free-tier ready",
-    desc: "Runs on Vercel + Appwrite Cloud free tier — $0 to host.",
+    name: "Free-tier friendly",
+    desc: "Vercel + Appwrite Cloud + Groq free tiers stack — $0 to host.",
   },
   {
     Icon: Layers,
@@ -231,8 +305,8 @@ const meta = [
   },
   {
     Icon: Sparkles,
-    name: "Designed in 2026",
-    desc: "Light + dark, animated gradients, polished empty/loading states.",
+    name: "PWA-ready",
+    desc: "Installable, offline shell, and a thoughtful onboarding file.",
   },
 ];
 
@@ -250,11 +324,11 @@ export function FeaturesBento() {
           Features
         </p>
         <h2 className="mt-3 text-balance text-3xl font-semibold tracking-tight md:text-4xl">
-          A focused, fast, friendly file workspace.
+          More than a file dropper.
         </h2>
         <p className="mt-3 text-muted-foreground">
-          Nimbus keeps the surface area small on purpose. Upload, organize,
-          share, find. Done.
+          Folders, realtime, AI, peer-to-peer transfer, and a keyboard-first
+          surface — all wired into a single, focused workspace.
         </p>
       </motion.div>
 
@@ -298,6 +372,7 @@ export function FeaturesBento() {
           </motion.li>
         ))}
       </ul>
+
     </section>
   );
 }

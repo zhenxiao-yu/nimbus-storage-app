@@ -43,6 +43,8 @@ const MoveToFolderDialog = ({
 
   useEffect(() => {
     if (!open) return;
+    // Open-driven reset + fetch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelected(currentFolderId);
     setIsLoading(true);
     getFolders({ parentId: null })

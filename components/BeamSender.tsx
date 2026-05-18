@@ -276,6 +276,8 @@ export default function BeamSender({ file }: BeamSenderProps) {
       const t = setTimeout(() => setPhase("unsupported"), 0);
       return () => clearTimeout(t);
     }
+    // External system subscribe (PeerJS) — setState fires in response to peer events.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     startBeam();
 
     const handleBeforeUnload = () => tearDown();

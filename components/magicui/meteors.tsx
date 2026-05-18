@@ -14,6 +14,8 @@ export const Meteors = ({ number = 20, className }: MeteorsProps) => {
   >([]);
 
   useEffect(() => {
+    // Random seeds must run client-side to avoid SSR hydration mismatch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMeteors(
       Array.from({ length: number }, () => ({
         left: Math.floor(Math.random() * 100) + "%",

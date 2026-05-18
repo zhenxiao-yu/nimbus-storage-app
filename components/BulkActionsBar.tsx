@@ -301,6 +301,8 @@ function BulkMoveDialog({
 
   useEffect(() => {
     if (!open) return;
+    // Open-driven data fetch — reset + load when the dialog opens.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelected(null);
     setIsLoading(true);
     getFolders({ parentId: null })

@@ -20,7 +20,7 @@ export const siteConfig = {
   title: "Nimbus — Cloud storage that gets out of your way",
   shortTitle: "Nimbus",
   description:
-    "A modern cloud workspace for your files. Upload, organize, share, and access anywhere — encrypted in transit and at rest, built on Appwrite, Next.js, and shadcn/ui.",
+    "Cloud file workspace with folders, trash, short-lived share links, command palette, in-app preview, realtime sync, AI Q&A, and browser-to-browser Beam transfer.",
   url:
     process.env.NEXT_PUBLIC_SITE_URL ||
     "https://nimbus-storage-app.vercel.app",
@@ -31,12 +31,20 @@ export const siteConfig = {
   keywords: [
     "cloud storage",
     "file management",
+    "AI workspace",
+    "WebRTC file transfer",
+    "P2P file sharing",
+    "command palette",
+    "realtime sync",
+    "share links",
     "Appwrite",
-    "Next.js 15",
+    "Next.js 16",
     "React 19",
+    "Groq Llama 3.1",
     "shadcn/ui",
     "Tailwind CSS",
     "TypeScript",
+    "PWA",
     "Mark Yu",
     "portfolio",
   ],

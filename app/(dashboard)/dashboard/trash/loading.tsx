@@ -15,7 +15,7 @@ export default function TrashLoading() {
       <div className="rounded-2xl border border-border/60 bg-card p-2 shadow-soft">
         <div className="divide-y divide-border/60">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="flex items-center gap-3 px-3 py-3">
+            <div key={i} className="flex items-center gap-3 p-3">
               <div className="size-12 animate-pulse rounded-xl bg-muted" />
               <div className="flex-1 space-y-2">
                 <div className="h-4 w-2/3 animate-pulse rounded bg-muted" />

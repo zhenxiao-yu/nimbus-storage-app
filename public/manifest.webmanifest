@@ -10,7 +10,10 @@
   "orientation": "portrait",
   "background_color": "#0a0e1a",
   "theme_color": "#6366f1",
+  "lang": "en",
+  "dir": "ltr",
   "categories": ["productivity", "utilities"],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/icon",
@@ -28,6 +31,22 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-wide",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Nimbus dashboard on desktop"
+    },
+    {
+      "src": "/screenshot-narrow",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Nimbus dashboard on mobile"
     }
   ],
   "shortcuts": [

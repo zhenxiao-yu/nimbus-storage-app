@@ -166,7 +166,7 @@ export function TopNav({ isAuthenticated }: { isAuthenticated: boolean }) {
                   key={l.href}
                   href={l.href}
                   onClick={() => setOpen(false)}
-                  className="block rounded-md px-3 py-3 text-sm font-medium text-muted-foreground hover:bg-accent/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                  className="block rounded-md p-3 text-sm font-medium text-muted-foreground hover:bg-accent/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                 >
                   {l.label}
                 </Link>
