@@ -128,7 +128,11 @@ export default async function FolderPage({
           <FileGrid files={files} />
         </section>
       ) : childFolders.length === 0 ? (
-        <EmptyFolder name={folder.name} />
+        searchText ? (
+          <EmptyFolderSearch name={folder.name} query={searchText} />
+        ) : (
+          <EmptyFolder name={folder.name} />
+        )
       ) : null}
     </div>
   );
@@ -143,6 +147,25 @@ function EmptyFolder({ name }: { name: string }) {
         <p className="max-w-sm text-sm text-muted-foreground">
           Upload files from the header, or move existing files in from their
           actions menu.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function EmptyFolderSearch({ name, query }: { name: string; query: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-border bg-card/40 px-6 py-16 text-center">
+      <EmptyIllustration className="w-52 opacity-90" />
+      <div className="space-y-1">
+        <p className="text-base font-medium">
+          No matches for &ldquo;
+          <span className="break-all text-foreground">{query}</span>&rdquo; in{" "}
+          <span className="break-all text-foreground">{name}</span>
+        </p>
+        <p className="max-w-sm text-sm text-muted-foreground">
+          Try a different spelling, or clear the search to see everything in
+          this folder.
         </p>
       </div>
     </div>

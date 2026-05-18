@@ -1,11 +1,17 @@
 "use server";
 
-import { createAdminClient, createSessionClient } from "@/lib/appwrite";
+import { createAdminClient } from "@/lib/appwrite";
 import { appwriteConfig } from "@/lib/appwrite/config";
 import { Models, Query } from "node-appwrite";
 import { parseStringify } from "@/lib/utils";
 import { getCurrentUser } from "@/lib/actions/user.actions";
 import { handleActionError as handleError, logError } from "@/lib/logger";
+
+// Appwrite's listDocuments defaults to 25 rows per page. For our list views
+// we want the full set (capped at the SDK's hard ceiling of 100 per request).
+// If/when a workspace genuinely exceeds 100 files of one type we'll add
+// pagination — for now this hits the realistic ceiling without round-trips.
+const DEFAULT_LIST_LIMIT = 100;
 
 /**
  * Creates queries for fetching files based on user, file types, search text, sorting, and limits.
@@ -48,7 +54,7 @@ const createQueries = (
 
   if (types.length > 0) queries.push(Query.equal("type", types));
   if (searchText) queries.push(Query.contains("name", searchText));
-  if (limit) queries.push(Query.limit(limit));
+  queries.push(Query.limit(limit ?? DEFAULT_LIST_LIMIT));
 
   if (sort) {
     const [sortBy, orderBy] = sort.split("-");
@@ -125,6 +131,7 @@ export const getTrashedFiles = async ({
     ];
 
     if (searchText) queries.push(Query.contains("name", searchText));
+    queries.push(Query.limit(DEFAULT_LIST_LIMIT));
 
     if (sort) {
       const [sortBy, orderBy] = sort.split("-");
@@ -185,21 +192,21 @@ export const getFileByShareToken = async (token: string) => {
  */
 export async function getTotalSpaceUsed() {
   try {
-    const { databases } = await createSessionClient();
     const currentUser = await getCurrentUser();
-
     if (!currentUser) throw new Error("User is not authenticated.");
 
-    const files = await databases.listDocuments(
-      appwriteConfig.databaseId,
-      appwriteConfig.filesCollectionId,
-      [
-        Query.equal("owner", [currentUser.$id]),
-        Query.isNull("deletedAt"),
-      ],
-    );
+    // Use the admin client (we're already filtering by owner = currentUser.$id
+    // explicitly). The previous code created a session client and never used
+    // it, then fell through to the admin SDK via getCurrentUser — wasted cookie
+    // read + Appwrite client init.
+    const { databases } = await createAdminClient();
 
-    const totalSpace = {
+    // Paginate manually: listDocuments caps at 100 rows per call and the
+    // previous implementation silently truncated workspaces with more than
+    // 25 files (the SDK default), reporting a low "used" total. Project to
+    // only the fields we actually consume to cut payload + parse cost.
+    const PAGE_SIZE = 100;
+    const totals = {
       image: { size: 0, latestDate: "" },
       document: { size: 0, latestDate: "" },
       video: { size: 0, latestDate: "" },
@@ -209,20 +216,42 @@ export async function getTotalSpaceUsed() {
       all: 2 * 1024 * 1024 * 1024, // 2GB available bucket storage
     };
 
-    files.documents.forEach((file) => {
-      const fileType = file.type as FileType;
-      totalSpace[fileType].size += file.size;
-      totalSpace.used += file.size;
+    let cursor: string | undefined;
+    // Hard cap loop iterations to avoid a runaway query if Appwrite ever
+    // returns weird paging state. 50 * 100 = 5,000 files — well above the
+    // free-tier ceiling.
+    for (let i = 0; i < 50; i++) {
+      const queries = [
+        Query.equal("owner", [currentUser.$id]),
+        Query.isNull("deletedAt"),
+        Query.select(["$id", "type", "size", "$updatedAt"]),
+        Query.limit(PAGE_SIZE),
+      ];
+      if (cursor) queries.push(Query.cursorAfter(cursor));
 
-      if (
-        !totalSpace[fileType].latestDate ||
-        new Date(file.$updatedAt) > new Date(totalSpace[fileType].latestDate)
-      ) {
-        totalSpace[fileType].latestDate = file.$updatedAt;
+      const page = await databases.listDocuments(
+        appwriteConfig.databaseId,
+        appwriteConfig.filesCollectionId,
+        queries,
+      );
+
+      for (const file of page.documents) {
+        const fileType = file.type as FileType;
+        totals[fileType].size += file.size;
+        totals.used += file.size;
+        if (
+          !totals[fileType].latestDate ||
+          new Date(file.$updatedAt) > new Date(totals[fileType].latestDate)
+        ) {
+          totals[fileType].latestDate = file.$updatedAt;
+        }
       }
-    });
 
-    return parseStringify(totalSpace);
+      if (page.documents.length < PAGE_SIZE) break;
+      cursor = page.documents[page.documents.length - 1].$id;
+    }
+
+    return parseStringify(totals);
   } catch (error) {
     handleError(error, "Error calculating total space used");
   }

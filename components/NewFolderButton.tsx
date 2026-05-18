@@ -25,6 +25,8 @@ interface NewFolderButtonProps {
   className?: string;
 }
 
+const MAX_FOLDER_NAME = 60;
+
 const NewFolderButton = ({
   parentId = null,
   variant = "default",
@@ -34,20 +36,34 @@ const NewFolderButton = ({
 }: NewFolderButtonProps) => {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const path = usePathname();
 
   const close = () => {
     setOpen(false);
     setName("");
+    setError(null);
+  };
+
+  const validate = (value: string): string | null => {
+    const trimmed = value.trim();
+    if (!trimmed) return "Give the folder a name first.";
+    if (trimmed.length > MAX_FOLDER_NAME)
+      return `Keep it under ${MAX_FOLDER_NAME} characters.`;
+    if (/[\\/]/.test(trimmed))
+      return "Folder names can't contain slashes.";
+    return null;
   };
 
   const handleCreate = () => {
     const trimmed = name.trim();
-    if (!trimmed) {
-      toast.error("Give the folder a name first.");
+    const validationError = validate(name);
+    if (validationError) {
+      setError(validationError);
       return;
     }
+    setError(null);
     startTransition(async () => {
       try {
         await createFolder({ name: trimmed, parentId, path });
@@ -55,6 +71,7 @@ const NewFolderButton = ({
         close();
       } catch {
         toast.error("Couldn't create folder.");
+        setError("Couldn't create folder. Try again.");
       }
     });
   };
@@ -72,12 +89,18 @@ const NewFolderButton = ({
           <DialogTitle className="text-center">New folder</DialogTitle>
         </DialogHeader>
 
-        <div className="pt-2">
+        <div className="space-y-1.5 pt-2">
           <Input
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              if (error) setError(null);
+            }}
             placeholder="Folder name"
             autoFocus
+            maxLength={MAX_FOLDER_NAME + 20}
+            aria-invalid={error ? true : undefined}
+            aria-describedby={error ? "new-folder-error" : undefined}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
@@ -85,6 +108,30 @@ const NewFolderButton = ({
               }
             }}
           />
+          <div className="flex items-start justify-between gap-3 text-xs">
+            {error ? (
+              <p
+                id="new-folder-error"
+                role="alert"
+                className="text-destructive"
+              >
+                {error}
+              </p>
+            ) : (
+              <span className="text-muted-foreground">
+                Letters, numbers, spaces — no slashes.
+              </span>
+            )}
+            <span
+              className={
+                name.trim().length > MAX_FOLDER_NAME
+                  ? "shrink-0 tabular-nums text-destructive"
+                  : "shrink-0 tabular-nums text-muted-foreground"
+              }
+            >
+              {name.trim().length}/{MAX_FOLDER_NAME}
+            </span>
+          </div>
         </div>
 
         <DialogFooter className="flex-col gap-2 sm:flex-row">

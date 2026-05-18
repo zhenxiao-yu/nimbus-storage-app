@@ -214,6 +214,10 @@ const CommandPalette = ({ open, onOpenChange }: CommandPaletteProps) => {
                 />
                 Loading recent files…
               </div>
+            ) : !loadingFiles && files.length === 0 ? (
+              <div className="px-2 py-3 text-sm text-muted-foreground">
+                No files yet — upload one to see it here.
+              </div>
             ) : (
               files.map((file) => (
                 <Command.Item

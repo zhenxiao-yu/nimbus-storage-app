@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Models } from "node-appwrite";
 import { Check, Copy, Link2, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
@@ -66,17 +66,37 @@ interface ShareInputProps {
   onRemove: (email: string) => void;
 }
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export const ShareInput = ({
   file,
   onInputChange,
   onRemove,
 }: ShareInputProps) => {
+  const [raw, setRaw] = useState("");
+
+  const { parsed, invalid } = useMemo(() => {
+    const entries = raw
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const valid: string[] = [];
+    const bad: string[] = [];
+    for (const e of entries) {
+      if (EMAIL_PATTERN.test(e)) valid.push(e);
+      else bad.push(e);
+    }
+    return { parsed: valid, invalid: bad };
+  }, [raw]);
+
+  const showInvalidHint = invalid.length > 0;
+
   return (
     <div className="space-y-3">
       <ImageThumbnail file={file} />
 
-      <div>
-        <label htmlFor="share-emails" className="mb-1.5 block text-sm font-medium">
+      <div className="space-y-1.5">
+        <label htmlFor="share-emails" className="block text-sm font-medium">
           Share with others
         </label>
         <Input
@@ -84,15 +104,38 @@ export const ShareInput = ({
           type="email"
           placeholder="Enter email addresses, comma-separated"
           className="w-full"
-          onChange={(e) =>
+          aria-invalid={showInvalidHint ? true : undefined}
+          aria-describedby={
+            showInvalidHint ? "share-emails-error" : "share-emails-hint"
+          }
+          value={raw}
+          onChange={(e) => {
+            setRaw(e.target.value);
             onInputChange(
               e.target.value
                 .split(",")
                 .map((s) => s.trim())
                 .filter(Boolean),
-            )
-          }
+            );
+          }}
         />
+        {showInvalidHint ? (
+          <p
+            id="share-emails-error"
+            role="alert"
+            className="text-xs text-destructive"
+          >
+            {invalid.length === 1
+              ? `"${invalid[0]}" doesn't look like an email address.`
+              : `${invalid.length} entries don't look like email addresses.`}
+          </p>
+        ) : (
+          <p id="share-emails-hint" className="text-xs text-muted-foreground">
+            {parsed.length === 0
+              ? "Separate multiple emails with commas."
+              : `${parsed.length} ${parsed.length === 1 ? "recipient" : "recipients"} ready to add.`}
+          </p>
+        )}
       </div>
 
       {file.users?.length > 0 && (

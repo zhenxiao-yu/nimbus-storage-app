@@ -52,6 +52,20 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: "100MB",
     },
+    // Tree-shake barrel imports for icon + chart libraries that otherwise
+    // ship a lot of unused exports into client bundles. Next maps named
+    // imports onto direct file paths at build time.
+    optimizePackageImports: [
+      "lucide-react",
+      "recharts",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-dropdown-menu",
+      "@radix-ui/react-alert-dialog",
+      "@radix-ui/react-select",
+      "@radix-ui/react-tooltip",
+      "framer-motion",
+      "cmdk",
+    ],
   },
   images: {
     formats: ["image/avif", "image/webp"],

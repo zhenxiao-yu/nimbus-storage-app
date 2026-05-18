@@ -82,6 +82,8 @@ export default async function TypePage({
 
       {files?.total > 0 ? (
         <FileGrid files={files.documents as Models.DefaultDocument[]} />
+      ) : searchText ? (
+        <EmptySearchState label={label.toLowerCase()} query={searchText} />
       ) : (
         <EmptyState label={label.toLowerCase()} />
       )}
@@ -101,6 +103,24 @@ function EmptyState({ label }: { label: string }) {
             Upload
           </span>{" "}
           in the header — or drop a file anywhere on this page.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function EmptySearchState({ label, query }: { label: string; query: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-border bg-card/40 px-6 py-16 text-center">
+      <EmptyIllustration className="w-52 opacity-90" />
+      <div className="space-y-1">
+        <p className="text-base font-medium">
+          No {label} match &ldquo;
+          <span className="break-all text-foreground">{query}</span>&rdquo;
+        </p>
+        <p className="max-w-sm text-sm text-muted-foreground">
+          Try a different spelling, or clear the search to see everything in
+          this section.
         </p>
       </div>
     </div>

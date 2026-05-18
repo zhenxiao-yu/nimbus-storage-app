@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -46,6 +46,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<"google" | "github" | null>(null);
   const [accountId, setAccountId] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const searchParams = useSearchParams();
 
@@ -53,6 +54,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
     const errorKey = searchParams.get("error");
     if (errorKey && oauthErrorMessages[errorKey]) {
       toast.error(oauthErrorMessages[errorKey]);
+      setFormError(oauthErrorMessages[errorKey]);
     }
   }, [searchParams]);
 
@@ -64,6 +66,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
+    setFormError(null);
     try {
       const user =
         type === "register"
@@ -71,11 +74,12 @@ const AuthForm = ({ type }: { type: FormType }) => {
           : await signInUser({ email: values.email });
 
       if (!user.accountId) {
-        toast.error(
+        const msg =
           type === "login"
             ? "We couldn't find that email. Try registering first."
-            : "Couldn't create your account.",
-        );
+            : "Couldn't create your account.";
+        toast.error(msg);
+        setFormError(msg);
         return;
       }
 
@@ -86,7 +90,9 @@ const AuthForm = ({ type }: { type: FormType }) => {
           : "Welcome back — check your inbox for the OTP.",
       );
     } catch {
-      toast.error("Something went wrong. Please try again.");
+      const msg = "Something went wrong. Please try again.";
+      toast.error(msg);
+      setFormError(msg);
     } finally {
       setIsLoading(false);
     }
@@ -94,6 +100,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
   const handleProvider = async (provider: "google" | "github") => {
     setOauthLoading(provider);
+    setFormError(null);
     try {
       await signInWithProvider(provider);
     } catch (err) {
@@ -101,9 +108,9 @@ const AuthForm = ({ type }: { type: FormType }) => {
       // bubbles to the client — that's the success path, not a failure.
       const digest = (err as { digest?: string } | null)?.digest;
       if (typeof digest === "string" && digest.startsWith("NEXT_REDIRECT")) return;
-      toast.error(
-        `${provider === "google" ? "Google" : "GitHub"} sign-in is not configured yet.`,
-      );
+      const msg = `${provider === "google" ? "Google" : "GitHub"} sign-in is not configured yet.`;
+      toast.error(msg);
+      setFormError(msg);
       setOauthLoading(null);
     }
   };
@@ -127,6 +134,19 @@ const AuthForm = ({ type }: { type: FormType }) => {
           />
 
           <OrDivider />
+
+          {formError && (
+            <div
+              role="alert"
+              className="flex items-start gap-2 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+            >
+              <AlertCircle
+                aria-hidden="true"
+                className="mt-0.5 size-4 shrink-0"
+              />
+              <span>{formError}</span>
+            </div>
+          )}
 
           {type === "register" && (
             <IconField
